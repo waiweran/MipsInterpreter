@@ -191,7 +191,8 @@ public class TextParser {
 			}
 		}
 		else {
-			Line madeLine = new Line(line, new Instruction(opcode, regs[0], regs[1], regs[2], immed, target));
+			Line madeLine = new Line(line, new Instruction(opcode, regs[0], 
+					regs[1], regs[2], immed, target));
 			prog.getProgramLines().add(madeLine);
 			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, madeLine);
 		}
