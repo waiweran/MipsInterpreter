@@ -19,7 +19,7 @@ public class Data {
 		Write;
 	}
 	
-	private long val;
+	private int val;
 	private DataType typ;
 	private Permissions per;
 	
@@ -63,9 +63,9 @@ public class Data {
 			return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
 		}
 		if(typ.equals(DataType.Address)) {
-			return Long.toHexString(val);
+			return Integer.toHexString(val);
 		}
-		return Long.toString(val);
+		return Integer.toString(val);
 	}
 	
 }
