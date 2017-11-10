@@ -6,9 +6,7 @@ import java.util.List;
 public class Data {
 
 	public enum DataType {
-		Str_Head,
 		String,
-		Str_Tail,
 		Integer,
 		Address,
 		Space;
@@ -56,13 +54,11 @@ public class Data {
 	@Override
 	public String toString() {
 
-		if(typ.equals(DataType.Str_Head)
-				|| typ.equals(DataType.String)
-				|| typ.equals(DataType.Str_Tail)) {
+		if(typ.equals(DataType.String)) {
 			List<Data> string = new ArrayList<Data>();
 			string.add(this);
 			string.add(new Data());
-			return TextParser.dataArrayToString(string);
+			return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
 		}
 		return Integer.toString(val);
 	}

@@ -63,7 +63,8 @@ public enum Opcode {
 				insn.getImmed()));
 	}),
 	BranchEquals ("beq", (insn, prog) -> {
-		if(prog.getRegFile().read(insn.getR1()) == prog.getRegFile().read(insn.getR2())) {
+		if(prog.getRegFile().read(insn.getR1()).getValue() == 
+				prog.getRegFile().read(insn.getR2()).getValue()) {
 			prog.jump(insn.getTarget());
 		}
 	}),
@@ -100,7 +101,8 @@ public enum Opcode {
 		}
 	}),
 	BranchNotEquals ("bne", (insn, prog) -> {
-		if(prog.getRegFile().read(insn.getR1()) != prog.getRegFile().read(insn.getR2())) {
+		if(prog.getRegFile().read(insn.getR1()).getValue() != 
+				prog.getRegFile().read(insn.getR2()).getValue()) {
 			prog.jump(insn.getTarget());
 		}
 	}),	

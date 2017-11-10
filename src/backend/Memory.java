@@ -103,7 +103,7 @@ public class Memory {
 	public Data loadByte(int address) {
 		Data word = loadWord(address - (address % 4));
 		int val = (word.getValue() << 8*(address % 4)) >>> 24;
-		return new Data(val, word.getDataType(), word.getPermissions());
+		return new Data(val, Data.DataType.Integer, word.getPermissions());
 	}
 	
 	public void storeByte(Data data, int address) {
