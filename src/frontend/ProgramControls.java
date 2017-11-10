@@ -36,7 +36,10 @@ public class ProgramControls implements ScreenObject {
 		reset = new Button("Reset");
 		playPause.setOnAction(e -> playPause(runProg.getCurrentRate() > 0));
 		step.setOnAction(e -> step());
-		reset.setOnAction(e -> gui.loadProgram());
+		reset.setOnAction(e -> {
+			playPause(true);
+			gui.loadProgram();
+		});
 		controls.getChildren().addAll(playPause, step, reset);
 	}
 	

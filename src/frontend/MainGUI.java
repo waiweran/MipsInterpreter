@@ -60,6 +60,7 @@ public class MainGUI {
 		Scene scene = new Scene(root);
 		mainStage.setScene(scene);
 		mainStage.show();
+		cmd.clear();
 	}
 	
 	public void loadProgram() {
