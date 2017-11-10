@@ -94,19 +94,23 @@ public class TextParser {
 		
 		if(dataType.equals(".space")) {
 			int size = (int)Math.round(Math.ceil(Double.parseDouble(dataVal)/4.0));
-			Integer[] space = new Integer[size];
+			Data[] space = new Data[size];
+			for(int i = 0; i < space.length; i++) {
+				space[i] = new Data();
+			}
 			prog.getMem().addToGlobalData(reference, Arrays.asList(space));
 		}
 		else if(dataType.equals(".word")) {
-			ArrayList<Integer> output = new ArrayList<>();
+			ArrayList<Data> output = new ArrayList<>();
 			String[] dataVals = dataVal.split(",");
 			for(int i = 0; i < dataVals.length; i++) {
-				output.add(Integer.parseInt(dataVal.trim()));
+				output.add(new Data(Integer.parseInt(dataVal.trim()), 
+						Data.DataType.Integer, Data.Permissions.Read_Only));
 			}
 			prog.getMem().addToGlobalData(reference, output);
 		}
 		else if(dataType.equals(".asciiz")) {
-			prog.getMem().addToGlobalData(reference, stringToIntArray(processString(dataVal)));
+			prog.getMem().addToGlobalData(reference, stringToDataArray(processString(dataVal)));
 		}
 		else if(dataType.equals(".halfword") || dataType.equals(".byte")) {
 			throw new RuntimeException("Data types .halfword and .byte are not supported");
@@ -211,31 +215,34 @@ public class TextParser {
 		return inString;
 	}
 	
-	public static List<Integer> stringToIntArray(String dataVal) {
-		ArrayList<Integer> memOutput = new ArrayList<>();
+	public static List<Data> stringToDataArray(String dataVal) {
+		ArrayList<Data> memOutput = new ArrayList<>();
 		char[] charArray = (dataVal + "\0").toCharArray();		
 		for(int i = 0; i < charArray.length; i += 4) {
-			memOutput.add(0);
-			memOutput.add(0);
-			memOutput.add(0);
-			memOutput.add(0);
+			memOutput.add(new Data());
+			memOutput.add(new Data());
+			memOutput.add(new Data());
+			memOutput.add(new Data());
 			for(int j = i; j < i + 4; j++) {
 				if(j < charArray.length) {
-					memOutput.set(i/4, (memOutput.get(i/4) << 8) + charArray[j]);
+					memOutput.set(i/4, new Data((memOutput.get(i/4).getValue() << 8)
+							+ charArray[j], (i == 0)? Data.DataType.String : 
+								Data.DataType.String_Head, Data.Permissions.Read_Only));
 				}
 				else {
-					memOutput.set(i/4, memOutput.get(i/4) << 8);
+					memOutput.set(i/4, new Data(memOutput.get(i/4).getValue() << 8, 
+							Data.DataType.String_Tail, Data.Permissions.Read_Only));
 				}
 			}
 		}
 		return memOutput;
 	}
 	
-	public static String intArrayToString(List<Integer> input) {
+	public static String dataArrayToString(List<Data> input) {
 		StringBuilder output = new StringBuilder();
 		for(int i = 0; i < input.size(); i++) {
 			for(int j = 3; j >= 0; j--) {
-				char nextChar = (char) ((input.get(i) >> 8*j) % 256);
+				char nextChar = (char) ((input.get(i).getValue() >> 8*j) % 256);
 				if(nextChar == (char)0) {
 					return output.toString();
 				}

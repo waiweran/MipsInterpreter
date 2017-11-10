@@ -8,10 +8,10 @@ import java.util.Map;
 public class Memory {
 	
 	private RegisterFile regs;
-	private List<Integer> globalData;
+	private List<Data> globalData;
 	private Map<String, Integer> dataRefs;
-	private List<Integer> heap;
-	private List<Integer> stack;
+	private List<Data> heap;
+	private List<Data> stack;
 
 	public Memory(RegisterFile registers) {
 		regs = registers;
@@ -25,7 +25,7 @@ public class Memory {
 		return dataRefs.containsKey(ref);
 	}
 	
-	public void addToGlobalData(String reference, List<Integer> values) {
+	public void addToGlobalData(String reference, List<Data> values) {
 		if(dataRefs.containsKey(reference)) throw new RuntimeException("Memory address reference \""
 				+ reference + "\" already used");
 		dataRefs.put(reference, globalData.size()*4);
@@ -42,12 +42,12 @@ public class Memory {
 		int size = amount/4 + ((amount%4 == 0)? 0 : 1);
 		int address = (globalData.size() + heap.size())*4;
 		for(int i = 0; i < size; i++) {
-			heap.add(0);
+			heap.add(new Data());
 		}
 		return address;
 	}
 	
-	public int loadWord(int address) {
+	public Data loadWord(int address) {
 		int word = getWordAddress(address);
 		// Global data
 		if(word < globalData.size()) {
@@ -70,10 +70,13 @@ public class Memory {
 		}
 	}
 	
-	public void storeWord(int data, int address) {
+	public void storeWord(Data data, int address) {
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
+			if(globalData.get(word).getPermissions().equals(Data.Permissions.Read_Only))
+				throw new RuntimeException("Segmentation Fault: "
+						+ "Cannot write to read only address " + address);
 			globalData.set(word, data);
 		}
 		// Heap
@@ -81,9 +84,10 @@ public class Memory {
 			heap.set(word - globalData.size(), data);
 		}
 		// Stack
-		else if(word >= regs.read(Register.sp)/4) {
-			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1 - regs.read(Register.sp)/4; i++) {
-				stack.add(0);
+		else if(word >= regs.read(Register.sp).getValue()/4) {
+			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1
+					- regs.read(Register.sp).getValue()/4; i++) {
+				stack.add(new Data());
 			}
 			stack.set(Integer.MAX_VALUE/4 - word, data);
 		}
@@ -96,22 +100,23 @@ public class Memory {
 		}
 	}
 	
-	public int loadByte(int address) {
-		int word = loadWord(address - (address % 4));
-		word = (word << 8*(address % 4)) >>> 24;
-		return word;
+	public Data loadByte(int address) {
+		Data word = loadWord(address - (address % 4));
+		int val = (word.getValue() << 8*(address % 4)) >>> 24;
+		return new Data(val, word.getDataType(), word.getPermissions());
 	}
 	
-	public void storeByte(int data, int address) {
-		int word = loadWord(address - (address % 4));
-		int top = (word >>> 8*(4 - (address % 4))) << 8*(4 - (address % 4));
-		int bottom = (word << 8*((address % 4) + 1)) >>> 8*((address % 4) + 1);
-		data = (data % 256) << 8*(3 - (address % 4));
-		storeWord(top & data & bottom, address - (address % 4));
+	public void storeByte(Data data, int address) {
+		Data word = loadWord(address - (address % 4));
+		int top = (word.getValue() >>> 8*(4 - (address % 4))) << 8*(4 - (address % 4));
+		int bottom = (word.getValue() << 8*((address % 4) + 1)) >>> 8*((address % 4) + 1);
+		int mid = (data.getValue() % 256) << 8*(3 - (address % 4));
+		storeWord(new Data(top & mid & bottom, data.getDataType(), 
+				data.getPermissions()), address - (address % 4));
 	}
 	
-	public List<Integer> loadArray(int address) {
-		ArrayList<Integer> values = new ArrayList<>();
+	public List<Data> loadArray(int address) {
+		ArrayList<Data> values = new ArrayList<>();
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
@@ -141,7 +146,7 @@ public class Memory {
 		return values;
 	}
 
-	public void storeArray(int address, List<Integer> values) {
+	public void storeArray(int address, List<Data> values) {
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
@@ -166,9 +171,10 @@ public class Memory {
 			}
 		}
 		// Stack
-		else if(word >= regs.read(Register.sp)/4) {
-			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1 - regs.read(Register.sp)/4; i++) {
-				stack.add(0);
+		else if(word >= regs.read(Register.sp).getValue()/4) {
+			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1
+					- regs.read(Register.sp).getValue()/4; i++) {
+				stack.add(new Data());
 			}
 			try {
 				for(int i = 0; i < values.size(); i++) {

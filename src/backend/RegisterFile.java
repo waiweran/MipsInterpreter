@@ -4,40 +4,41 @@ import java.util.Map;
 
 public class RegisterFile {
 	
-	private Map<Register, Integer> vals;
-	private int lo, hi;
+	private Map<Register, Data> vals;
+	private Data lo, hi;
 	
 	public RegisterFile() {
 		vals = new HashMap<>();
 		for(Register r : Register.values()) {
-			vals.put(r, 0);
+			vals.put(r, new Data());
 		}
-		vals.put(Register.sp, Integer.MAX_VALUE + 1);
+		vals.put(Register.sp, new Data(Integer.MAX_VALUE + 1, 
+				Data.DataType.Address, Data.Permissions.Write));
 	}
 	
-	public void write(Register write, int value) {
+	public void write(Register write, Data value) {
 		if(!write.equals(Register.zero)) {
 			vals.put(write, value);
 		}
 	}
 	
-	public int read(Register read) {
+	public Data read(Register read) {
 		return vals.get(read);
 	}
 	
-	public void writeLO(int value) {
+	public void writeLO(Data value) {
 		lo = value;
 	}
 	
-	public int readLO() {
+	public Data readLO() {
 		return lo;
 	}	
 	
-	public void writeHI(int value) {
+	public void writeHI(Data value) {
 		hi = value;
 	}
 	
-	public int readHI() {
+	public Data readHI() {
 		return hi;
 	}
 

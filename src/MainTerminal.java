@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
+import backend.Data;
 import backend.Instruction;
 import backend.Line;
 import backend.Opcode;
@@ -70,7 +71,8 @@ public class MainTerminal {
 	}
 
 	private static void setupProgramClose(Program prog) {
-		prog.getRegFile().write(Register.ra, prog.getProgramLines().size());
+		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(), 
+				Data.DataType.Address, Data.Permissions.Read_Only));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
 				Register.v0, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 

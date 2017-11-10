@@ -2,6 +2,7 @@ package frontend;
 
 import java.io.File;
 
+import backend.Data;
 import backend.Instruction;
 import backend.Line;
 import backend.Opcode;
@@ -79,7 +80,8 @@ public class MainGUI {
 	}
 	
 	private void setupProgramClose(Program prog) {
-		prog.getRegFile().write(Register.ra, prog.getProgramLines().size());
+		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
+				Data.DataType.Address, Data.Permissions.Read_Only));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
 				Register.v0, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 
