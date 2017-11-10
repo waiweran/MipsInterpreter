@@ -1,13 +1,15 @@
 package backend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Data {
 
 	public enum DataType {
-		String_Head,
+		Str_Head,
 		String,
-		String_Tail,
+		Str_Tail,
 		Integer,
-		Float, 
 		Address,
 		Space;
 	}
@@ -53,6 +55,15 @@ public class Data {
 	
 	@Override
 	public String toString() {
+
+		if(typ.equals(DataType.Str_Head)
+				|| typ.equals(DataType.String)
+				|| typ.equals(DataType.Str_Tail)) {
+			List<Data> string = new ArrayList<Data>();
+			string.add(this);
+			string.add(new Data());
+			return TextParser.dataArrayToString(string);
+		}
 		return Integer.toString(val);
 	}
 	

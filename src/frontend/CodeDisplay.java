@@ -56,11 +56,11 @@ public class CodeDisplay implements ScreenObject {
 
 	@Override
 	public Node getGraphics() {
-		progDisp.setMinWidth(MainGUI.SCREEN_WIDTH/2);
+		progDisp.setMinWidth(MainGUI.SCREEN_WIDTH/3);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setContent(progDisp);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scroll.setMinViewportWidth(MainGUI.SCREEN_WIDTH/2);
+		scroll.setMinViewportWidth(MainGUI.SCREEN_WIDTH/3);
 		scroll.setMinHeight(MainGUI.SCREEN_HEIGHT/2);
 		return scroll;
 	}

@@ -53,6 +53,7 @@ public class MainGUI {
 		root.setLeft(regs.getGraphics());
 		root.setCenter(code.getGraphics());
 		root.setBottom(cmd.getGraphics());
+		root.setRight(mem.getGraphics());
 		HBox topBar = new HBox();
 		topBar.getChildren().addAll(menu.getGraphics(), control.getGraphics());
 		root.setTop(topBar);

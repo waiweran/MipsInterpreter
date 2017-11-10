@@ -226,12 +226,12 @@ public class TextParser {
 			for(int j = i; j < i + 4; j++) {
 				if(j < charArray.length) {
 					memOutput.set(i/4, new Data((memOutput.get(i/4).getValue() << 8)
-							+ charArray[j], (i == 0)? Data.DataType.String : 
-								Data.DataType.String_Head, Data.Permissions.Read_Only));
+							+ charArray[j], (i == 0)? Data.DataType.Str_Head : 
+								Data.DataType.String, Data.Permissions.Read_Only));
 				}
 				else {
 					memOutput.set(i/4, new Data(memOutput.get(i/4).getValue() << 8, 
-							Data.DataType.String_Tail, Data.Permissions.Read_Only));
+							Data.DataType.Str_Tail, Data.Permissions.Read_Only));
 				}
 			}
 		}

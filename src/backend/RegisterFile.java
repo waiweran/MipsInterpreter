@@ -9,6 +9,8 @@ public class RegisterFile {
 	
 	public RegisterFile() {
 		vals = new HashMap<>();
+		lo = new Data();
+		hi = new Data();
 		for(Register r : Register.values()) {
 			vals.put(r, new Data());
 		}
