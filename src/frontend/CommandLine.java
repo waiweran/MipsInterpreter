@@ -15,8 +15,9 @@ public class CommandLine implements ScreenObject {
 		@Override
 		public void write(int b) throws IOException {
 			currentText.append(Character.toString((char)b));
-			cmds.setText(currentText.toString() + input);
+			cmds.setText(currentText.toString() + input.toString());
 			cmds.positionCaret(cmds.getLength());
+			cmds.setScrollTop(Double.MAX_VALUE);
 		}
 		
 	}
@@ -87,6 +88,7 @@ public class CommandLine implements ScreenObject {
 
 	@Override
 	public Node getGraphics() {
+		cmds.setMaxHeight(MainGUI.SCREEN_HEIGHT/6);
 		return cmds;
 	}
 

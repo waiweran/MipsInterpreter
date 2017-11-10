@@ -23,20 +23,20 @@ public class CodeDisplay implements ScreenObject {
 	
 	public CodeDisplay(Program program) {
 		progDisp = new VBox(2);
+		progDisp.setPadding(new Insets(10, 10, 0, 2));
 		MainGUI.setBackground(progDisp, Color.WHITE);
 		lineDisps = new HashMap<>();
 		initialize(program.getProgramLines());
 	}
 	
 	private void initialize(List<Line> lines) {
-		for(Line l : lines) {
+		for(int i = 0; i < lines.size(); i++) {
 			VBox line = new VBox();
-			line.setPadding(new Insets(0, 0, 0, 10));
-			Text text = new Text(l.getText());
+			Text text = new Text("   ".substring((i + "").length())+ i + ":\t" + lines.get(i).getText());
 			text.setFont(Font.font("Courier", 12));
 			line.getChildren().add(text);
 			MainGUI.setBackground(line, Color.WHITE);
-			lineDisps.put(l, line);
+			lineDisps.put(lines.get(i), line);
 			progDisp.getChildren().add(line);
 		}
 		currentHighlight = lineDisps.get(lines.get(0));
@@ -56,12 +56,13 @@ public class CodeDisplay implements ScreenObject {
 
 	@Override
 	public Node getGraphics() {
-		progDisp.setMinWidth(MainGUI.SCREEN_WIDTH/3);
+		progDisp.setMinWidth(MainGUI.SCREEN_WIDTH/2);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setContent(progDisp);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scroll.setMinViewportWidth(MainGUI.SCREEN_WIDTH/3);
-		scroll.setMinHeight(MainGUI.SCREEN_HEIGHT/2);
+		scroll.setMinViewportWidth(MainGUI.SCREEN_WIDTH/2);
+		scroll.setMinHeight(MainGUI.SCREEN_HEIGHT*2/3);
+		scroll.setMaxHeight(MainGUI.SCREEN_HEIGHT*2/3);
 		return scroll;
 	}
 

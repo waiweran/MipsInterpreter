@@ -8,7 +8,9 @@ public class Data {
 	public enum DataType {
 		String,
 		Integer,
+		Byte,
 		Address,
+		J_Target,
 		Space;
 	}
 	

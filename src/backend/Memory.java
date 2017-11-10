@@ -103,16 +103,17 @@ public class Memory {
 	public Data loadByte(int address) {
 		Data word = loadWord(address - (address % 4));
 		int val = (word.getValue() << 8*(address % 4)) >>> 24;
-		return new Data(val, Data.DataType.Integer, word.getPermissions());
+		return new Data(val, Data.DataType.Byte, word.getPermissions());
 	}
 	
 	public void storeByte(Data data, int address) {
-		Data word = loadWord(address - (address % 4));
-		int top = (word.getValue() >>> 8*(4 - (address % 4))) << 8*(4 - (address % 4));
-		int bottom = (word.getValue() << 8*((address % 4) + 1)) >>> 8*((address % 4) + 1);
-		int mid = (data.getValue() % 256) << 8*(3 - (address % 4));
-		storeWord(new Data(top & mid & bottom, data.getDataType(), 
-				data.getPermissions()), address - (address % 4));
+		int offset = address % 4;
+		Data word = loadWord(address - offset);
+		int top = (word.getValue() >>> 8*(4 - offset)) << 8*(4 - offset);
+		int bottom = (word.getValue() << 8*(offset + 1)) >>> 8*(offset + 1);
+		int mid = (data.getValue() % 256) << 8*(3 - offset);
+		storeWord(new Data(top | mid | bottom, word.getDataType(), 
+				data.getPermissions()), address - offset);
 	}
 	
 	public List<Data> loadArray(int address) {

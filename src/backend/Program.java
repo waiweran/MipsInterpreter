@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Program {
 	
@@ -14,7 +13,6 @@ public class Program {
 	private Memory mem;
 	private List<Line> lines;
 	private Map<String, Line> insnRefs;
-	private Scanner inScan;
 	private InputStream in;
 	private PrintStream out;
 	private int pc;
@@ -26,7 +24,6 @@ public class Program {
 		mem = new Memory(regs);
 		lines = new ArrayList<>();
 		insnRefs = new HashMap<>();
-		inScan = new Scanner(input);
 		in = input;
 		out = output;
 		done = false;
@@ -73,7 +70,15 @@ public class Program {
 	}
 	
 	public String getInput() {
-		return inScan.nextLine();
+		StringBuilder output = new StringBuilder();
+		while(inputAvailable()) {
+			try {
+				output.append((char)in.read());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return output.toString();
 	}
 	
 	public PrintStream getOutput() {

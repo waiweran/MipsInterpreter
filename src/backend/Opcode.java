@@ -35,8 +35,9 @@ public enum Opcode {
 	}),
 	SetEqual ("seq", (insn, prog) -> {
 		prog.getRegFile().write(insn.getR1(), 
-				new Data((prog.getRegFile().read(insn.getR2()) == 
-				prog.getRegFile().read(insn.getR3()))? 1 : 0, Data.DataType.Integer));
+				new Data((prog.getRegFile().read(insn.getR2()).getValue() == 
+				prog.getRegFile().read(insn.getR3()).getValue())?
+				1 : 0, Data.DataType.Integer));
 	}),
 	
 	// Normal MIPS Commands
@@ -75,7 +76,7 @@ public enum Opcode {
 	}),
 	BranchGreaterEqualsZeroAndLink ("bgezal", (insn, prog) -> {
 		if(prog.getRegFile().read(insn.getR1()).getValue() >= 0) {
-			prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.Address));
+			prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.J_Target));
 			prog.jump(insn.getTarget());
 		}
 	}),
@@ -96,7 +97,7 @@ public enum Opcode {
 	}),
 	BranchLessZeroAndLink ("bltzal", (insn, prog) -> {
 		if(prog.getRegFile().read(insn.getR1()).getValue() < 0) {
-			prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.Address));
+			prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.J_Target));
 			prog.jump(insn.getTarget());
 		}
 	}),
@@ -118,11 +119,11 @@ public enum Opcode {
 		prog.jump(insn.getTarget());
 	}),
 	JumpAndLink ("jal", (insn, prog) -> {
-		prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.Address));
+		prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.J_Target));
 		prog.jump(insn.getTarget());
 	}),
 	JumpAndLinkRegister ("jalr", (insn, prog) -> {
-		prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.Address));
+		prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.J_Target));
 		prog.setPC(prog.getRegFile().read(insn.getR1()).getValue());
 	}),	
 	JumpRegister ("jr", (insn, prog) -> {
