@@ -109,9 +109,17 @@ public class Memory {
 	public void storeByte(Data data, int address) {
 		int offset = address % 4;
 		Data word = loadWord(address - offset);
-		int top = (word.getValue() >>> 8*(4 - offset)) << 8*(4 - offset);
-		int bottom = (word.getValue() << 8*(offset + 1)) >>> 8*(offset + 1);
+		int top = (offset == 0)? 0 : (word.getValue() >>> 8*(4 - offset)) << 8*(4 - offset);
+		int bottom = word.getValue() - ((word.getValue() >>> 8*(3 - offset)) << 8*(3 - offset));
 		int mid = (data.getValue() % 256) << 8*(3 - offset);
+		System.out.println("Offset: " + offset);
+		System.out.println("Existing Word: " + Integer.toHexString(word.getValue()));
+		System.out.println("Write Value " + Integer.toHexString(mid));
+		System.out.println("Top Keep " + Integer.toHexString(top));
+		System.out.println("Bottom Keep " + Integer.toHexString(bottom));
+		System.out.println("Shift 1 " + Integer.toHexString((word.getValue() << 8*(offset))) + " With offset " + 8*(offset + 1));
+		System.out.println("New Word: " + new Data(top | mid | bottom, word.getDataType(), 
+				data.getPermissions()));
 		storeWord(new Data(top | mid | bottom, word.getDataType(), 
 				data.getPermissions()), address - offset);
 	}
