@@ -220,9 +220,6 @@ public class TextParser {
 		char[] charArray = (dataVal + "\0").toCharArray();		
 		for(int i = 0; i < charArray.length; i += 4) {
 			memOutput.add(new Data());
-			memOutput.add(new Data());
-			memOutput.add(new Data());
-			memOutput.add(new Data());
 			for(int j = i; j < i + 4; j++) {
 				if(j < charArray.length) {
 					memOutput.set(i/4, new Data((memOutput.get(i/4).getValue() << 8)
