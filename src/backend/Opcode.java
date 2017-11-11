@@ -267,7 +267,7 @@ public enum Opcode {
 		else if(type == 5) {
 			if(prog.inputAvailable()) {
 				prog.getRegFile().write(Register.v0, 
-						new Data(Integer.parseInt(prog.getInput()), Data.DataType.Integer));
+						new Data(Integer.parseInt(prog.getInput().trim()), Data.DataType.Integer));
 			}
 			// If input not ready, stall
 			else {
@@ -279,7 +279,7 @@ public enum Opcode {
 			if(prog.inputAvailable()) {
 				int address = prog.getRegFile().read(Register.a0).getValue();
 				int length = prog.getRegFile().read(Register.a1).getValue();
-				String inputString = prog.getInput() + "\n";
+				String inputString = prog.getInput();
 				if(inputString.length() >= length) {
 					inputString = inputString.substring(0, length);
 				}

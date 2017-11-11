@@ -73,7 +73,9 @@ public class Program {
 		StringBuilder output = new StringBuilder();
 		while(inputAvailable()) {
 			try {
-				output.append((char)in.read());
+				char c = (char)in.read();
+				output.append(c);
+				if(c == '\n') break;
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

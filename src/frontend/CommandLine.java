@@ -34,12 +34,9 @@ public class CommandLine implements ScreenObject {
 		public int read() throws IOException {
 			try {
 				int read = (int)input.charAt(0);
+				if(read == '\r') read = '\n';
 				out.write(read);
 				input.deleteCharAt(0);
-				if(input.charAt(0) == '\r') {
-					out.write((int)'\n');
-					input.deleteCharAt(0);
-				}
 				return read;
 			}
 			catch(IndexOutOfBoundsException e) {
