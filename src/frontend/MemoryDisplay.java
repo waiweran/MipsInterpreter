@@ -1,6 +1,6 @@
 package frontend;
 
-import backend.Program;
+import backend.program.Program;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;

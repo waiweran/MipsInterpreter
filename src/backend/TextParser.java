@@ -6,6 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import backend.program.Instruction;
+import backend.program.Line;
+import backend.program.Opcode;
+import backend.program.Program;
+import backend.program.Register;
+import backend.state.Data;
+
 public class TextParser {
 	
 	private Program prog;

@@ -3,8 +3,8 @@ package frontend;
 import java.util.HashMap;
 import java.util.Map;
 
-import backend.Program;
-import backend.Register;
+import backend.program.Program;
+import backend.program.Register;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;

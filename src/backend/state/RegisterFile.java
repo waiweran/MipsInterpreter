@@ -1,6 +1,8 @@
-package backend;
+package backend.state;
 import java.util.HashMap;
 import java.util.Map;
+
+import backend.program.Register;
 
 public class RegisterFile {
 	

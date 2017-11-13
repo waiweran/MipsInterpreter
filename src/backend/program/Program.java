@@ -1,4 +1,4 @@
-package backend;
+package backend.program;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import backend.state.Memory;
+import backend.state.RegisterFile;
 
 public class Program {
 	

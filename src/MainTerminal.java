@@ -6,13 +6,13 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
-import backend.Data;
-import backend.Instruction;
-import backend.Line;
-import backend.Opcode;
-import backend.Program;
-import backend.Register;
 import backend.TextParser;
+import backend.program.Instruction;
+import backend.program.Line;
+import backend.program.Opcode;
+import backend.program.Program;
+import backend.program.Register;
+import backend.state.Data;
 
 public class MainTerminal {
 

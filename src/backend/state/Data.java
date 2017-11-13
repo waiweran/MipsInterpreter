@@ -1,7 +1,9 @@
-package backend;
+package backend.state;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import backend.TextParser;
 
 public class Data {
 
@@ -51,6 +53,16 @@ public class Data {
 	
 	public Permissions getPermissions() {
 		return per;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new Integer(val).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		return other instanceof Data && this.val == ((Data) other).val;
 	}
 	
 	@Override

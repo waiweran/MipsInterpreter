@@ -1,7 +1,7 @@
 package frontend;
 
-import backend.Line;
-import backend.Program;
+import backend.program.Line;
+import backend.program.Program;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
