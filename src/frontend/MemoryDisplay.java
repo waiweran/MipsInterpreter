@@ -13,16 +13,18 @@ public class MemoryDisplay implements ScreenObject {
 
 	private VBox memoryArea;
 	private Program prog;
+	private DataDisplay displayType;
 	
 	public MemoryDisplay(Program program) {
 		prog = program;
 		memoryArea = new VBox();
+		displayType = DataDisplay.AUTO;
 		initialize();
 	}
 	
 	private void initialize() {
 		MainGUI.setBackground(memoryArea, Color.WHITE);
-		memoryArea.getChildren().add(new Text(prog.getMem().toString()));
+		memoryArea.getChildren().add(new Text(memoryToString()));
 		memoryArea.setPadding(new Insets(10, 10, 10, 10));
 	}
 
@@ -40,7 +42,20 @@ public class MemoryDisplay implements ScreenObject {
 
 	@Override
 	public void update() {
-		((Text)memoryArea.getChildren().get(0)).setText(prog.getMem().toString());
+		((Text)memoryArea.getChildren().get(0)).setText(memoryToString());
+	}
+	
+	
+	private String memoryToString() {
+		if(displayType.equals(DataDisplay.AUTO)) return prog.getMem().toString();
+		if(displayType.equals(DataDisplay.HEX)) return prog.getMem().toHexString();
+		if(displayType.equals(DataDisplay.DECIMAL)) return prog.getMem().toDecimalString();
+		return prog.getMem().toCharString();
+	}
+	
+	public void setDisplayType(DataDisplay type) {
+		displayType = type;
+		update();
 	}
 
 }

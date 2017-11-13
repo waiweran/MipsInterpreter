@@ -69,14 +69,27 @@ public class Data {
 	public String toString() {
 
 		if(typ.equals(DataType.String)) {
-			List<Data> string = new ArrayList<Data>();
-			string.add(this);
-			string.add(new Data());
-			return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
+			return toCharString();
 		}
 		if(typ.equals(DataType.Address)) {
-			return Integer.toHexString(val);
+			return toHex();
 		}
+		return toDecimal();
+	}
+
+	public String toCharString() {
+		List<Data> string = new ArrayList<Data>();
+		string.add(this);
+		string.add(new Data());
+		return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
+	}
+	
+	public String toHex() {
+		String output = Integer.toHexString(val);
+		return "00000000".substring(output.length()) + output.toUpperCase();
+	}
+	
+	public String toDecimal() {
 		return Integer.toString(val);
 	}
 	
