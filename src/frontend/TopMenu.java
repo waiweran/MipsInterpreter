@@ -16,6 +16,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 
+/**
+ * Top Menu of the MIPS Interpreter GUI.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class TopMenu implements ScreenObject {
 	
 	private MenuBar topBar;
@@ -26,6 +31,10 @@ public class TopMenu implements ScreenObject {
 	private List<MenuItem> recentDisp;
 	private Menu display;
 
+	/**
+	 * Initializes the Top Menu.
+	 * @param mainGui the GUI that this menu controls.
+	 */
 	public TopMenu(MainGUI mainGui) {
 		gui = mainGui;
 		topBar = new MenuBar();
@@ -38,6 +47,9 @@ public class TopMenu implements ScreenObject {
 		topBar.getMenus().addAll(file, display);
 	}
 
+	/**
+	 * Sets up everything under File menu.
+	 */
 	private void makeFileMenu() {
 		MenuItem open = new MenuItem("Open");
 		open.setOnAction(e -> {
@@ -49,6 +61,9 @@ public class TopMenu implements ScreenObject {
 		listRecentFiles();
 	}
 	
+	/**
+	 * Sets up everything under Display menu.
+	 */
 	private void makeDisplayMenu() {
 		Menu dataDisp = new Menu("Data Format");
 		ToggleGroup toggle = new ToggleGroup();
@@ -90,6 +105,9 @@ public class TopMenu implements ScreenObject {
 		// do nothing
 	}
 	
+	/**
+	 * Adds an item to the list of recent files.
+	 */
 	private void addToRecents() {
 		recents.remove(gui.getFile());
 		recents.add(0, gui.getFile());
@@ -98,6 +116,9 @@ public class TopMenu implements ScreenObject {
 		listRecentFiles();
 	}
 	
+	/**
+	 * Generates list of recent files.
+	 */
 	private void listRecentFiles() {
 		if(recents.isEmpty()) readInRecents();
 		file.getItems().removeAll(recentDisp);
@@ -114,6 +135,9 @@ public class TopMenu implements ScreenObject {
 		file.getItems().addAll(recentDisp);
 	}
 	
+	/**
+	 * Reads recents list in from a file.
+	 */
 	private void readInRecents() {
 		try {
 			Scanner in = new Scanner(new File("mipsdata.txt"));
@@ -126,6 +150,9 @@ public class TopMenu implements ScreenObject {
 		}
 	}
 	
+	/**
+	 * Writes recents list out to a file.
+	 */
 	private void writeOutRecents() {
 		try {
 			FileWriter fw = new FileWriter(new File("mipsdata.txt"));
@@ -136,7 +163,7 @@ public class TopMenu implements ScreenObject {
 			pw.close();
 			fw.close();
 		} catch (IOException e) {
-			// Do nothing, recents aren't saved, no biggie
+			// Do nothing, recents just aren't saved
 		}
 	}
 
