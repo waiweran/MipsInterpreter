@@ -110,6 +110,14 @@ public class MainGUI {
 		return menu;
 	}
 	
+	public File getFile() {
+		return currentFile;
+	}
+	
+	public void setFile(File newFile) {
+		currentFile = newFile;
+	}
+	
 	public static void setBackground(Region line, Color color) {
 		line.setBackground(new Background(new BackgroundFill(color, 
 				new CornerRadii(0.01), new Insets(0, 0, 0, 0))));

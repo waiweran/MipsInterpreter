@@ -1,0 +1,3 @@
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/HoopStats.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/recurse.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/palindromes.s
