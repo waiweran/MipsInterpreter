@@ -39,7 +39,6 @@ public class CodeDisplay implements ScreenObject {
 			lineDisps.put(lines.get(i), line);
 			progDisp.getChildren().add(line);
 		}
-		currentHighlight = lineDisps.get(lines.get(0));
 	}
 	
 	public void executionHighlight(Line line) {
@@ -57,6 +56,7 @@ public class CodeDisplay implements ScreenObject {
 	@Override
 	public Node getGraphics() {
 		progDisp.setMinWidth(MainGUI.SCREEN_WIDTH/2);
+		progDisp.setMinHeight(MainGUI.SCREEN_HEIGHT*2/3 - 2);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setContent(progDisp);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);

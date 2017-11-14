@@ -67,6 +67,7 @@ public class RegisterDisplay implements ScreenObject {
 	@Override
 	public Node getGraphics() {
 		regs.setMinWidth(MainGUI.SCREEN_WIDTH/6);
+		regs.setMinHeight(MainGUI.SCREEN_HEIGHT*2/3 - 2);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setContent(regs);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);

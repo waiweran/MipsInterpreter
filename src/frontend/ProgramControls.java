@@ -87,6 +87,18 @@ public class ProgramControls implements ScreenObject {
 			step();
 		}
 	}
+	
+	public void unlock() {
+		playPause.setDisable(false);
+		step.setDisable(false);
+		reset.setDisable(false);
+	}
+	
+	public void lock() {
+		playPause.setDisable(true);
+		step.setDisable(true);
+		reset.setDisable(true);
+	}
 
 	@Override
 	public Node getGraphics() {

@@ -105,6 +105,12 @@ public class TopMenu implements ScreenObject {
 		// do nothing
 	}
 	
+	public void openMostRecent() {
+		if(!recents.isEmpty()) {
+			gui.setFile(recents.get(0));
+		}
+	}
+	
 	/**
 	 * Adds an item to the list of recent files.
 	 */

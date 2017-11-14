@@ -38,9 +38,10 @@ public class MainGUI {
 	
 	public MainGUI(Stage stage) {
 		mainStage = stage;
+		mainStage.setResizable(false);
 		cmd = new CommandLine();
 		menu = new TopMenu(this);
-		openFile();
+		menu.openMostRecent();
 		loadProgram();
 	}
 
@@ -65,11 +66,16 @@ public class MainGUI {
 	
 	public void loadProgram() {
 		Program prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
-		TextParser parser = new TextParser(currentFile, prog);
-		prog = parser.getProgram();
-		setupProgramClose(prog);
-		new Instruction(Opcode.Jump, null, null, null, 0, "main").execute(prog);
+		if(currentFile != null) {
+			mainStage.setTitle(currentFile.getName());
+			TextParser parser = new TextParser(currentFile, prog);
+			prog = parser.getProgram();
+			setupProgramClose(prog);
+			new Instruction(Opcode.Jump, null, null, null, 0, "main").execute(prog);
+		}
 		initialize(prog);
+		if(currentFile == null) control.lock();
+		else control.unlock();
 	}
 
 	public void openFile() {

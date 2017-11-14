@@ -31,6 +31,7 @@ public class MemoryDisplay implements ScreenObject {
 	@Override
 	public Node getGraphics() {
 		memoryArea.setMinWidth(MainGUI.SCREEN_WIDTH/5);
+		memoryArea.setMinHeight(MainGUI.SCREEN_HEIGHT*2/3 - 2);
 		ScrollPane scroll = new ScrollPane();
 		scroll.setContent(memoryArea);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
