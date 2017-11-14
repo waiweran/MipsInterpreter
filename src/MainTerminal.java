@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,9 @@ import backend.state.Data;
 public class MainTerminal {
 
 	public static void main(String[] args) {
-		List<String> arguments = Arrays.asList(args);
+		List<String> arguments = new ArrayList<>();
+		int runs = -1;
+		arguments.addAll(Arrays.asList(args));
 		if(arguments.get(0).equals("-h") || arguments.get(0).equals("--help")) {
 			printHelp();
 			return;
@@ -26,17 +29,19 @@ public class MainTerminal {
 		if(verbose) arguments.remove(0);
 		File progLoc = new File(arguments.remove(0));
 		if(!arguments.isEmpty() && arguments.get(arguments.size() - 1).matches("\\d+")) {
-			Integer.parseInt(arguments.remove(arguments.size() - 1));
+			runs = Integer.parseInt(arguments.remove(arguments.size() - 1));
 		}
 		Program prog = makeProgram(arguments);
-		int runs = -1;
 		TextParser parser = new TextParser(progLoc, prog);
 		prog = parser.getProgram();
 		setupProgramClose(prog);
 		new Instruction(Opcode.Jump, null, null, null, 0, "main").execute(prog);
+		int lastPC = -1;
 		for(int i = 0; !prog.isDone() && i != runs; i++) {
 			Line currentLine = prog.getNextLine();
-			if(verbose) System.out.println(currentLine);
+			if(verbose && lastPC != prog.getPC()) System.out.println(currentLine);
+			if(lastPC == prog.getPC()) i--;
+			lastPC = prog.getPC();
 			if(currentLine.isExecutable()) {
 				try {
 					currentLine.getInstruction().execute(prog);
