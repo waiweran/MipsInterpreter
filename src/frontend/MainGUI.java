@@ -71,7 +71,8 @@ public class MainGUI {
 			TextParser parser = new TextParser(currentFile, prog);
 			prog = parser.getProgram();
 			setupProgramClose(prog);
-			new Instruction(Opcode.Jump, null, null, null, 0, "main").execute(prog);
+			new Instruction(Opcode.Jump, null, null, null, null, null, null,
+					0, "main").execute(prog);
 		}
 		initialize(prog);
 		if(currentFile == null) control.lock();
@@ -91,9 +92,9 @@ public class MainGUI {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
 				Data.DataType.Address, Data.Permissions.Read_Only));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
-				Register.v0, null, null, 10, "")));
+				Register.v0, null, null, null, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 
-				null, null, null, 0, "")));
+				null, null, null, null, null, null, 0, "")));
 	}
 	
 	public CodeDisplay getCode() {

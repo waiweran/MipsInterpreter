@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import backend.state.FPRegisterFile;
 import backend.state.Memory;
 import backend.state.RegisterFile;
-import floating_point.FPRegisterFile;
 
 public class Program {
 	

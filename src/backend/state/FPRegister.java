@@ -1,4 +1,4 @@
-package floating_point;
+package backend.state;
 
 public enum FPRegister {
 	

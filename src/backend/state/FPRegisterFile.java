@@ -1,8 +1,7 @@
-package floating_point;
+package backend.state;
 import java.util.HashMap;
 import java.util.Map;
 
-import backend.state.Data;
 import backend.state.Data.DataType;
 
 public class FPRegisterFile {

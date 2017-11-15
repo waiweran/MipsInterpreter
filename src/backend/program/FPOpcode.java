@@ -1,7 +1,6 @@
-package floating_point;
+package backend.program;
 import java.util.function.BiConsumer;
 
-import backend.program.Program;
 import backend.state.Data;
 
 public enum FPOpcode {
@@ -207,9 +206,9 @@ public enum FPOpcode {
 
 	
 	private String opName;
-	private BiConsumer<FPInstruction, Program> opAction;
+	private BiConsumer<Instruction, Program> opAction;
 	
-	private FPOpcode(String name, BiConsumer<FPInstruction, Program> action) {
+	private FPOpcode(String name, BiConsumer<Instruction, Program> action) {
 		opName = name;
 		opAction = action;
 	}
@@ -232,7 +231,7 @@ public enum FPOpcode {
 		return opName;
 	}
 	
-	public BiConsumer<FPInstruction, Program> getAction() {
+	public BiConsumer<Instruction, Program> getAction() {
 		return opAction;
 	}
 	
