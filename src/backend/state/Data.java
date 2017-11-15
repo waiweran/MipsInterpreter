@@ -44,7 +44,7 @@ public class Data {
 	}
 	
 	public int getValue() {
-		return (int)val;
+		return val;
 	}
 	
 	public DataType getDataType() {

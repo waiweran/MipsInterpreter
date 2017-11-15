@@ -159,7 +159,7 @@ public enum Opcode {
 	Multiply ("mult", (insn, prog) -> {
 		long output = (long)prog.getRegFile().read(insn.getR1()).getValue() * 
 				(long)prog.getRegFile().read(insn.getR2()).getValue();
-		long outLO = (output << 16) >>> 16;
+		long outLO = (output << 16) >>> 16; // TODO this probably doesn't work, use mod.
 		long outHI = output >>> 16;
 		prog.getRegFile().writeLO(new Data((int) outLO));
 		prog.getRegFile().writeHI(new Data((int) outHI));
