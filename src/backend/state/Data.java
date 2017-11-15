@@ -13,6 +13,9 @@ public class Data {
 		Byte,
 		Address,
 		J_Target,
+		Float,
+		Double_L,
+		Double_H,
 		Space;
 	}
 	
@@ -44,7 +47,7 @@ public class Data {
 	}
 	
 	public int getValue() {
-		return (int)val;
+		return val;
 	}
 	
 	public DataType getDataType() {
@@ -67,11 +70,15 @@ public class Data {
 	
 	@Override
 	public String toString() {
-
 		if(typ.equals(DataType.String)) {
 			return toCharString();
 		}
-		if(typ.equals(DataType.Address)) {
+		if(typ.equals(DataType.Float)) {
+			return toFloatString();
+		}
+		if(typ.equals(DataType.Address)
+				|| typ.equals(DataType.Double_H)
+				|| typ.equals(DataType.Double_L)) {
 			return toHex();
 		}
 		return toDecimal();
@@ -91,6 +98,10 @@ public class Data {
 	
 	public String toDecimal() {
 		return Integer.toString(val);
+	}
+	
+	public String toFloatString() {
+		return Float.toString(Float.intBitsToFloat(val));
 	}
 	
 }

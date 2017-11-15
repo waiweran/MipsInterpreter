@@ -5,6 +5,7 @@ public enum DataDisplay {
 	AUTO,
 	HEX,
 	DECIMAL,
+	FLOAT,
 	STRING;
 
 }

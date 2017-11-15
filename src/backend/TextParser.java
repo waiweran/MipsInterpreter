@@ -12,6 +12,7 @@ import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
+import backend.state.FPRegister;
 
 public class TextParser {
 	
@@ -116,6 +117,27 @@ public class TextParser {
 			}
 			prog.getMem().addToGlobalData(reference, output);
 		}
+		else if(dataType.equals(".float")) {
+			ArrayList<Data> output = new ArrayList<>();
+			String[] dataVals = dataVal.split(",");
+			for(int i = 0; i < dataVals.length; i++) {
+				output.add(new Data(Float.floatToIntBits(Float.parseFloat(dataVal.trim())), 
+						Data.DataType.Float, Data.Permissions.Read_Only));
+			}
+			prog.getMem().addToGlobalData(reference, output);
+		}
+		else if(dataType.equals(".double")) {
+			ArrayList<Data> output = new ArrayList<>();
+			String[] dataVals = dataVal.split(",");
+			for(int i = 0; i < dataVals.length; i++) {
+				long doubleVal = Double.doubleToLongBits(Double.parseDouble(dataVal.trim()));
+				int bottom = (int)(Long.rotateLeft(doubleVal, 32) >>> 32);
+				int top = (int)(doubleVal >>> 32);
+				output.add(new Data(bottom, Data.DataType.Double_L, Data.Permissions.Read_Only));
+				output.add(new Data(top, Data.DataType.Double_H, Data.Permissions.Read_Only));
+			}
+			prog.getMem().addToGlobalData(reference, output);
+		}
 		else if(dataType.equals(".asciiz")) {
 			prog.getMem().addToGlobalData(reference, stringToDataArray(processString(dataVal)));
 		}
@@ -142,6 +164,8 @@ public class TextParser {
 		Opcode opcode = null;
 		int regNum = 0;
 		Register[] regs = new Register[3];
+		int fpRegNum = 0;
+		FPRegister[] fpRegs = new FPRegister[3];
 		int immed = 0;
 		boolean immedUsed = false;
 		for(String comp : insnSplit) {
@@ -157,10 +181,20 @@ public class TextParser {
 			// If it's a register name
 			else if(comp.startsWith("$")) {
 				try {
-					regs[regNum++] = Register.findRegister(comp);
+					regs[regNum] = Register.findRegister(comp);
+					regNum++;
 				}
 				catch(IndexOutOfBoundsException e) {
 					throw new RuntimeException("Too many registers specified", e);
+				}
+				catch(RuntimeException e1) {
+					try {
+						fpRegs[fpRegNum] = FPRegister.findRegister(comp);
+						fpRegNum++;
+					}
+					catch(IndexOutOfBoundsException e2) {
+						throw new RuntimeException("Too many registers specified", e2);
+					}
 				}
 			}
 			// If it's an opcode
@@ -203,7 +237,7 @@ public class TextParser {
 		}
 		else {
 			Line madeLine = new Line(line, new Instruction(opcode, regs[0], 
-					regs[1], regs[2], immed, target));
+					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target));
 			prog.getProgramLines().add(madeLine);
 			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, madeLine);
 		}
@@ -254,6 +288,5 @@ public class TextParser {
 		}
 		throw new RuntimeException("Incomplete String: " + output.toString());
 	}
-
 
 }

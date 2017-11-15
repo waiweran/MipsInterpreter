@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import backend.state.FPRegisterFile;
 import backend.state.Memory;
 import backend.state.RegisterFile;
 
 public class Program {
 	
 	private RegisterFile regs;
+	private FPRegisterFile fpRegs;
 	private Memory mem;
 	private List<Line> lines;
 	private Map<String, Line> insnRefs;
@@ -20,10 +22,10 @@ public class Program {
 	private PrintStream out;
 	private int pc;
 	private boolean done;
-
 	
 	public Program(InputStream input, PrintStream output) {
 		regs = new RegisterFile();
+		fpRegs = new FPRegisterFile();
 		mem = new Memory(regs);
 		lines = new ArrayList<>();
 		insnRefs = new HashMap<>();
@@ -34,6 +36,10 @@ public class Program {
 	
 	public RegisterFile getRegFile() {
 		return regs;
+	}
+	
+	public FPRegisterFile getFPRegFile() {
+		return fpRegs;
 	}
 	
 	public Memory getMem() {
