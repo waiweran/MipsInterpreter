@@ -462,11 +462,11 @@ public enum Opcode {
 			prog.getOutput().print(prog.getRegFile().read(Register.a0));
 		}
 		// print float
-		if(type == 2) {
+		else if(type == 2) {
 			prog.getOutput().print(prog.getFPRegFile().read(FPRegister.f0));
 		}
 		// print double
-		if(type == 3) {
+		else if(type == 3) {
 			prog.getOutput().print(prog.getFPRegFile().readDouble(FPRegister.f0));
 		}
 		// print string
