@@ -34,7 +34,6 @@ public enum FPRegister {
 	f29 (29),
 	f30 (30),
 	f31 (31);
-	// TODO add more
 	
 	private int regNum;
 	
@@ -46,7 +45,7 @@ public enum FPRegister {
 		for(FPRegister reg : FPRegister.values()) {
 			if(("$f" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}
-		throw new RuntimeException("Invalid or Reserved Register, Name: " + name);
+		throw new RuntimeException("Invalid FP Register, Name: " + name);
 	}
 	
 	public int getRegisterNumber() {

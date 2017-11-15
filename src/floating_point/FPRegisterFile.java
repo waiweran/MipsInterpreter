@@ -34,10 +34,6 @@ public class FPRegisterFile {
 	}
 	
 	public double readDouble(FPRegister read) {
-		if(!vals.get(read).getDataType().equals(DataType.Double_L)
-				|| !vals.get(read.getDoubleUpper()).getDataType().equals(DataType.Double_H)) {
-			throw new RuntimeException("Cannot read double from " + read + " because it's not one");
-		}
 		long lower = vals.get(read).getValue();
 		long upper = vals.get(read.getDoubleUpper()).getValue();
 		return Double.longBitsToDouble(lower + (upper << 32));

@@ -7,22 +7,22 @@ import backend.state.Data;
 public enum FPOpcode {
 	
 	// Single Precision Floating Point Commands
-	Add ("add.s", (insn, prog) -> {
+	AddFloat ("add.s", (insn, prog) -> {
 		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) + 
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),
-	Subtract ("sub.s", (insn, prog) -> {
+	SubtractFloat ("sub.s", (insn, prog) -> {
 		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) - 
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),
-	Multiply ("mult.s", (insn, prog) -> {
+	MultiplyFloat ("mult.s", (insn, prog) -> {
 		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) * 
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),	
-	Divide ("div.s", (insn, prog) -> {
+	DivideFloat ("div.s", (insn, prog) -> {
 		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) / 
 				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
@@ -126,6 +126,54 @@ public enum FPOpcode {
 		}
 	}),
 	
+	// Movement Commands
+	MoveFloat ("mov.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), 
+				prog.getFPRegFile().read(insn.getFPR2()));
+	}),
+	MoveDouble ("mov.d", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(), 
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	MoveIntToFloat ("mtc1", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), 
+				prog.getRegFile().read(insn.getR1()));
+	}),
+	MoveFloatToInt ("mfc1", (insn, prog) -> {
+		prog.getRegFile().write(insn.getR1(), 
+				prog.getFPRegFile().read(insn.getFPR2()));
+	}),
+	
+	// Conversion Commands
+	ConvertFloatToInt ("cvt.w.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), new Data((int)(
+				(float)prog.getFPRegFile().read(insn.getFPR2()).getValue())));
+	}),
+	ConvertIntToFloat ("cvt.s.w", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), new Data(Float.floatToIntBits(
+				(float)prog.getFPRegFile().read(insn.getFPR2()).getValue()), 
+				Data.DataType.Float));
+	}),
+	ConvertDoubleToInt ("cvt.w.d", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), new Data((int)
+				prog.getFPRegFile().readDouble(insn.getFPR2())));
+	}),
+	ConvertIntToDouble ("cvt.d.w", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(), 
+				(double)prog.getFPRegFile().read(insn.getFPR2()).getValue());
+	}),
+	
+	ConvertDoubleToFloat ("cvt.s.d", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), new Data(Float.floatToIntBits(
+				new Double(prog.getFPRegFile().readDouble(insn.getFPR2())).floatValue()), 
+				Data.DataType.Float));
+	}),
+	ConvertFloatToDouble ("cvt.d.s", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(), 
+				new Float(Float.intBitsToFloat(prog.getFPRegFile().read(
+						insn.getFPR2()).getValue())).doubleValue());
+	}),
+	
 	// Load and Store Commands
 	LoadFloat ("l.s", (insn, prog) -> {
 		prog.getFPRegFile().write(insn.getFPR1(), 
@@ -136,6 +184,24 @@ public enum FPOpcode {
 	StoreFloat ("s.s", (insn, prog) -> {
 		prog.getMem().storeWord(prog.getFPRegFile().read(insn.getFPR1()), 
 				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue()));
+	}),
+	LoadDouble ("l.d", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), 
+				prog.getMem().loadWord(insn.getImmed() + 
+				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue())));
+		prog.getFPRegFile().write(insn.getFPR1().getDoubleUpper(), 
+				prog.getMem().loadWord(4 + insn.getImmed() + 
+				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue())));
+	}),	
+	StoreDouble ("s.d", (insn, prog) -> {
+		prog.getMem().storeWord(prog.getFPRegFile().read(insn.getFPR1()), 
+				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue()));
+		prog.getMem().storeWord(prog.getFPRegFile().read(insn.getFPR1().getDoubleUpper()), 
+				4 + insn.getImmed() + ((insn.getR1() == null)? 
 				0 : prog.getRegFile().read(insn.getR1()).getValue()));
 	});	
 

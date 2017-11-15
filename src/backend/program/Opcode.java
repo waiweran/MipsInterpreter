@@ -1,4 +1,5 @@
 package backend.program;
+
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -159,8 +160,8 @@ public enum Opcode {
 	Multiply ("mult", (insn, prog) -> {
 		long output = (long)prog.getRegFile().read(insn.getR1()).getValue() * 
 				(long)prog.getRegFile().read(insn.getR2()).getValue();
-		long outLO = (output << 16) >>> 16; // TODO this probably doesn't work, use mod.
-		long outHI = output >>> 16;
+		long outLO = Long.rotateLeft(output, 32) >>> 32;
+		long outHI = output >>> 32;
 		prog.getRegFile().writeLO(new Data((int) outLO));
 		prog.getRegFile().writeHI(new Data((int) outHI));
 	}),	
