@@ -281,6 +281,26 @@ public class Memory {
 		return output.toString();
 	}
 	
+	public String toFloatString() {
+		StringBuilder output = new StringBuilder();
+		output.append("Global Data: \n");
+		for(int i = 0; i < globalData.size(); i++) {
+			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
+					+ "\t" + globalData.get(i).toFloatString() + "\n");
+		}
+		output.append("\nHeap: \n");
+		for(int i = 0; i < heap.size(); i++) {
+			output.append(getHex((i + globalData.size())*4) + ":\t"
+					+ heap.get(i).getDataType() + "\t" + heap.get(i).toFloatString() + "\n");
+		}
+		output.append("\nStack: \n");
+		for(int i = 0; i < stack.size(); i++) {
+			output.append(getHex((Integer.MAX_VALUE/4 - i)*4) + ":\t"
+					+ stack.get(i).getDataType() + "\t" + stack.get(i).toFloatString() + "\n");
+		}
+		return output.toString();
+	}
+	
 	private String getHex(int value) {
 		String output = Integer.toHexString(value);
 		return "00000000".substring(output.length()) + output.toUpperCase();

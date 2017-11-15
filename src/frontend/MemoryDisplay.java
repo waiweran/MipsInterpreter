@@ -51,6 +51,7 @@ public class MemoryDisplay implements ScreenObject {
 		if(displayType.equals(DataDisplay.AUTO)) return prog.getMem().toString();
 		if(displayType.equals(DataDisplay.HEX)) return prog.getMem().toHexString();
 		if(displayType.equals(DataDisplay.DECIMAL)) return prog.getMem().toDecimalString();
+		if(displayType.equals(DataDisplay.FLOAT)) return prog.getMem().toFloatString();
 		return prog.getMem().toCharString();
 	}
 	

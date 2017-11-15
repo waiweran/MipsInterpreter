@@ -85,13 +85,19 @@ public class TopMenu implements ScreenObject {
 			gui.getRegisters().setDisplayType(DataDisplay.DECIMAL);
 		});	
 		dec.setToggleGroup(toggle);
+		RadioMenuItem flo = new RadioMenuItem("Floating Point");
+		flo.setOnAction(e -> {
+			gui.getMemory().setDisplayType(DataDisplay.FLOAT);
+			gui.getRegisters().setDisplayType(DataDisplay.FLOAT);
+		});	
+		flo.setToggleGroup(toggle);
 		RadioMenuItem str = new RadioMenuItem("String");
 		str.setOnAction(e -> {
 			gui.getMemory().setDisplayType(DataDisplay.STRING);
 			gui.getRegisters().setDisplayType(DataDisplay.STRING);
 		});
 		str.setToggleGroup(toggle);
-		dataDisp.getItems().addAll(auto, hex, dec, str);
+		dataDisp.getItems().addAll(auto, hex, dec, flo, str);
 		display.getItems().add(dataDisp);
 	}
 
