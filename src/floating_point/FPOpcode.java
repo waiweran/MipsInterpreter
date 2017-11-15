@@ -2,87 +2,143 @@ package floating_point;
 import java.util.function.BiConsumer;
 
 import backend.program.Program;
-import backend.program.Register;
+import backend.state.Data;
 
 public enum FPOpcode {
-
-	// Specially Added Commands
-//	LoadImmediate ("li", (insn, prog) -> {
-//		prog.getRegFile().write(insn.getR1(), 
-//				new Data(insn.getImmed(), Data.DataType.Integer));
-//	}),
-//	LoadUpperImmediate ("lui", (insn, prog) -> {
-//	prog.getRegFile().write(insn.getR1(), 
-//			new Data(insn.getImmed() << 16));
-//}),
-//	AddImmediate ("addi", (insn, prog) -> {
-//	prog.getRegFile().write(insn.getR1(), 
-//			new Data(prog.getRegFile().read(insn.getR2() == null? 
-//					insn.getR1() : insn.getR2()).getValue() + 
-//			insn.getImmed()));
-//}),
-//	Move ("move", (insn, prog) -> {
-//		prog.getRegFile().write(insn.getR1(), 
-//			prog.getRegFile().read(insn.getR2()));
-//	}),
 	
-	// Normal MIPS Commands
-	Add ("add", (insn, prog) -> {
-		prog.getFPRegFile().write(insn.getR1(), 
-				new FPData(prog.getFPRegFile().read(insn.getR2()).getValue() + 
-				prog.getFPRegFile().read(insn.getR3()).getValue()));
+	// Single Precision Floating Point Commands
+	Add ("add.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) + 
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),
-	Subtract ("sub", (insn, prog) -> {
-		prog.getFPRegFile().write(insn.getR1(), 
-				new FPData(prog.getFPRegFile().read(insn.getR2()).getValue() - 
-				prog.getFPRegFile().read(insn.getR3()).getValue()));
+	Subtract ("sub.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) - 
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),
-	Multiply ("mult", (insn, prog) -> {
-		prog.getFPRegFile().write(insn.getR1(), 
-				new FPData(prog.getFPRegFile().read(insn.getR2()).getValue() * 
-				prog.getFPRegFile().read(insn.getR3()).getValue()));
+	Multiply ("mult.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) * 
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),	
-	Divide ("div", (insn, prog) -> {
-		prog.getFPRegFile().write(insn.getR1(), 
-				new FPData(prog.getFPRegFile().read(insn.getR2()).getValue() / 
-				prog.getFPRegFile().read(insn.getR3()).getValue()));
-
+	Divide ("div.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), convertToData(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())) / 
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR3()))));
 	}),	
-	LoadWord ("lw", (insn, prog) -> {
-		prog.getFPRegFile().write(insn.getR1(), 
+	
+	// Double Precision Floating Point Commands
+	AddDouble ("add.d", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(),
+				prog.getFPRegFile().readDouble(insn.getFPR2()) + 
+				prog.getFPRegFile().readDouble(insn.getFPR3()));
+	}),
+	SubtractDouble ("sub.d", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(),
+				prog.getFPRegFile().readDouble(insn.getFPR2()) - 
+				prog.getFPRegFile().readDouble(insn.getFPR3()));
+	}),
+	MultiplyDouble ("mult.d", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(),
+				prog.getFPRegFile().readDouble(insn.getFPR2()) *
+				prog.getFPRegFile().readDouble(insn.getFPR3()));
+	}),	
+	DivideDouble ("div.d", (insn, prog) -> {
+		prog.getFPRegFile().writeDouble(insn.getFPR1(),
+				prog.getFPRegFile().readDouble(insn.getFPR2()) / 
+				prog.getFPRegFile().readDouble(insn.getFPR3()));
+	}),	
+	
+	// Single Precision Comparisons
+	CompareEqual ("c.eq.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) ==
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	CompareNotEqual ("c.ne.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) !=
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	CompareLessThan ("c.lt.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) <
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	CompareLessEquals ("c.le.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) <=
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	CompareGreaterThan ("c.gt.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) >
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	CompareGreaterEquals ("c.ge.s", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR1())) >=
+				convertToFloat(prog.getFPRegFile().read(insn.getFPR2())));
+	}),
+	
+	// Double Precision Comparisons
+	CompareEqualDouble ("c.eq.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) ==
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	CompareNotEqualDouble ("c.ne.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) !=
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	CompareLessThanDouble ("c.lt.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) <
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	CompareLessEqualsDouble ("c.le.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) <=
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	CompareGreaterThanDouble ("c.gt.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) >
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	CompareGreaterEqualsDouble ("c.ge.d", (insn, prog) -> {
+		prog.getFPRegFile().writeCond(
+				prog.getFPRegFile().readDouble(insn.getFPR1()) >=
+				prog.getFPRegFile().readDouble(insn.getFPR2()));
+	}),
+	
+	// Branch Commands
+	BranchTrue ("bc1t", (insn, prog) -> {
+		if(prog.getRegFile().read(insn.getR1()).getValue() == 0) {
+			prog.jump(insn.getTarget());
+		}
+	}),
+	BranchFalse ("bc1f", (insn, prog) -> {
+		if(prog.getRegFile().read(insn.getR1()).getValue() == 0) {
+			prog.jump(insn.getTarget());
+		}
+	}),
+	
+	// Load and Store Commands
+	LoadFloat ("l.s", (insn, prog) -> {
+		prog.getFPRegFile().write(insn.getFPR1(), 
 				prog.getMem().loadWord(insn.getImmed() + 
-				((insn.getR2() == null)? 0 : 
-				prog.getFPRegFile().read(insn.getR2()).getValue())));
+				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue())));
 	}),	
-	StoreWord ("sw", (insn, prog) -> {
-		prog.getMem().storeWord(prog.getFPRegFile().read(insn.getR1()), 
-				insn.getImmed() + ((insn.getR2() == null)? 
-				0 : prog.getFPRegFile().read(insn.getR2()).getValue()));
-	}),	
-	
-	// System Calls
-	Syscall ("syscall", (insn, prog) -> {
-		int type = prog.getRegFile().read(Register.v0).getValue();
-		// print float
-		if(type == 2) {
+	StoreFloat ("s.s", (insn, prog) -> {
+		prog.getMem().storeWord(prog.getFPRegFile().read(insn.getFPR1()), 
+				insn.getImmed() + ((insn.getR1() == null)? 
+				0 : prog.getRegFile().read(insn.getR1()).getValue()));
+	});	
 
-		}
-		// print double
-		else if(type == 3) {
-			
-		}
-		// read float
-		else if(type == 6) {
-			
-		}
-		// read double
-		else if(type == 7) {
-			
-		}
-		else {
-			throw new RuntimeException("Invalid Syscall: " + type);
-		}
-	});
 	
 	private String opName;
 	private BiConsumer<FPInstruction, Program> opAction;
@@ -112,6 +168,17 @@ public enum FPOpcode {
 	
 	public BiConsumer<FPInstruction, Program> getAction() {
 		return opAction;
+	}
+	
+	private static Data convertToData(float value) {
+		return new Data(Float.floatToIntBits(value), Data.DataType.Float);
+	}
+	
+	private static float convertToFloat(Data value) {
+		if(!value.getDataType().equals(Data.DataType.Float))
+			throw new RuntimeException("Data Not a Float: "
+					+ value.getDataType() + " " + value.toString());
+		return Float.intBitsToFloat(value.getValue());
 	}
 	
 }
