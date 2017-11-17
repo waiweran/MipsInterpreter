@@ -14,10 +14,29 @@ import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
+import frontend.MainGUI;
 
-public class MainTerminal {
+public class Main {
 
+	/**
+	 * Entry point for the MIPS Interpreter.
+	 * Runs in command line or as GUI.
+	 * @param args command line arguments.
+	 */
 	public static void main(String[] args) {
+		if(args.length == 0) {
+			MainGUI.launch(args);
+		}
+		else {
+			runFromTerminal(args);
+		}
+	}
+	
+	/**
+	 * Runs the MIPS Interpreter in the command line.
+	 * @param args command line arguments specifying code file, I/O, run configurations.
+	 */
+	public static void runFromTerminal(String[] args) {
 		List<String> arguments = new ArrayList<>();
 		int runs = -1;
 		arguments.addAll(Arrays.asList(args));
@@ -54,6 +73,11 @@ public class MainTerminal {
 		}
 	}
 
+	/**
+	 * Makes a Program object from specified code file.
+	 * @param arguments command line arguments configuring program.
+	 * @return the Program.
+	 */
 	private static Program makeProgram(List<String> arguments) {
 		InputStream in = System.in;
 		PrintStream out = System.out;
@@ -61,20 +85,25 @@ public class MainTerminal {
 			try {
 				in = new FileInputStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				throw new RuntimeException("Improper in/out file");
+				throw new RuntimeException("Improper input file");
 			}
 		}		
 		if(!arguments.isEmpty()) {
 			try {
 				out = new PrintStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				throw new RuntimeException("Improper in/out file");
+				throw new RuntimeException("Improper output file");
 			}
 		}
 		Program prog = new Program(in, out);
 		return prog;
 	}
 
+	/**
+	 * Sets up lines of code added to the end of the program to properly exit.
+	 * Used if program runs off bottom of file or exits via a return Jump Register.
+	 * @param prog the Program to set up closing for.
+	 */
 	private static void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(), 
 				Data.DataType.Address, Data.Permissions.Read_Only));
@@ -84,7 +113,10 @@ public class MainTerminal {
 				null, null, null, null, null, null, 0, "")));
 	}
 	
-	private static void printHelp() {
+	/**
+	 * Prints the Help text.
+	 */
+	private static void printHelp() { //TODO make this a file
 		System.out.println("MIPS I Interpreter\n");
 		System.out.println("See GitHub page for more information\n");
 		System.out.println("Command Line Arguments\n");

@@ -9,6 +9,7 @@ import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
@@ -22,7 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class MainGUI {
+public class MainGUI extends Application {
 	
 	public static final double SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
 	public static final double SCREEN_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight();
@@ -35,9 +36,11 @@ public class MainGUI {
 	private ProgramControls control;
 	private File currentFile;
 	private Stage mainStage;
+
 	
-	public MainGUI(Stage stage) {
-		mainStage = stage;
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		mainStage = primaryStage;
 		mainStage.setResizable(false);
 		cmd = new CommandLine();
 		menu = new TopMenu(this);
