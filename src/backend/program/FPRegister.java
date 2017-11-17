@@ -1,5 +1,10 @@
-package backend.state;
+package backend.program;
 
+/**
+ * Stores names of all floating point registers
+ * @author Nathaniel
+ * @version 11-15-2017
+ */
 public enum FPRegister {
 	
 	f0 (0),
@@ -41,6 +46,11 @@ public enum FPRegister {
 		regNum = num;
 	}
 	
+	/**
+	 * Finds the FPRegister with the given name.
+	 * @param name the name of the FPRegister.
+	 * @return FPRegister with that name.
+	 */
 	public static FPRegister findRegister(String name) {
 		for(FPRegister reg : FPRegister.values()) {
 			if(("$f" + reg.regNum).equalsIgnoreCase(name)) return reg;
@@ -48,14 +58,23 @@ public enum FPRegister {
 		throw new RuntimeException("Invalid FP Register, Name: " + name);
 	}
 	
+	/**
+	 * @return the register number.
+	 */
 	public int getRegisterNumber() {
 		return regNum;
 	}
 	
+	/**
+	 * @return the register name.
+	 */
 	public String getRegisterName() {
 		return "$f" + regNum;
 	}
 	
+	/**
+	 * @return the FPRegister this register can be paired with for double precision.
+	 */
 	public FPRegister getDoubleUpper() {
 		if(regNum % 2 != 0) 
 			throw new RuntimeException("FP Register " + getRegisterName()

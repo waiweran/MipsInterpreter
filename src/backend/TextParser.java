@@ -6,33 +6,55 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Line;
 import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
-import backend.state.FPRegister;
 
+/**
+ * Parses a text file and converts it into MIPS Instructions.
+ * Stores instructions in a Program data structure.
+ * @author Nathaniel
+ * @version 11-04-2017
+ */
 public class TextParser {
 	
 	private Program prog;
 	
+	/**
+	 * Initializes the Text Parser.
+	 * @param code the File to parse.
+	 * @param program the Program to add the parsed instructions to.
+	 */
 	public TextParser(File code, Program program) {
 		prog = program;
 		readFile(code);
 	}
 	
+	/**
+	 * @return the Program the instructions are added to.
+	 */
 	public Program getProgram() {
 		return prog;
 	}
 	
+	/**
+	 * Reads the given file.
+	 * @param code File to read.
+	 */
 	private void readFile(File code) {
 		readData(code);
 		readInstructions(code);
 		checkTargets();
 	}
 
+	/**
+	 * Reads Instructions out of the given file.
+	 * @param code File to read.
+	 */
 	private void readInstructions(File code) {
 		try {
 			Scanner in = new Scanner(code);
@@ -54,6 +76,10 @@ public class TextParser {
 		}
 	}
 
+	/**
+	 * Reads global data values out of the file.
+	 * @param code File to read.
+	 */
 	private void readData(File code) {
 		try {
 			Scanner in = new Scanner(code);
@@ -75,6 +101,11 @@ public class TextParser {
 		}
 	}
 	
+	/**
+	 * Checks that all stored instruction targets are valid.
+	 * Used to check that all branches and jumps have a valid 
+	 * target once the full program is parsed.
+	 */
 	private void checkTargets() {
 		for(Line l : prog.getProgramLines()) {
 			if(l.isExecutable()) {
@@ -86,6 +117,10 @@ public class TextParser {
 		}
 	}
 	
+	/**
+	 * Converts a line in the file to a global data entry.
+	 * @param line line of file to convert.
+	 */
 	private void makeData(String line) {
 		String text = line;
 		if(line.indexOf('#') > 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
@@ -113,7 +148,7 @@ public class TextParser {
 			String[] dataVals = dataVal.split(",");
 			for(int i = 0; i < dataVals.length; i++) {
 				output.add(new Data(Integer.parseInt(dataVal.trim()), 
-						Data.DataType.Integer, Data.Permissions.Read_Only));
+						Data.DataType.Integer));
 			}
 			prog.getMem().addToGlobalData(reference, output);
 		}
@@ -122,7 +157,7 @@ public class TextParser {
 			String[] dataVals = dataVal.split(",");
 			for(int i = 0; i < dataVals.length; i++) {
 				output.add(new Data(Float.floatToIntBits(Float.parseFloat(dataVal.trim())), 
-						Data.DataType.Float, Data.Permissions.Read_Only));
+						Data.DataType.Float));
 			}
 			prog.getMem().addToGlobalData(reference, output);
 		}
@@ -133,8 +168,8 @@ public class TextParser {
 				long doubleVal = Double.doubleToLongBits(Double.parseDouble(dataVal.trim()));
 				int bottom = (int)(Long.rotateLeft(doubleVal, 32) >>> 32);
 				int top = (int)(doubleVal >>> 32);
-				output.add(new Data(bottom, Data.DataType.Double_L, Data.Permissions.Read_Only));
-				output.add(new Data(top, Data.DataType.Double_H, Data.Permissions.Read_Only));
+				output.add(new Data(bottom, Data.DataType.Double_L));
+				output.add(new Data(top, Data.DataType.Double_H));
 			}
 			prog.getMem().addToGlobalData(reference, output);
 		}
@@ -149,6 +184,10 @@ public class TextParser {
 		}
 	}
 
+	/**
+	 * Converts a line of the file to an instruction.
+	 * @param line the line to convert.
+	 */
 	private void makeInstruction(String line) {
 		String text = line;
 		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
@@ -243,6 +282,11 @@ public class TextParser {
 		}
 	}
 	
+	/**
+	 * Converts escape characters in a string to the actual escape character.
+	 * @param dataVal the input string to process.
+	 * @return processed string with proper escape character values.
+	 */
 	private static String processString(String dataVal) {
 		String inString = dataVal.substring(dataVal.indexOf(34) + 1, 
 				dataVal.lastIndexOf(34));
@@ -256,6 +300,14 @@ public class TextParser {
 		return inString;
 	}
 	
+	/**
+	 * Converts a String to a list of Data.
+	 * Splits string into chars, stores each char as a byte, 
+	 * clumps 4 consecutive bytes into a word, and saves that
+	 * as a Data value.
+	 * @param dataVal the String to convert.
+	 * @return List of Data values produced from the string.
+	 */
 	public static List<Data> stringToDataArray(String dataVal) {
 		ArrayList<Data> memOutput = new ArrayList<>();
 		char[] charArray = (dataVal + "\0").toCharArray();		
@@ -264,17 +316,25 @@ public class TextParser {
 			for(int j = i; j < i + 4; j++) {
 				if(j < charArray.length) {
 					memOutput.set(i/4, new Data((memOutput.get(i/4).getValue() << 8)
-							+ charArray[j], Data.DataType.String, Data.Permissions.Read_Only));
+							+ charArray[j], Data.DataType.String));
 				}
 				else {
 					memOutput.set(i/4, new Data(memOutput.get(i/4).getValue() << 8, 
-							Data.DataType.String, Data.Permissions.Read_Only));
+							Data.DataType.String));
 				}
 			}
 		}
 		return memOutput;
 	}
 	
+	/**
+	 * Converts a list of Data values to a String.
+	 * Takes each Data value, splits it into 4 bytes, converts
+	 * each byte into a character, and concatenates the characters
+	 * into the output string.
+	 * @param input the list of Data values to convert to a String.
+	 * @return output String produced from Data values.
+	 */
 	public static String dataArrayToString(List<Data> input) {
 		StringBuilder output = new StringBuilder();
 		for(int i = 0; i < input.size(); i++) {

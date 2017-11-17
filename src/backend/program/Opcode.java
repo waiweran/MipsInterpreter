@@ -5,7 +5,6 @@ import java.util.function.BiConsumer;
 
 import backend.TextParser;
 import backend.state.Data;
-import backend.state.FPRegister;
 
 public enum Opcode {
 

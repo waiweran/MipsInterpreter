@@ -1,5 +1,10 @@
 package backend.program;
 
+/**
+ * Stores names of all data registers.
+ * @author Nathaniel
+ * @version 11-04-2017
+ */
 public enum Register {
 	
 	zero (0, "$zero"),
@@ -38,6 +43,11 @@ public enum Register {
 		regName = name;
 	}
 	
+	/**
+	 * Finds the Register with the given name.
+	 * @param name the name of the register.
+	 * @return the Register with that name.
+	 */
 	public static Register findRegister(String name) {
 		for(Register reg : Register.values()) {
 			if(reg.regName.equalsIgnoreCase(name) 
@@ -47,10 +57,16 @@ public enum Register {
 		throw new RuntimeException("Invalid or Reserved Register, Name: " + name);
 	}
 	
+	/**
+	 * @return the Register number.
+	 */
 	public int getRegisterNumber() {
 		return regNum;
 	}
 	
+	/**
+	 * @return the Register name.
+	 */
 	public String getRegisterName() {
 		return regName;
 	}

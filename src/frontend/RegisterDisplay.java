@@ -3,10 +3,10 @@ package frontend;
 import java.util.HashMap;
 import java.util.Map;
 
+import backend.program.FPRegister;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
-import backend.state.FPRegister;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;

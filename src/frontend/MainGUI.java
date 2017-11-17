@@ -93,7 +93,7 @@ public class MainGUI extends Application {
 	
 	private void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
-				Data.DataType.Address, Data.Permissions.Read_Only));
+				Data.DataType.Address));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
 				Register.v0, null, null, null, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 

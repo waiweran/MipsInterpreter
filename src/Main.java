@@ -16,6 +16,12 @@ import backend.program.Register;
 import backend.state.Data;
 import frontend.MainGUI;
 
+/**
+ * Main class of MIPS Interpreter.
+ * Runs the program.
+ * @author Nathaniel
+ * @version 11-17-2017
+ */
 public class Main {
 
 	/**
@@ -106,7 +112,7 @@ public class Main {
 	 */
 	private static void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(), 
-				Data.DataType.Address, Data.Permissions.Read_Only));
+				Data.DataType.Address));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
 				Register.v0, null, null, null, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 

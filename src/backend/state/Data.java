@@ -5,8 +5,18 @@ import java.util.List;
 
 import backend.TextParser;
 
+/**
+ * Stores a single word-length data value in register files or memory.
+ * Stores information regarding the data type held, for debugging.
+ * @author Nathaniel
+ * @version 11-10-2017
+ */
 public class Data {
 
+	/**
+	 * Enum specifying the type of data stored.
+	 * @author Nathaniel
+	 */
 	public enum DataType {
 		String,
 		Integer,
@@ -19,43 +29,47 @@ public class Data {
 		Space;
 	}
 	
-	public enum Permissions {
-		Read_Only,
-		Write;
-	}
-	
 	private int val;
 	private DataType typ;
-	private Permissions per;
 	
+	/**
+	 * Initializes a new Data storing nothing (Space).
+	 */
 	public Data() {
 		this(0, DataType.Space);
 	}
 	
+	/**
+	 * Initializes a new Data with the specified value.
+	 * Data type is Integer.
+	 * @param value the value to store.
+	 */
 	public Data(int value) {
 		this(value, DataType.Integer);
 	}
 	
+	/**
+	 * Initializes a new Data.
+	 * @param value the value to store.
+	 * @param type the data type stored.
+	 */
 	public Data(int value, DataType type) {
-		this(value, type, Permissions.Write);
-	}
-	
-	public Data(int value, DataType type, Permissions permission) {
 		val = value;
 		typ = type;
-		per = permission;
 	}
 	
+	/**
+	 * @return the value stored.
+	 */
 	public int getValue() {
 		return val;
 	}
 	
+	/**
+	 * @return the data type of the stored value.
+	 */
 	public DataType getDataType() {
 		return typ;
-	}
-	
-	public Permissions getPermissions() {
-		return per;
 	}
 	
 	@Override
@@ -84,6 +98,9 @@ public class Data {
 		return toDecimal();
 	}
 
+	/**
+	 * @return String representing the data as a string.
+	 */
 	public String toCharString() {
 		List<Data> string = new ArrayList<Data>();
 		string.add(this);
@@ -91,15 +108,24 @@ public class Data {
 		return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
 	}
 	
+	/**
+	 * @return String representing the data as a hexadecimal value.
+	 */
 	public String toHex() {
 		String output = Integer.toHexString(val);
 		return "00000000".substring(output.length()) + output.toUpperCase();
 	}
 	
+	/**
+	 * @return String representing the data as a base-10 value.
+	 */
 	public String toDecimal() {
 		return Integer.toString(val);
 	}
 	
+	/**
+	 * @return String representing the data as a IEEE standard 32-bit floating point number.
+	 */
 	public String toFloatString() {
 		return Float.toString(Float.intBitsToFloat(val));
 	}

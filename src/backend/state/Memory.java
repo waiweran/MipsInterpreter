@@ -9,8 +9,19 @@ import backend.program.Register;
 
 public class Memory {
 	
+	private class GlobalDataValue {
+		
+		private boolean readOnly;
+		private Data value;
+		
+		private GlobalDataValue(Data val, boolean noWrite) {
+			value = val;
+			readOnly = noWrite;
+		}
+	}
+	
 	private RegisterFile regs;
-	private List<Data> globalData;
+	private List<GlobalDataValue> globalData;
 	private Map<String, Integer> dataRefs;
 	private List<Data> heap;
 	private List<Data> stack;
@@ -30,8 +41,17 @@ public class Memory {
 	public void addToGlobalData(String reference, List<Data> values) {
 		if(dataRefs.containsKey(reference)) throw new RuntimeException("Memory address reference \""
 				+ reference + "\" already used");
+		List<GlobalDataValue> writeVals = new ArrayList<>();
+		for(Data val : values) {
+			if(val.getDataType().equals(Data.DataType.Space)) {
+				writeVals.add(new GlobalDataValue(val, false));
+			}
+			else {
+				writeVals.add(new GlobalDataValue(val, true));
+			}
+		}
 		dataRefs.put(reference, globalData.size()*4);
-		globalData.addAll(values);
+		globalData.addAll(writeVals);
 	}
 	
 	public int getMemoryAddress(String reference) {
@@ -53,7 +73,7 @@ public class Memory {
 		int word = getWordAddress(address);
 		// Global data
 		if(word < globalData.size()) {
-			return globalData.get(word);
+			return globalData.get(word).value;
 		}
 		// Heap
 		else if(word - globalData.size() < heap.size()) {
@@ -76,10 +96,10 @@ public class Memory {
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
-			if(globalData.get(word).getPermissions().equals(Data.Permissions.Read_Only))
+			if(globalData.get(word).readOnly)
 				throw new RuntimeException("Segmentation Fault: "
 						+ "Cannot write to read only address " + address);
-			globalData.set(word, data);
+			globalData.set(word, new GlobalDataValue(data, false));
 		}
 		// Heap
 		else if(word - globalData.size() < heap.size()) {
@@ -105,7 +125,7 @@ public class Memory {
 	public Data loadByte(int address) {
 		Data word = loadWord(address - (address % 4));
 		int val = (word.getValue() << 8*(address % 4)) >>> 24;
-		return new Data(val, Data.DataType.Byte, word.getPermissions());
+		return new Data(val, Data.DataType.Byte);
 	}
 	
 	public void storeByte(Data data, int address) {
@@ -114,8 +134,7 @@ public class Memory {
 		int top = (offset == 0)? 0 : (word.getValue() >>> 8*(4 - offset)) << 8*(4 - offset);
 		int bottom = word.getValue() - ((word.getValue() >>> 8*(3 - offset)) << 8*(3 - offset));
 		int mid = (data.getValue() % 256) << 8*(3 - offset);
-		storeWord(new Data(top | mid | bottom, word.getDataType(), 
-				data.getPermissions()), address - offset);
+		storeWord(new Data(top | mid | bottom, word.getDataType()), address - offset);
 	}
 	
 	public List<Data> loadArray(int address) {
@@ -124,7 +143,7 @@ public class Memory {
 		// Global Data
 		if(word < globalData.size()) {
 			for(int i = 0; word + i < globalData.size(); i++) {
-				values.add(globalData.get(word + i));
+				values.add(globalData.get(word + i).value);
 			}
 		}
 		// Heap
@@ -155,7 +174,7 @@ public class Memory {
 		if(word < globalData.size()) {
 			try {
 				for(int i = 0; i < values.size(); i++) {
-					globalData.set(word + i, values.get(i));
+					globalData.set(word + i, new GlobalDataValue(values.get(i), false));
 				}
 			}
 			catch(IndexOutOfBoundsException e) {
@@ -203,7 +222,7 @@ public class Memory {
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
 			output.append(getHex(i*4) + ":\t" 
-					+ globalData.get(i).getDataType() + "\t" + globalData.get(i) + "\n");
+					+ globalData.get(i).value.getDataType() + "\t" + globalData.get(i) + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
@@ -223,8 +242,8 @@ public class Memory {
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
 			output.append(getHex(i*4) + ":\t" 
-					+ globalData.get(i).getDataType() + "\t"
-					+ globalData.get(i).toCharString() + "\n");
+					+ globalData.get(i).value.getDataType() + "\t"
+					+ globalData.get(i).value.toCharString() + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
@@ -245,8 +264,8 @@ public class Memory {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
-			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
-					+ "\t" + globalData.get(i).toHex() + "\n");
+			output.append(getHex(i*4) + ":\t" + globalData.get(i).value.getDataType()
+					+ "\t" + globalData.get(i).value.toHex() + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
@@ -265,8 +284,8 @@ public class Memory {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
-			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
-					+ "\t" + globalData.get(i).toDecimal() + "\n");
+			output.append(getHex(i*4) + ":\t" + globalData.get(i).value.getDataType()
+					+ "\t" + globalData.get(i).value.toDecimal() + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
@@ -285,8 +304,8 @@ public class Memory {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
-			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
-					+ "\t" + globalData.get(i).toFloatString() + "\n");
+			output.append(getHex(i*4) + ":\t" + globalData.get(i).value.getDataType()
+					+ "\t" + globalData.get(i).value.toFloatString() + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
