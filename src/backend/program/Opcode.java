@@ -64,7 +64,7 @@ public enum Opcode {
 	AndImmediate ("andi", (insn, prog) -> {
 		prog.getRegFile().write(insn.getR1(), 
 				new Data(prog.getRegFile().read(insn.getR2() == null? 
-						insn.getR1() : insn.getR2()).getValue() + 
+						insn.getR1() : insn.getR2()).getValue() & 
 				insn.getImmed()));
 	}),
 	BranchEquals ("beq", (insn, prog) -> {
