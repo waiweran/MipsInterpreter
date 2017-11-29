@@ -18,6 +18,11 @@ public class Memory {
 			value = val;
 			readOnly = noWrite;
 		}
+		
+		@Override
+		public String toString() {
+			return value.toString();
+		}
 	}
 	
 	private RegisterFile regs;

@@ -25,7 +25,7 @@ public class DoubleArithmeticTest {
 		preloadReg(FPRegister.f4, 6.6332E2);
 		Instruction insn = new Instruction(Opcode.AddDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
-		assertEquals(1.123E2+6.6332E2, checkReg(FPRegister.f2), 0.01);
+		assertEquals(7.7562E2, checkReg(FPRegister.f2), 0.01);
 	}
 	
 	@Test
@@ -49,10 +49,10 @@ public class DoubleArithmeticTest {
 	@Test
 	public void testDiv() {
 		preloadReg(FPRegister.f0, 1.123E8);
-		preloadReg(FPRegister.f4, 6.6332E9);
+		preloadReg(FPRegister.f4, 6.6332E7);
 		Instruction insn = new Instruction(Opcode.DivideDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
-		assertEquals(1.123E8/6.6332E9, checkReg(FPRegister.f2), 0.01);
+		assertEquals(1.123E8/6.6332E7, checkReg(FPRegister.f2), 0.01);
 	}
 	
 	@Test

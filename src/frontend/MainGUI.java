@@ -9,21 +9,20 @@ import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class MainGUI extends Application {
+public class MainGUI {
 	
 	public static final double SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
 	public static final double SCREEN_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight();
@@ -37,9 +36,7 @@ public class MainGUI extends Application {
 	private File currentFile;
 	private Stage mainStage;
 
-	
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public MainGUI(Stage primaryStage) {
 		mainStage = primaryStage;
 		mainStage.setResizable(false);
 		cmd = new CommandLine();
@@ -58,7 +55,7 @@ public class MainGUI extends Application {
 		root.setCenter(code.getGraphics());
 		root.setBottom(cmd.getGraphics());
 		root.setRight(mem.getGraphics());
-		HBox topBar = new HBox();
+		VBox topBar = new VBox();
 		topBar.getChildren().addAll(menu.getGraphics(), control.getGraphics());
 		root.setTop(topBar);
 		Scene scene = new Scene(root);

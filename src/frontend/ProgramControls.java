@@ -2,12 +2,16 @@ package frontend;
 
 import backend.program.Line;
 import backend.program.Program;
+import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class ProgramControls implements ScreenObject {
@@ -17,12 +21,13 @@ public class ProgramControls implements ScreenObject {
 	private Program prog;
 	private MainGUI gui;
 	private Button playPause, step, reset;
+	private Slider rate;
 	
 	public ProgramControls(Program program, MainGUI mainGui) {
 		prog = program;
 		gui = mainGui;
 		controls = new HBox(5);
-		KeyFrame frame = new KeyFrame(Duration.millis(50), e -> step());
+		KeyFrame frame = new KeyFrame(Duration.millis(1000), e -> step());
 		runProg = new Timeline(frame);
 		runProg.setCycleCount(Timeline.INDEFINITE);
 		initialize();
@@ -31,16 +36,21 @@ public class ProgramControls implements ScreenObject {
 	
 	private void initialize() {
 		controls.setPadding(new Insets(5, 5, 5, 5));
+		controls.setAlignment(Pos.CENTER_LEFT);
 		playPause = new Button("Play ");
 		step = new Button("Step");
 		reset = new Button("Reset");
-		playPause.setOnAction(e -> playPause(runProg.getCurrentRate() > 0));
+		rate = new Slider(1, 50, 20);
+		rate.setMinWidth(200);
+		runProg.setRate(rate.getValue());
+		playPause.setOnAction(e -> playPause(runProg.getStatus() == Status.RUNNING));
 		step.setOnAction(e -> step());
 		reset.setOnAction(e -> {
 			playPause(true);
 			gui.loadProgram();
 		});
-		controls.getChildren().addAll(playPause, step, reset);
+		rate.setOnMouseDragged(e -> updateAnimationRate());
+		controls.getChildren().addAll(playPause, step, reset, new Text("     Speed:"), rate);
 	}
 	
 	private void playPause(boolean isPlaying) {
@@ -98,6 +108,15 @@ public class ProgramControls implements ScreenObject {
 		playPause.setDisable(true);
 		step.setDisable(true);
 		reset.setDisable(true);
+	}
+	
+	public void updateAnimationRate() {
+		if(rate.getValue() < rate.getMax()) {
+			runProg.setRate(rate.getValue());
+		}
+		else {
+			runProg.setRate(10000);
+		}
 	}
 
 	@Override

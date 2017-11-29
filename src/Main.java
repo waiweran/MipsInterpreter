@@ -15,6 +15,8 @@ import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
 import frontend.MainGUI;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  * Main class of MIPS Interpreter.
@@ -22,7 +24,7 @@ import frontend.MainGUI;
  * @author Nathaniel
  * @version 11-17-2017
  */
-public class Main {
+public class Main extends Application {
 
 	/**
 	 * Entry point for the MIPS Interpreter.
@@ -31,11 +33,16 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		if(args.length == 0) {
-			MainGUI.launch(args);
+			launch(args);
 		}
 		else {
 			runFromTerminal(args);
 		}
+	}
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		new MainGUI(primaryStage);
 	}
 	
 	/**
