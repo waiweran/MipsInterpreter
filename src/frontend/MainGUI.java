@@ -5,9 +5,11 @@ import java.io.File;
 import backend.TextParser;
 import backend.program.Instruction;
 import backend.program.Line;
-import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
+import backend.program.opcode.normal_mips.Jump;
+import backend.program.opcode.normal_mips.Syscall;
+import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -71,7 +73,7 @@ public class MainGUI {
 			TextParser parser = new TextParser(currentFile, prog);
 			prog = parser.getProgram();
 			setupProgramClose(prog);
-			new Instruction(Opcode.Jump, null, null, null, null, null, null,
+			new Instruction(new Jump(), null, null, null, null, null, null,
 					0, "main").execute(prog);
 		}
 		initialize(prog);
@@ -91,9 +93,9 @@ public class MainGUI {
 	private void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
 				Data.DataType.Address));
-		prog.getProgramLines().add(new Line("", new Instruction(Opcode.LoadImmediate, 
+		prog.getProgramLines().add(new Line("", new Instruction(new LoadImmediate(), 
 				Register.v0, null, null, null, null, null, 10, "")));
-		prog.getProgramLines().add(new Line("", new Instruction(Opcode.Syscall, 
+		prog.getProgramLines().add(new Line("", new Instruction(new Syscall(), 
 				null, null, null, null, null, null, 0, "")));
 	}
 	

@@ -1,0 +1,22 @@
+package backend.program.opcode.specially_added;
+
+import backend.program.Instruction;
+import backend.program.Program;
+import backend.program.opcode.Opcode;
+import backend.state.Data;
+
+public class SetEqual extends Opcode {
+
+	public SetEqual() {
+		super("seq");
+	}
+
+	@Override
+	public void execute(Instruction insn, Program prog) {
+		prog.getRegFile().write(insn.getR1(), 
+				new Data((prog.getRegFile().read(insn.getR2()).getValue() == 
+				prog.getRegFile().read(insn.getR3()).getValue())?
+				1 : 0, Data.DataType.Integer));
+	}
+
+}

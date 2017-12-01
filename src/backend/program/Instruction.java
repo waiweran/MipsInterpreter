@@ -1,5 +1,7 @@
 package backend.program;
 
+import backend.program.opcode.Opcode;
+
 /**
  * Holds the information for a single MIPS Instruction.
  * @author Nathaniel
@@ -45,7 +47,7 @@ public class Instruction {
 	 * @param program The Program for the instruction execution to modify.
 	 */
 	public void execute(Program program) {
-		op.getAction().accept(this, program);
+		op.execute(this, program);
 	}
 	
 	/**

@@ -9,9 +9,10 @@ import java.util.Scanner;
 import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Line;
-import backend.program.Opcode;
 import backend.program.Program;
 import backend.program.Register;
+import backend.program.opcode.Opcode;
+import backend.program.opcode.OpcodeFactory;
 import backend.state.Data;
 
 /**
@@ -189,6 +190,7 @@ public class TextParser {
 	 * @param line the line to convert.
 	 */
 	private void makeInstruction(String line) {
+		OpcodeFactory opFactory = new OpcodeFactory();
 		String text = line;
 		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
 		text = text.replaceAll("[,()]", " "); // Remove unnecessary characters
@@ -237,9 +239,9 @@ public class TextParser {
 				}
 			}
 			// If it's an opcode
-			else if(Opcode.isOpcode(comp)) {
+			else if(opFactory.isOpcode(comp)) {
 				if(opcode != null) throw new RuntimeException("Two opcodes detected in one line");
-				opcode = Opcode.findOpcode(comp);
+				opcode = opFactory.findOpcode(comp);
 			}
 			// If it's a data memory address reference
 			else if(prog.getMem().isDataReference(comp)) {

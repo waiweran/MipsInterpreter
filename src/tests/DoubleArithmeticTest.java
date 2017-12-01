@@ -1,14 +1,26 @@
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import backend.program.FPRegister;
 import backend.program.Instruction;
-import backend.program.Opcode;
 import backend.program.Program;
+import backend.program.opcode.float_d.AddDouble;
+import backend.program.opcode.float_d.CompareEqualDouble;
+import backend.program.opcode.float_d.CompareGreaterEqualsDouble;
+import backend.program.opcode.float_d.CompareGreaterThanDouble;
+import backend.program.opcode.float_d.CompareLessEqualsDouble;
+import backend.program.opcode.float_d.CompareLessThanDouble;
+import backend.program.opcode.float_d.CompareNotEqualDouble;
+import backend.program.opcode.float_d.DivideDouble;
+import backend.program.opcode.float_d.MoveDouble;
+import backend.program.opcode.float_d.MultiplyDouble;
+import backend.program.opcode.float_d.SubtractDouble;
 
 public class DoubleArithmeticTest {
 	
@@ -23,7 +35,7 @@ public class DoubleArithmeticTest {
 	public void testAdd() {
 		preloadReg(FPRegister.f0, 1.123E2);
 		preloadReg(FPRegister.f4, 6.6332E2);
-		Instruction insn = new Instruction(Opcode.AddDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
+		Instruction insn = new Instruction(new AddDouble(), null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
 		assertEquals(7.7562E2, checkReg(FPRegister.f2), 0.01);
 	}
@@ -32,7 +44,7 @@ public class DoubleArithmeticTest {
 	public void testSub() {
 		preloadReg(FPRegister.f0, 1.123E3);
 		preloadReg(FPRegister.f4, 6.6332E4);
-		Instruction insn = new Instruction(Opcode.SubtractDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
+		Instruction insn = new Instruction(new SubtractDouble(), null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
 		assertEquals(1.123E3-6.6332E4, checkReg(FPRegister.f2), 0.01);
 	}
@@ -41,7 +53,7 @@ public class DoubleArithmeticTest {
 	public void testMult() {
 		preloadReg(FPRegister.f0, 1.123E3);
 		preloadReg(FPRegister.f4, 6.6332E2);
-		Instruction insn = new Instruction(Opcode.MultiplyDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
+		Instruction insn = new Instruction(new MultiplyDouble(), null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
 		assertEquals(1.123E3*6.6332E2, checkReg(FPRegister.f2), 1);
 	}
@@ -50,7 +62,7 @@ public class DoubleArithmeticTest {
 	public void testDiv() {
 		preloadReg(FPRegister.f0, 1.123E8);
 		preloadReg(FPRegister.f4, 6.6332E7);
-		Instruction insn = new Instruction(Opcode.DivideDouble, null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
+		Instruction insn = new Instruction(new DivideDouble(), null, null, null, FPRegister.f2, FPRegister.f0, FPRegister.f4, 0, "");
 		insn.execute(program);
 		assertEquals(1.123E8/6.6332E7, checkReg(FPRegister.f2), 0.01);
 	}
@@ -59,62 +71,62 @@ public class DoubleArithmeticTest {
 	public void testComp() {
 		preloadReg(FPRegister.f0, 1.123E8);
 		preloadReg(FPRegister.f4, 6.6332E9);
-		Instruction insn = new Instruction(Opcode.CompareEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		Instruction insn = new Instruction(new CompareEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareNotEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareNotEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
 		preloadReg(FPRegister.f0, 1.123E-3);
 		preloadReg(FPRegister.f4, 1.123E-3);
-		insn = new Instruction(Opcode.CompareEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareNotEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareNotEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
 		preloadReg(FPRegister.f0, 1.248E-3);
 		preloadReg(FPRegister.f4, 1.123E-3);
-		insn = new Instruction(Opcode.CompareEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareNotEqualDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareNotEqualDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareLessEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareLessEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertFalse(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterThanDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterThanDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
-		insn = new Instruction(Opcode.CompareGreaterEqualsDouble, null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
+		insn = new Instruction(new CompareGreaterEqualsDouble(), null, null, null, FPRegister.f0, FPRegister.f4, null, 0, "");
 		insn.execute(program);
 		assertTrue(program.getFPRegFile().readCond());
 	}
@@ -122,7 +134,7 @@ public class DoubleArithmeticTest {
 	@Test
 	public void testMove() {
 		preloadReg(FPRegister.f0, 1.123E3);
-		Instruction insn = new Instruction(Opcode.MoveDouble, null, null, null, FPRegister.f2, FPRegister.f0, null, 0, "");
+		Instruction insn = new Instruction(new MoveDouble(), null, null, null, FPRegister.f2, FPRegister.f0, null, 0, "");
 		insn.execute(program);
 		assertEquals(1.123E3, checkReg(FPRegister.f2), 0);
 	}
