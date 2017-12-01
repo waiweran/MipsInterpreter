@@ -1,2 +1,0 @@
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/HoopStats.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/multTest.s
