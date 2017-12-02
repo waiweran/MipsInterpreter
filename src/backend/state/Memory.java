@@ -7,8 +7,18 @@ import java.util.Map;
 
 import backend.program.Register;
 
+/**
+ * Holds all of main memory.
+ * @author Nathaniel
+ * @version 11-05-2017
+ */
 public class Memory {
 	
+	/**
+	 * Holds a value in Global Data.
+	 * Used to designate whether the value
+	 * can be overwritten.
+	 */
 	private class GlobalDataValue {
 		
 		private boolean readOnly;
@@ -31,6 +41,11 @@ public class Memory {
 	private List<Data> heap;
 	private List<Data> stack;
 
+	/**
+	 * Initializes the main memory
+	 * @param registers the Register File.
+	 * Used to read the value of the stack pointer.
+	 */
 	public Memory(RegisterFile registers) {
 		regs = registers;
 		globalData = new ArrayList<>();
@@ -39,10 +54,20 @@ public class Memory {
 		stack = new ArrayList<>();
 	}
 	
+	/**
+	 * Checks to see if the given String references an item in global data.
+	 * @param ref the String in question.
+	 * @return true if the string references global data, false if not.
+	 */
 	public boolean isDataReference(String ref) {
 		return dataRefs.containsKey(ref);
 	}
 	
+	/**
+	 * Adds an item to global data.
+	 * @param reference the String referencing the global data address.
+	 * @param values the Data items to add to global data.
+	 */
 	public void addToGlobalData(String reference, List<Data> values) {
 		if(dataRefs.containsKey(reference)) throw new RuntimeException("Memory address reference \""
 				+ reference + "\" already used");
@@ -59,12 +84,22 @@ public class Memory {
 		globalData.addAll(writeVals);
 	}
 	
+	/**
+	 * Gets the memory address represented by a reference string.
+	 * @param reference the reference string.
+	 * @return integer representing the address in global data.
+	 */
 	public int getMemoryAddress(String reference) {
 		if(!dataRefs.containsKey(reference)) throw new RuntimeException("Reference \"" 
 				+ reference + "\" not in memory ");
 		return dataRefs.get(reference);
 	}
 	
+	/**
+	 * Allocates space on the heap.
+	 * @param amount number of bytes to allocate.
+	 * @return address of start of allocated heap space.
+	 */
 	public int allocateHeap(int amount) {
 		int size = amount/4 + ((amount%4 == 0)? 0 : 1);
 		int address = (globalData.size() + heap.size())*4;
@@ -74,6 +109,13 @@ public class Memory {
 		return address;
 	}
 	
+	/**
+	 * Loads a word from memory.
+	 * Must be word aligned.
+	 * Accesses global data, heap, and stack.
+	 * @param address the memory address.
+	 * @return the Data at that address.
+	 */
 	public Data loadWord(int address) {
 		int word = getWordAddress(address);
 		// Global data
@@ -97,6 +139,12 @@ public class Memory {
 		}
 	}
 	
+	/**
+	 * Stores a word to the given address.
+	 * Must be word aligned.
+	 * @param data the Data to store.
+	 * @param address location in memory to store the data.
+	 */
 	public void storeWord(Data data, int address) {
 		int word = getWordAddress(address);
 		// Global Data
@@ -127,12 +175,23 @@ public class Memory {
 		}
 	}
 	
+	/**
+	 * Loads a byte from memory.
+	 * @param address the memory address.
+	 * @return Data holding the byte at that address.
+	 */
 	public Data loadByte(int address) {
 		Data word = loadWord(address - (address % 4));
 		int val = (word.getValue() << 8*(address % 4)) >>> 24;
 		return new Data(val, Data.DataType.Byte);
 	}
 	
+	/**
+	 * Stores a byte to memory
+	 * @param data Data holding a byte to store.
+	 * Stores only first byte held in Data.
+	 * @param address the memory location to write to.
+	 */
 	public void storeByte(Data data, int address) {
 		int offset = address % 4;
 		Data word = loadWord(address - offset);
@@ -142,6 +201,12 @@ public class Memory {
 		storeWord(new Data(top | mid | bottom, word.getDataType()), address - offset);
 	}
 	
+	/**
+	 * Loads a series of consecutive values from memory.
+	 * @param address the starting address of the array.
+	 * @return contents of Global Data, Heap, or Stack,
+	 *  starting at that address and continuing to end of memory sector. 
+	 */
 	public List<Data> loadArray(int address) {
 		ArrayList<Data> values = new ArrayList<>();
 		int word = getWordAddress(address);
@@ -173,6 +238,11 @@ public class Memory {
 		return values;
 	}
 
+	/**
+	 * Stores a list of Data values to consecutive memory locations.
+	 * @param address the Address to store the first data value at.
+	 * @param values the list of Data values to store.
+	 */
 	public void storeArray(int address, List<Data> values) {
 		int word = getWordAddress(address);
 		// Global Data
@@ -242,6 +312,9 @@ public class Memory {
 		return output.toString();
 	}
 	
+	/**
+	 * @return Representation of memory with stored data as Strings
+	 */
 	public String toCharString() {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
@@ -265,6 +338,9 @@ public class Memory {
 		return output.toString();
 	}
 	
+	/**
+	 * @return representation of memory with stored data in Hex.
+	 */
 	public String toHexString() {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
@@ -285,6 +361,9 @@ public class Memory {
 		return output.toString();
 	}
 	
+	/**
+	 * @return representation of memory with stored data as decimal values.
+	 */
 	public String toDecimalString() {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
@@ -305,6 +384,9 @@ public class Memory {
 		return output.toString();
 	}
 	
+	/**
+	 * @return representation of memory with stored data as IEEE 32 bit floating point numbers.
+	 */
 	public String toFloatString() {
 		StringBuilder output = new StringBuilder();
 		output.append("Global Data: \n");
@@ -325,11 +407,22 @@ public class Memory {
 		return output.toString();
 	}
 	
+	/**
+	 * Gets the hex value of a given integer.
+	 * @param value integer input.
+	 * @return String of hex value.
+	 */
 	private String getHex(int value) {
 		String output = Integer.toHexString(value);
 		return "00000000".substring(output.length()) + output.toUpperCase();
 	}
 	
+	/**
+	 * Converts a byte indexed address to the word indexed address containing that byte.
+	 * @param address the address input.
+	 * @return the index in word-addressed memory to access.
+	 * @throws RuntimeException if non-word aligned address input.
+	 */
 	private int getWordAddress(int address) {
 		if(address%4 != 0) {
 			throw new RuntimeException("Misaligned Word Access: " + address);

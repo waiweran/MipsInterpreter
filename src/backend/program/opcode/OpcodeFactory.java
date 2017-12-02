@@ -6,14 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Creates an Opcode object given the Opcode name
+ * @author Nathaniel 
+ * @version 12-10-2017
+ */
 public class OpcodeFactory {
 	
 	private List<Opcode> values;
 
+	/**
+	 * Initializes the list of available Opcodes.
+	 */
 	public OpcodeFactory() {
 		initialize();
 	}
 	
+	/**
+	 * gets an Opcode given the command name.
+	 * @param name the name of the opcode.
+	 * @return the Opcode.
+	 */
 	public Opcode findOpcode(String name) {
 		for(Opcode op : values) {
 			if(op.getName().equalsIgnoreCase(name)) return op;
@@ -21,6 +34,11 @@ public class OpcodeFactory {
 		throw new RuntimeException("Invalid Opcode, Name: " + name);
 	}
 	
+	/**
+	 * Determines whether the given name is a recognized Opcode.
+	 * @param name the name to check.
+	 * @return true if valid opcode name, false if not.
+	 */
 	public boolean isOpcode(String name) {
 		for(Opcode op : values) {
 			if(op.getName().equalsIgnoreCase(name)) return true;
@@ -28,6 +46,9 @@ public class OpcodeFactory {
 		return false;
 	}
 	
+	/**
+	 * Initializes the list of available opcodes from the file.
+	 */
 	private void initialize() {
 		values = new ArrayList<>();
 		try {
