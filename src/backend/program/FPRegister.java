@@ -1,5 +1,8 @@
 package backend.program;
 
+import exceptions.InstructionFormatException;
+import exceptions.FPRegisterException;
+
 /**
  * Stores names of all floating point registers
  * @author Nathaniel
@@ -55,7 +58,7 @@ public enum FPRegister {
 		for(FPRegister reg : FPRegister.values()) {
 			if(("$f" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}
-		throw new RuntimeException("Invalid FP Register, Name: " + name);
+		throw new InstructionFormatException("Invalid FP Register, Name: " + name);
 	}
 	
 	/**
@@ -77,11 +80,11 @@ public enum FPRegister {
 	 */
 	public FPRegister getDoubleUpper() {
 		if(regNum % 2 != 0) 
-			throw new RuntimeException("FP Register " + getRegisterName()
+			throw new FPRegisterException("FP Register " + getRegisterName()
 					+ "Cannot " + "be used for doubles");
 		for(FPRegister reg : FPRegister.values()) {
 			if(reg.regNum == regNum + 1) return reg;
 		}
-		throw new RuntimeException("Requested register has no double pairing");
+		throw new FPRegisterException("Requested register has no double pairing");
 	}
 }

@@ -1,6 +1,7 @@
 package frontend;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import backend.TextParser;
 import backend.program.Instruction;
@@ -13,6 +14,8 @@ import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -69,12 +72,21 @@ public class MainGUI {
 	public void loadProgram() {
 		Program prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
 		if(currentFile != null) {
-			mainStage.setTitle(currentFile.getName());
-			TextParser parser = new TextParser(currentFile, prog);
-			prog = parser.getProgram();
-			setupProgramClose(prog);
-			new Instruction(new Jump(), null, null, null, null, null, null,
-					0, "main").execute(prog);
+			try {
+				TextParser parser = new TextParser(currentFile, prog);
+				mainStage.setTitle(currentFile.getName());
+				prog = parser.getProgram();
+				setupProgramClose(prog);
+				new Instruction(new Jump(), null, null, null, null, null, null,
+						0, "main").execute(prog);
+			}
+			catch (FileNotFoundException e) {
+				currentFile = null;
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("File Not Found");
+				alert.setContentText("Try opening a different file");
+				alert.show();
+			}
 		}
 		initialize(prog);
 		if(currentFile == null) control.lock();

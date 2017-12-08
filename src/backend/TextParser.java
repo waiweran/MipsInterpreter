@@ -14,6 +14,9 @@ import backend.program.Register;
 import backend.program.opcode.Opcode;
 import backend.program.opcode.OpcodeFactory;
 import backend.state.Data;
+import exceptions.DataFormatException;
+import exceptions.InstructionFormatException;
+import exceptions.UnsupportedDataException;
 
 /**
  * Parses a text file and converts it into MIPS Instructions.
@@ -29,8 +32,9 @@ public class TextParser {
 	 * Initializes the Text Parser.
 	 * @param code the File to parse.
 	 * @param program the Program to add the parsed instructions to.
+	 * @throws FileNotFoundException 
 	 */
-	public TextParser(File code, Program program) {
+	public TextParser(File code, Program program) throws FileNotFoundException {
 		prog = program;
 		readFile(code);
 	}
@@ -45,8 +49,9 @@ public class TextParser {
 	/**
 	 * Reads the given file.
 	 * @param code File to read.
+	 * @throws FileNotFoundException 
 	 */
-	private void readFile(File code) {
+	private void readFile(File code) throws FileNotFoundException {
 		readData(code);
 		readInstructions(code);
 		checkTargets();
@@ -55,51 +60,45 @@ public class TextParser {
 	/**
 	 * Reads Instructions out of the given file.
 	 * @param code File to read.
+	 * @throws FileNotFoundException 
 	 */
-	private void readInstructions(File code) {
-		try {
-			Scanner in = new Scanner(code);
-			boolean insnSect = false;
-			while(in.hasNextLine()) {
-				String lineText = in.nextLine();
-				if(lineText.contains(".data")) {
-					insnSect = false;
-				}
-				if(lineText.contains(".text")) {
-					insnSect = true;
-					continue;
-				}
-				if(insnSect) makeInstruction(lineText);
+	private void readInstructions(File code) throws FileNotFoundException {
+		Scanner in = new Scanner(code);
+		boolean insnSect = false;
+		while(in.hasNextLine()) {
+			String lineText = in.nextLine();
+			if(lineText.contains(".data")) {
+				insnSect = false;
 			}
-			in.close();
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException ("File Not Found", e);
+			if(lineText.contains(".text")) {
+				insnSect = true;
+				continue;
+			}
+			if(insnSect) makeInstruction(lineText);
 		}
+		in.close();
 	}
 
 	/**
 	 * Reads global data values out of the file.
 	 * @param code File to read.
+	 * @throws FileNotFoundException 
 	 */
-	private void readData(File code) {
-		try {
-			Scanner in = new Scanner(code);
-			boolean dataSect = false;
-			while(in.hasNextLine()) {
-				String lineText = in.nextLine();
-				if(lineText.contains(".data")) {
-					dataSect = true;
-					continue;
-				}
-				if(lineText.contains(".text")) {
-					dataSect = false;
-				}
-				if(dataSect) makeData(lineText);
+	private void readData(File code) throws FileNotFoundException {
+		Scanner in = new Scanner(code);
+		boolean dataSect = false;
+		while(in.hasNextLine()) {
+			String lineText = in.nextLine();
+			if(lineText.contains(".data")) {
+				dataSect = true;
+				continue;
 			}
-			in.close();
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException ("File Not Found", e);
+			if(lineText.contains(".text")) {
+				dataSect = false;
+			}
+			if(dataSect) makeData(lineText);
 		}
+		in.close();
 	}
 	
 	/**
@@ -112,7 +111,7 @@ public class TextParser {
 			if(l.isExecutable()) {
 				String target = l.getInstruction().getTarget();
 				if(!target.isEmpty() && !prog.getInsnRefs().containsKey(target)) {
-					throw new RuntimeException("Improper Instruction Detected: " + l.toString());
+					throw new InstructionFormatException("Improper Jump Reference Detected: " + l.toString());
 				}
 			}
 		}
@@ -129,9 +128,9 @@ public class TextParser {
 		if(text.startsWith(".align")) return; // Skip alignment commands
 		if(text.isEmpty()) return; // Skip empty lines
 		String[] dataSplit = text.split("\\s+", 3); // Split around remaining whitespace
-		if(dataSplit.length < 3) throw new RuntimeException("Data entry too short: " + line);
+		if(dataSplit.length < 3) throw new DataFormatException("Data entry too short: " + line);
 		String reference = dataSplit[0];
-		if(!reference.endsWith(":")) throw new RuntimeException("Improper Data Address Reference: " + reference);
+		if(!reference.endsWith(":")) throw new DataFormatException("Improper Data Address Reference: " + reference);
 		reference = reference.replaceAll(":", "");
 		String dataType = dataSplit[1];
 		String dataVal = dataSplit[2];
@@ -178,10 +177,10 @@ public class TextParser {
 			prog.getMem().addToGlobalData(reference, stringToDataArray(processString(dataVal)));
 		}
 		else if(dataType.equals(".halfword") || dataType.equals(".byte")) {
-			throw new RuntimeException("Data types .halfword and .byte are not supported");
+			throw new UnsupportedDataException("Data types .halfword and .byte are not supported");
 		}
 		else {
-			throw new RuntimeException("Improper Data Type: " + dataType);
+			throw new DataFormatException("Improper Data Type: " + dataType);
 		}
 	}
 
@@ -216,7 +215,7 @@ public class TextParser {
 					reference = comp.substring(0, comp.length() - 1);
 				}
 				else {
-					throw new RuntimeException("Two references detected in one line");
+					throw new InstructionFormatException("Two references detected in one line");
 				}
 			}
 			// If it's a register name
@@ -226,21 +225,21 @@ public class TextParser {
 					regNum++;
 				}
 				catch(IndexOutOfBoundsException e) {
-					throw new RuntimeException("Too many registers specified", e);
+					throw new InstructionFormatException("Too many registers specified", e);
 				}
-				catch(RuntimeException e1) {
+				catch(InstructionFormatException e1) {
 					try {
 						fpRegs[fpRegNum] = FPRegister.findRegister(comp);
 						fpRegNum++;
 					}
 					catch(IndexOutOfBoundsException e2) {
-						throw new RuntimeException("Too many registers specified", e2);
+						throw new InstructionFormatException("Too many registers specified", e2);
 					}
 				}
 			}
 			// If it's an opcode
 			else if(opFactory.isOpcode(comp)) {
-				if(opcode != null) throw new RuntimeException("Two opcodes detected in one line");
+				if(opcode != null) throw new InstructionFormatException("Two opcodes detected in one line");
 				opcode = opFactory.findOpcode(comp);
 			}
 			// If it's a data memory address reference
@@ -251,7 +250,7 @@ public class TextParser {
 				// If it's an integer immediate
 				try {
 					immed = Integer.parseInt(comp);
-					if(immedUsed) throw new RuntimeException("Only one immediate allowed");
+					if(immedUsed) throw new InstructionFormatException("Only one immediate allowed");
 					immedUsed = true;
 				}
 				catch(NumberFormatException e) {	
@@ -260,7 +259,7 @@ public class TextParser {
 						target = comp;
 					}
 					else {
-						throw new RuntimeException("Unrecognized Instruction Component: " + comp +
+						throw new InstructionFormatException("Unrecognized Instruction Component: " + comp +
 								" in line " + line);
 					}
 				}
@@ -273,7 +272,7 @@ public class TextParser {
 				prog.getInsnRefs().put(reference, madeLine);
 			}
 			else {
-				throw new RuntimeException("No Opcode Found in Line: " + line);
+				throw new InstructionFormatException("No Opcode Found in Line: " + line);
 			}
 		}
 		else {
@@ -348,7 +347,7 @@ public class TextParser {
 				output.append(nextChar);
 			}
 		}
-		throw new RuntimeException("Incomplete String: " + output.toString());
+		throw new DataFormatException("Incomplete String: " + output.toString());
 	}
 
 }

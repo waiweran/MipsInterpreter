@@ -1,6 +1,7 @@
 package backend.program;
 
 import backend.program.opcode.Opcode;
+import exceptions.InstructionFormatException;
 
 /**
  * Holds the information for a single MIPS Instruction.
@@ -30,7 +31,7 @@ public class Instruction {
 	public Instruction(Opcode opcode, Register reg1, Register reg2, 
 			Register reg3, FPRegister fpReg1, FPRegister fpReg2, 
 			FPRegister fpReg3, int immediate, String target) {
-		if(opcode == null) throw new RuntimeException("No Opcode Found");
+		if(opcode == null) throw new InstructionFormatException("No Opcode Found");
 		op = opcode;
 		r1 = reg1;
 		r2 = reg2;

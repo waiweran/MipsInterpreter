@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import backend.program.Register;
+import exceptions.DataFormatException;
+import exceptions.MemoryException;
+import exceptions.SegmentationFault;
 
 /**
  * Holds all of main memory.
@@ -69,7 +72,7 @@ public class Memory {
 	 * @param values the Data items to add to global data.
 	 */
 	public void addToGlobalData(String reference, List<Data> values) {
-		if(dataRefs.containsKey(reference)) throw new RuntimeException("Memory address reference \""
+		if(dataRefs.containsKey(reference)) throw new DataFormatException("Memory address reference \""
 				+ reference + "\" already used");
 		List<GlobalDataValue> writeVals = new ArrayList<>();
 		for(Data val : values) {
@@ -90,7 +93,7 @@ public class Memory {
 	 * @return integer representing the address in global data.
 	 */
 	public int getMemoryAddress(String reference) {
-		if(!dataRefs.containsKey(reference)) throw new RuntimeException("Reference \"" 
+		if(!dataRefs.containsKey(reference)) throw new MemoryException("Reference \"" 
 				+ reference + "\" not in memory ");
 		return dataRefs.get(reference);
 	}
@@ -131,11 +134,7 @@ public class Memory {
 			return stack.get(Integer.MAX_VALUE/4 - word);
 		}
 		else {
-			throw new RuntimeException("Segmentation Fault: " + address + 
-					" Global Data: 0 to " + (globalData.size()*4) + ", Heap: " + 
-					(globalData.size()*4 + " to " + (globalData.size()*4 + heap.size()*4) + 
-					", Stack: " + ((long)Integer.MAX_VALUE - stack.size()*4 + 1) + " to " + 
-					Integer.MAX_VALUE));
+			throw new SegmentationFault(address, globalData, heap, stack);
 		}
 	}
 	
@@ -150,8 +149,7 @@ public class Memory {
 		// Global Data
 		if(word < globalData.size()) {
 			if(globalData.get(word).readOnly)
-				throw new RuntimeException("Segmentation Fault: "
-						+ "Cannot write to read only address " + address);
+				throw new MemoryException("Cannot write to read only address " + address);
 			globalData.set(word, new GlobalDataValue(data, false));
 		}
 		// Heap
@@ -167,11 +165,7 @@ public class Memory {
 			stack.set(Integer.MAX_VALUE/4 - word, data);
 		}
 		else {
-			throw new RuntimeException("Segmentation Fault: " + address + 
-					" Global Data: 0 to " + (globalData.size()*4) + ", Heap: " + 
-					(globalData.size()*4 + " to " + (globalData.size()*4 + heap.size()*4) + 
-					", Stack: " + (Integer.MAX_VALUE - stack.size()*4) + " to " + 
-					((long)Integer.MAX_VALUE) + 1));
+			throw new SegmentationFault(address, globalData, heap, stack);
 		}
 	}
 	
@@ -229,11 +223,7 @@ public class Memory {
 			}
 		}
 		else {
-			throw new RuntimeException("Segmentation Fault: " + address + 
-					" Global Data: 0 to " + (globalData.size()*4) + ", Heap: " + 
-					(globalData.size()*4 + " to " + (globalData.size()*4 + heap.size()*4) + 
-					", Stack: " + (Integer.MAX_VALUE - stack.size()*4) + " to " + 
-					((long)Integer.MAX_VALUE) + 1));
+			throw new SegmentationFault(address, globalData, heap, stack);
 		}
 		return values;
 	}
@@ -253,7 +243,7 @@ public class Memory {
 				}
 			}
 			catch(IndexOutOfBoundsException e) {
-				throw new RuntimeException("Array too long for given memory slot");
+				throw new MemoryException("Array too long for given memory slot");
 			}
 		}
 		// Heap
@@ -264,7 +254,7 @@ public class Memory {
 				}
 			}
 			catch(IndexOutOfBoundsException e) {
-				throw new RuntimeException("Array too long for given memory slot");
+				throw new MemoryException("Array too long for given memory slot");
 			}
 		}
 		// Stack
@@ -279,15 +269,11 @@ public class Memory {
 				}
 			}
 			catch(IndexOutOfBoundsException e) {
-				throw new RuntimeException("Array too long for given memory slot");
+				throw new MemoryException("Array too long for given memory slot");
 			}
 		}
 		else {
-			throw new RuntimeException("Segmentation Fault: " + address + 
-					" Global Data: 0 to " + (globalData.size()*4) + ", Heap: " + 
-					(globalData.size()*4 + " to " + (globalData.size()*4 + heap.size()*4) + 
-					", Stack: " + (Integer.MAX_VALUE - stack.size()*4) + " to " + 
-					((long)Integer.MAX_VALUE) + 1));
+			throw new SegmentationFault(address, globalData, heap, stack);
 		}
 	}
 	
@@ -421,11 +407,11 @@ public class Memory {
 	 * Converts a byte indexed address to the word indexed address containing that byte.
 	 * @param address the address input.
 	 * @return the index in word-addressed memory to access.
-	 * @throws RuntimeException if non-word aligned address input.
+	 * @throws MemoryException if non-word aligned address input.
 	 */
 	private int getWordAddress(int address) {
 		if(address%4 != 0) {
-			throw new RuntimeException("Misaligned Word Access: " + address);
+			throw new MemoryException("Misaligned Word Access: " + address);
 		}
 		return address/4;
 	}

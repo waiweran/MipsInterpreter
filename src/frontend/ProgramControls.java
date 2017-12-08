@@ -2,6 +2,7 @@ package frontend;
 
 import backend.program.Line;
 import backend.program.Program;
+import exceptions.ExecutionException;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -84,7 +85,7 @@ public class ProgramControls implements ScreenObject {
 				playPause(true);
 				playPause.setDisable(true);
 				step.setDisable(true);
-				throw new RuntimeException("Program line " + currentLine + 
+				throw new ExecutionException("Program line " + currentLine + 
 						" caused exception", e);
 			}
 			gui.getRegisters().update();

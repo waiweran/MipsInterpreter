@@ -3,6 +3,7 @@ package backend.program.opcode;
 import backend.program.Instruction;
 import backend.program.Program;
 import backend.state.Data;
+import exceptions.DataFormatException;
 
 /**
  * Abstract class defining a MIPS Opcode
@@ -54,7 +55,7 @@ public abstract class Opcode {
 	 */
 	protected float convertToFloat(Data value) {
 		if(!value.getDataType().equals(Data.DataType.Float))
-			throw new RuntimeException("Data Not a Float: "
+			throw new DataFormatException("Data Not a Float: "
 					+ value.getDataType() + " " + value.toString());
 		return Float.intBitsToFloat(value.getValue());
 	}

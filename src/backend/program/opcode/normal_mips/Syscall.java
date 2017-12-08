@@ -9,6 +9,7 @@ import backend.program.Program;
 import backend.program.Register;
 import backend.program.opcode.Opcode;
 import backend.state.Data;
+import exceptions.ExecutionException;
 
 public class Syscall extends Opcode {
 
@@ -99,7 +100,7 @@ public class Syscall extends Opcode {
 			prog.done();
 		}
 		else {
-			throw new RuntimeException("Invalid Syscall: " + type);
+			throw new ExecutionException("Invalid Syscall: " + type);
 		}
 	}
 

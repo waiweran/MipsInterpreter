@@ -16,6 +16,7 @@ import backend.program.opcode.normal_mips.Jump;
 import backend.program.opcode.normal_mips.Syscall;
 import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
+import exceptions.ExecutionException;
 import frontend.MainGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -66,25 +67,30 @@ public class Main extends Application {
 			runs = Integer.parseInt(arguments.remove(arguments.size() - 1));
 		}
 		Program prog = makeProgram(arguments);
-		TextParser parser = new TextParser(progLoc, prog);
-		prog = parser.getProgram();
-		setupProgramClose(prog);
-		new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
-		int lastPC = -1;
-		for(int i = 0; !prog.isDone() && i != runs; i++) {
-			Line currentLine = prog.getNextLine();
-			if(verbose && lastPC != prog.getPC()) System.out.println(currentLine);
-			if(lastPC == prog.getPC()) i--;
-			lastPC = prog.getPC();
-			if(currentLine.isExecutable()) {
-				try {
-					currentLine.getInstruction().execute(prog);
-				}
-				catch(Exception e) {
-					throw new RuntimeException("Program line " + currentLine + 
-							" caused exception", e);
+		try {
+			TextParser parser = new TextParser(progLoc, prog);
+			prog = parser.getProgram();
+			setupProgramClose(prog);
+			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
+			int lastPC = -1;
+			for(int i = 0; !prog.isDone() && i != runs; i++) {
+				Line currentLine = prog.getNextLine();
+				if(verbose && lastPC != prog.getPC()) System.out.println(currentLine);
+				if(lastPC == prog.getPC()) i--;
+				lastPC = prog.getPC();
+				if(currentLine.isExecutable()) {
+					try {
+						currentLine.getInstruction().execute(prog);
+					}
+					catch(Exception e) {
+						throw new ExecutionException("Program line " + currentLine + 
+								" caused exception", e);
+					}
 				}
 			}
+
+		} catch (FileNotFoundException e1) {
+			throw new RuntimeException("Program File not found", e1);
 		}
 	}
 

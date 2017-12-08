@@ -1,5 +1,7 @@
 package backend.program;
 
+import exceptions.InstructionFormatException;
+
 /**
  * Stores names of all data registers.
  * @author Nathaniel
@@ -54,7 +56,7 @@ public enum Register {
 					|| ("$" + reg.regNum).equalsIgnoreCase(name)
 					|| ("$r" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}
-		throw new RuntimeException("Invalid or Reserved Register, Name: " + name);
+		throw new InstructionFormatException("Invalid or Reserved Register, Name: " + name);
 	}
 	
 	/**

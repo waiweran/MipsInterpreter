@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import exceptions.InstructionFormatException;
+import exceptions.UnsupportedOpcodeException;
+
 /**
  * Creates an Opcode object given the Opcode name
  * @author Nathaniel 
@@ -31,7 +34,7 @@ public class OpcodeFactory {
 		for(Opcode op : values) {
 			if(op.getName().equalsIgnoreCase(name)) return op;
 		}
-		throw new RuntimeException("Invalid Opcode, Name: " + name);
+		throw new InstructionFormatException("Invalid Opcode, Name: " + name);
 	}
 	
 	/**
@@ -63,13 +66,13 @@ public class OpcodeFactory {
 					} catch (ClassNotFoundException | InstantiationException
 							| IllegalAccessException | ClassCastException e) {
 						in.close();
-						throw new RuntimeException("Opcode " + input + " not supported", e);
+						throw new UnsupportedOpcodeException("Opcode " + input + " not supported", e);
 					}
 				}
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Opcodes list not found", e);
+			throw new RuntimeException("Opcodes list (available_opcodes.txt) not found");
 		}
 	}
 	
