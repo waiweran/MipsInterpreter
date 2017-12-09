@@ -17,7 +17,9 @@ import backend.state.Data;
 import exceptions.DataFormatException;
 import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
+import exceptions.JumpTargetException;
 import exceptions.MIPSException;
+import exceptions.RegisterFormatException;
 import exceptions.UnsupportedDataException;
 
 /**
@@ -35,9 +37,10 @@ public class TextParser {
 	 * @param code the File to parse.
 	 * @param program the Program to add the parsed instructions to.
 	 * @throws FileNotFoundException 
-	 * @throws MIPSException 
+	 * @throws InstructionFormatException 
+	 * @throws DataFormatException 
 	 */
-	public TextParser(File code, Program program) throws FileNotFoundException, MIPSException {
+	public TextParser(File code, Program program) throws FileNotFoundException, DataFormatException, InstructionFormatException {
 		prog = program;
 		readFile(code);
 	}
@@ -117,14 +120,14 @@ public class TextParser {
 	 * Checks that all stored instruction targets are valid.
 	 * Used to check that all branches and jumps have a valid 
 	 * target once the full program is parsed.
-	 * @throws InstructionFormatException if invalid target found
+	 * @throws JumpTargetException if invalid target found
 	 */
-	private void checkTargets() throws InstructionFormatException {
+	private void checkTargets() throws JumpTargetException {
 		for(Line l : prog.getProgramLines()) {
 			if(l.isExecutable()) {
 				String target = l.getInstruction().getTarget();
 				if(!target.isEmpty() && !prog.getInsnRefs().containsKey(target)) {
-					throw new InstructionFormatException("Improper Jump Reference Detected: " + l.toString());
+					throw new JumpTargetException("Improper Jump Target Detected: " + l.toString());
 				}
 			}
 		}
@@ -142,9 +145,11 @@ public class TextParser {
 		if(text.startsWith(".align")) return; // Skip alignment commands
 		if(text.isEmpty()) return; // Skip empty lines
 		String[] dataSplit = text.split("\\s+", 3); // Split around remaining whitespace
-		if(dataSplit.length < 3) throw new DataFormatException("Data entry too short: " + line);
+		if(dataSplit.length < 3) throw new DataFormatException(
+				"Data entry does not contain reference, data type, and value: " + line);
 		String reference = dataSplit[0];
-		if(!reference.endsWith(":")) throw new DataFormatException("Improper Data Address Reference: " + reference);
+		if(!reference.endsWith(":")) throw new DataFormatException(
+				"Improper Data Address Reference: " + reference);
 		reference = reference.replaceAll(":", "");
 		String dataType = dataSplit[1];
 		String dataVal = dataSplit[2];
@@ -244,14 +249,18 @@ public class TextParser {
 					prog.getProgramLines().add(new Line(line));
 					throw new InstructionFormatException("Too many registers specified", e);
 				}
-				catch(InstructionFormatException e1) {
+				catch(RegisterFormatException e1) {
 					try {
 						fpRegs[fpRegNum] = FPRegister.findRegister(comp);
 						fpRegNum++;
 					}
-					catch(IndexOutOfBoundsException e2) {
+					catch(RegisterFormatException e2) {
 						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException("Too many registers specified", e2);
+						throw new InstructionFormatException("Invalid or reserved register", e2);
+					}
+					catch(IndexOutOfBoundsException e3) {
+						prog.getProgramLines().add(new Line(line));
+						throw new InstructionFormatException("Too many registers specified", e3);
 					}
 				}
 			}

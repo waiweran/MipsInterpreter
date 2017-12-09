@@ -16,8 +16,10 @@ import backend.program.opcode.normal_mips.Jump;
 import backend.program.opcode.normal_mips.Syscall;
 import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
+import exceptions.DataFormatException;
 import exceptions.ExecutionException;
-import exceptions.MIPSException;
+import exceptions.InstructionFormatException;
+import exceptions.JumpTargetException;
 import frontend.MainGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -70,11 +72,14 @@ public class Main extends Application {
 		Program prog = makeProgram(arguments);
 		try {
 			try {
-				TextParser parser = new TextParser(progLoc, prog);
-				prog = parser.getProgram();
-			} catch (MIPSException e1) {
-				throw new RuntimeException("Syntax Error on line " + 
-						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e1);
+				new TextParser(progLoc, prog);
+			} catch(JumpTargetException e) {
+				throw new RuntimeException("Syntax Error: Jump Target", e);
+			} catch(InstructionFormatException e) {
+				throw new RuntimeException("Syntax Error: Instruction Section, Line " + 
+						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e);
+			} catch (DataFormatException e) {
+				throw new RuntimeException("Syntax Error: Data Section", e);
 			}
 			setupProgramClose(prog);
 			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
@@ -94,9 +99,8 @@ public class Main extends Application {
 					}
 				}
 			}
-
-		} catch (FileNotFoundException e1) {
-			throw new RuntimeException("Program File not found", e1);
+		} catch(FileNotFoundException e) {
+			throw new RuntimeException("Program File not found", e);
 		}
 	}
 

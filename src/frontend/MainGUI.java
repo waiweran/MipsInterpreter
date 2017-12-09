@@ -12,7 +12,9 @@ import backend.program.opcode.normal_mips.Jump;
 import backend.program.opcode.normal_mips.Syscall;
 import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
-import exceptions.MIPSException;
+import exceptions.DataFormatException;
+import exceptions.InstructionFormatException;
+import exceptions.JumpTargetException;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -48,7 +50,13 @@ public class MainGUI {
 		cmd = new CommandLine();
 		menu = new TopMenu(this);
 		menu.openMostRecent();
-		loadProgram();
+		try {
+			loadProgram();
+		}
+		catch(Exception e) {
+			currentFile = null;
+			loadProgram();
+		}
 	}
 
 	private void initialize(Program program) {
@@ -87,14 +95,37 @@ public class MainGUI {
 				alert.setContentText("Try opening a different file");
 				alert.show();
 			}
-			catch(MIPSException e1) {
-				System.out.println(prog.getProgramLines());
+			catch(JumpTargetException e) {
 				initialize(prog);
+				control.lock();
+				getCommandLine().printException(e);
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("Syntax Error: Jump Target");
+				alert.setContentText(e.getMessage());
+				alert.show();
+				throw new RuntimeException("Syntax Error: Jump Target", e);
+			}
+			catch(InstructionFormatException e) {
+				initialize(prog);
+				control.lock();
+				getCommandLine().printException(e);
 				getCode().errorHighlight(prog.getProgramLines().get(
 						prog.getProgramLines().size() - 1));
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("Syntax Error: Instruction Section");
+				alert.setContentText(e.getMessage());
+				alert.show();
+				throw new RuntimeException("Syntax Error: Instruction Section, Line " + 
+						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e);
+			} catch (DataFormatException e) {
+				initialize(prog);
 				control.lock();
-				getCommandLine().printException(e1);
-				throw new RuntimeException("Syntax Error", e1);
+				getCommandLine().printException(e);
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("Syntax Error: Data Section");
+				alert.setContentText(e.getMessage());
+				alert.show();
+				throw new RuntimeException("Syntax Error: Data Section", e);
 			}
 		}
 		initialize(prog);

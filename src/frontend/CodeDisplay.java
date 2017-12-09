@@ -37,7 +37,7 @@ public class CodeDisplay implements ScreenObject {
 			line.getChildren().add(text);
 			MainGUI.setBackground(line, Color.WHITE);
 			lineDisps.put(lines.get(i), line);
-			progDisp.getChildren().add(line);
+			if(i > 0) progDisp.getChildren().add(line);
 		}
 	}
 	

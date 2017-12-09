@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import exceptions.InstructionFormatException;
 import exceptions.UnsupportedOpcodeException;
 
 /**
@@ -29,13 +28,15 @@ public class OpcodeFactory {
 	 * gets an Opcode given the command name.
 	 * @param name the name of the opcode.
 	 * @return the Opcode.
-	 * @throws InstructionFormatException if invalid opcode given
+	 * @throws RuntimeException if invalid opcode given.
+	 * We recommend checking validity of opcode names before calling this method.
 	 */
-	public Opcode findOpcode(String name) throws InstructionFormatException {
+	public Opcode findOpcode(String name) {
 		for(Opcode op : values) {
 			if(op.getName().equalsIgnoreCase(name)) return op;
 		}
-		throw new InstructionFormatException("Invalid Opcode, Name: " + name);
+		throw new RuntimeException("Invalid Opcode, Name: " + name);
+		// This shouldn't happen because you should've checked the opcode name with isOpcode().
 	}
 	
 	/**

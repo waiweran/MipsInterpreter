@@ -1,7 +1,7 @@
 package backend.program;
 
-import exceptions.InstructionFormatException;
 import exceptions.FPRegisterException;
+import exceptions.RegisterFormatException;
 
 /**
  * Stores names of all floating point registers
@@ -53,13 +53,13 @@ public enum FPRegister {
 	 * Finds the FPRegister with the given name.
 	 * @param name the name of the FPRegister.
 	 * @return FPRegister with that name.
-	 * @throws InstructionFormatException 
+	 * @throws RegisterFormatException 
 	 */
-	public static FPRegister findRegister(String name) throws InstructionFormatException {
+	public static FPRegister findRegister(String name) throws RegisterFormatException {
 		for(FPRegister reg : FPRegister.values()) {
 			if(("$f" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}
-		throw new InstructionFormatException("Invalid FP Register, Name: " + name);
+		throw new RegisterFormatException("Invalid FP Register, Name: " + name);
 	}
 	
 	/**

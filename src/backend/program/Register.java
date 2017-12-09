@@ -1,6 +1,6 @@
 package backend.program;
 
-import exceptions.InstructionFormatException;
+import exceptions.RegisterFormatException;
 
 /**
  * Stores names of all data registers.
@@ -49,15 +49,15 @@ public enum Register {
 	 * Finds the Register with the given name.
 	 * @param name the name of the register.
 	 * @return the Register with that name.
-	 * @throws InstructionFormatException 
+	 * @throws RegisterFormatException 
 	 */
-	public static Register findRegister(String name) throws InstructionFormatException {
+	public static Register findRegister(String name) throws RegisterFormatException {
 		for(Register reg : Register.values()) {
 			if(reg.regName.equalsIgnoreCase(name) 
 					|| ("$" + reg.regNum).equalsIgnoreCase(name)
 					|| ("$r" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}
-		throw new InstructionFormatException("Invalid or Reserved Register, Name: " + name);
+		throw new RegisterFormatException("Invalid or Reserved Register, Name: " + name);
 	}
 	
 	/**
