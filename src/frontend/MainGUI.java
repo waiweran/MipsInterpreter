@@ -15,6 +15,7 @@ import backend.state.Data;
 import exceptions.DataFormatException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
+import exceptions.ProgramFormatException;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -126,6 +127,15 @@ public class MainGUI {
 				alert.setContentText(e.getMessage());
 				alert.show();
 				throw new RuntimeException("Syntax Error: Data Section", e);
+			} catch (ProgramFormatException e) {
+				initialize(prog);
+				control.lock();
+				getCommandLine().printException(e);
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("Syntax Error: General");
+				alert.setContentText(e.getMessage());
+				alert.show();
+				throw new RuntimeException("Syntax Error: General", e);
 			}
 		}
 		initialize(prog);

@@ -20,6 +20,7 @@ import exceptions.DataFormatException;
 import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
+import exceptions.ProgramFormatException;
 import frontend.MainGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -80,6 +81,8 @@ public class Main extends Application {
 						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e);
 			} catch (DataFormatException e) {
 				throw new RuntimeException("Syntax Error: Data Section", e);
+			} catch (ProgramFormatException e) {
+				throw new RuntimeException("Syntax Error: General", e);
 			}
 			setupProgramClose(prog);
 			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);

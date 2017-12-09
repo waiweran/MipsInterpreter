@@ -18,7 +18,7 @@ import exceptions.DataFormatException;
 import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
-import exceptions.MIPSException;
+import exceptions.ProgramFormatException;
 import exceptions.RegisterFormatException;
 import exceptions.UnsupportedDataException;
 
@@ -37,10 +37,9 @@ public class TextParser {
 	 * @param code the File to parse.
 	 * @param program the Program to add the parsed instructions to.
 	 * @throws FileNotFoundException 
-	 * @throws InstructionFormatException 
-	 * @throws DataFormatException 
+	 * @throws ProgramFormatException 
 	 */
-	public TextParser(File code, Program program) throws FileNotFoundException, DataFormatException, InstructionFormatException {
+	public TextParser(File code, Program program) throws FileNotFoundException, ProgramFormatException {
 		prog = program;
 		readFile(code);
 	}
@@ -56,12 +55,9 @@ public class TextParser {
 	 * Reads the given file.
 	 * @param code File to read.
 	 * @throws FileNotFoundException 
-	 * @throws DataFormatException 
-	 * @throws InstructionFormatException 
-	 * @throws MIPSException if processed instruction incorrectly formatted
+	 * @throws ProgramFormatException 
 	 */
-	private void readFile(File code) throws FileNotFoundException, 
-			DataFormatException, InstructionFormatException {
+	private void readFile(File code) throws FileNotFoundException, ProgramFormatException {
 		readData(code);
 		readInstructions(code);
 		checkTargets();
@@ -71,12 +67,12 @@ public class TextParser {
 	 * Reads Instructions out of the given file.
 	 * @param code File to read.
 	 * @throws FileNotFoundException 
-	 * @throws InstructionFormatException 
-	 * @throws MIPSException if improperly formatted instruction found
+	 * @throws ProgramFormatException 
 	 */
-	private void readInstructions(File code) throws FileNotFoundException, InstructionFormatException {
+	private void readInstructions(File code) throws FileNotFoundException, ProgramFormatException {
 		Scanner in = new Scanner(code);
 		boolean insnSect = false;
+		boolean hasInsns = false;
 		while(in.hasNextLine()) {
 			String lineText = in.nextLine();
 			if(lineText.contains(".data")) {
@@ -84,6 +80,7 @@ public class TextParser {
 			}
 			if(lineText.contains(".text")) {
 				insnSect = true;
+				hasInsns = true;
 				continue;
 			}
 			if(insnSect) {
@@ -91,6 +88,9 @@ public class TextParser {
 			}
 		}
 		in.close();
+		if(!hasInsns) {
+			throw new ProgramFormatException("No instruction section found");
+		}
 	}
 
 	/**
@@ -293,7 +293,8 @@ public class TextParser {
 					}
 					else {
 						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException("Unrecognized Instruction Component: " + comp);
+						throw new InstructionFormatException(
+								"Unrecognized Instruction Component: " + comp);
 					}
 				}
 			}	

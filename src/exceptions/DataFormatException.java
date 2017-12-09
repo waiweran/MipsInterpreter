@@ -5,7 +5,7 @@ package exceptions;
  * @author Nathaniel
  * @version 12-08-2017
  */
-public class DataFormatException extends MIPSException {
+public class DataFormatException extends ProgramFormatException {
 
 	private static final long serialVersionUID = 1L;
 
