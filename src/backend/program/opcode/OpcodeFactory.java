@@ -29,8 +29,9 @@ public class OpcodeFactory {
 	 * gets an Opcode given the command name.
 	 * @param name the name of the opcode.
 	 * @return the Opcode.
+	 * @throws InstructionFormatException if invalid opcode given
 	 */
-	public Opcode findOpcode(String name) {
+	public Opcode findOpcode(String name) throws InstructionFormatException {
 		for(Opcode op : values) {
 			if(op.getName().equalsIgnoreCase(name)) return op;
 		}

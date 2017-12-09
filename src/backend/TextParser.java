@@ -15,7 +15,9 @@ import backend.program.opcode.Opcode;
 import backend.program.opcode.OpcodeFactory;
 import backend.state.Data;
 import exceptions.DataFormatException;
+import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
+import exceptions.MIPSException;
 import exceptions.UnsupportedDataException;
 
 /**
@@ -33,8 +35,9 @@ public class TextParser {
 	 * @param code the File to parse.
 	 * @param program the Program to add the parsed instructions to.
 	 * @throws FileNotFoundException 
+	 * @throws MIPSException 
 	 */
-	public TextParser(File code, Program program) throws FileNotFoundException {
+	public TextParser(File code, Program program) throws FileNotFoundException, MIPSException {
 		prog = program;
 		readFile(code);
 	}
@@ -50,8 +53,12 @@ public class TextParser {
 	 * Reads the given file.
 	 * @param code File to read.
 	 * @throws FileNotFoundException 
+	 * @throws DataFormatException 
+	 * @throws InstructionFormatException 
+	 * @throws MIPSException if processed instruction incorrectly formatted
 	 */
-	private void readFile(File code) throws FileNotFoundException {
+	private void readFile(File code) throws FileNotFoundException, 
+			DataFormatException, InstructionFormatException {
 		readData(code);
 		readInstructions(code);
 		checkTargets();
@@ -61,8 +68,10 @@ public class TextParser {
 	 * Reads Instructions out of the given file.
 	 * @param code File to read.
 	 * @throws FileNotFoundException 
+	 * @throws InstructionFormatException 
+	 * @throws MIPSException if improperly formatted instruction found
 	 */
-	private void readInstructions(File code) throws FileNotFoundException {
+	private void readInstructions(File code) throws FileNotFoundException, InstructionFormatException {
 		Scanner in = new Scanner(code);
 		boolean insnSect = false;
 		while(in.hasNextLine()) {
@@ -74,7 +83,9 @@ public class TextParser {
 				insnSect = true;
 				continue;
 			}
-			if(insnSect) makeInstruction(lineText);
+			if(insnSect) {
+				makeInstruction(lineText);
+			}
 		}
 		in.close();
 	}
@@ -83,8 +94,9 @@ public class TextParser {
 	 * Reads global data values out of the file.
 	 * @param code File to read.
 	 * @throws FileNotFoundException 
+	 * @throws DataFormatException 
 	 */
-	private void readData(File code) throws FileNotFoundException {
+	private void readData(File code) throws FileNotFoundException, DataFormatException {
 		Scanner in = new Scanner(code);
 		boolean dataSect = false;
 		while(in.hasNextLine()) {
@@ -105,8 +117,9 @@ public class TextParser {
 	 * Checks that all stored instruction targets are valid.
 	 * Used to check that all branches and jumps have a valid 
 	 * target once the full program is parsed.
+	 * @throws InstructionFormatException if invalid target found
 	 */
-	private void checkTargets() {
+	private void checkTargets() throws InstructionFormatException {
 		for(Line l : prog.getProgramLines()) {
 			if(l.isExecutable()) {
 				String target = l.getInstruction().getTarget();
@@ -120,8 +133,9 @@ public class TextParser {
 	/**
 	 * Converts a line in the file to a global data entry.
 	 * @param line line of file to convert.
+	 * @throws DataFormatException 
 	 */
-	private void makeData(String line) {
+	private void makeData(String line) throws DataFormatException {
 		String text = line;
 		if(line.indexOf('#') > 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
 		text = text.trim(); // Remove leading and trailing whitespace
@@ -187,8 +201,9 @@ public class TextParser {
 	/**
 	 * Converts a line of the file to an instruction.
 	 * @param line the line to convert.
+	 * @throws InstructionFormatException 
 	 */
-	private void makeInstruction(String line) {
+	private void makeInstruction(String line) throws InstructionFormatException {
 		OpcodeFactory opFactory = new OpcodeFactory();
 		String text = line;
 		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
@@ -215,6 +230,7 @@ public class TextParser {
 					reference = comp.substring(0, comp.length() - 1);
 				}
 				else {
+					prog.getProgramLines().add(new Line(line));
 					throw new InstructionFormatException("Two references detected in one line");
 				}
 			}
@@ -225,6 +241,7 @@ public class TextParser {
 					regNum++;
 				}
 				catch(IndexOutOfBoundsException e) {
+					prog.getProgramLines().add(new Line(line));
 					throw new InstructionFormatException("Too many registers specified", e);
 				}
 				catch(InstructionFormatException e1) {
@@ -233,13 +250,17 @@ public class TextParser {
 						fpRegNum++;
 					}
 					catch(IndexOutOfBoundsException e2) {
+						prog.getProgramLines().add(new Line(line));
 						throw new InstructionFormatException("Too many registers specified", e2);
 					}
 				}
 			}
 			// If it's an opcode
 			else if(opFactory.isOpcode(comp)) {
-				if(opcode != null) throw new InstructionFormatException("Two opcodes detected in one line");
+				if(opcode != null) {
+					prog.getProgramLines().add(new Line(line));
+					throw new InstructionFormatException("Two opcodes detected in one line");
+				}
 				opcode = opFactory.findOpcode(comp);
 			}
 			// If it's a data memory address reference
@@ -250,7 +271,10 @@ public class TextParser {
 				// If it's an integer immediate
 				try {
 					immed = Integer.parseInt(comp);
-					if(immedUsed) throw new InstructionFormatException("Only one immediate allowed");
+					if(immedUsed) {
+						prog.getProgramLines().add(new Line(line));
+						throw new InstructionFormatException("Only one immediate allowed");
+					}
 					immedUsed = true;
 				}
 				catch(NumberFormatException e) {	
@@ -259,19 +283,21 @@ public class TextParser {
 						target = comp;
 					}
 					else {
-						throw new InstructionFormatException("Unrecognized Instruction Component: " + comp +
-								" in line " + line);
+						prog.getProgramLines().add(new Line(line));
+						throw new InstructionFormatException("Unrecognized Instruction Component: " + comp);
 					}
 				}
 			}	
 		}
 		if(opcode == null) {
-			if(!reference.isEmpty() && regNum == 0 && !immedUsed) {
+			if(!reference.isEmpty() && regNum == 0  && fpRegNum == 0
+					&& !immedUsed && target.isEmpty()) {
 				Line madeLine = new Line(line);
 				prog.getProgramLines().add(madeLine);
 				prog.getInsnRefs().put(reference, madeLine);
 			}
 			else {
+				prog.getProgramLines().add(new Line(line));
 				throw new InstructionFormatException("No Opcode Found in Line: " + line);
 			}
 		}
@@ -288,7 +314,7 @@ public class TextParser {
 	 * @param dataVal the input string to process.
 	 * @return processed string with proper escape character values.
 	 */
-	private static String processString(String dataVal) {
+	private String processString(String dataVal) {
 		String inString = dataVal.substring(dataVal.indexOf(34) + 1, 
 				dataVal.lastIndexOf(34));
 		if(inString.contains("\\")) {
@@ -347,7 +373,7 @@ public class TextParser {
 				output.append(nextChar);
 			}
 		}
-		throw new DataFormatException("Incomplete String: " + output.toString());
+		throw new ExecutionException("Incomplete String: " + output.toString());
 	}
 
 }

@@ -49,8 +49,9 @@ public enum Register {
 	 * Finds the Register with the given name.
 	 * @param name the name of the register.
 	 * @return the Register with that name.
+	 * @throws InstructionFormatException 
 	 */
-	public static Register findRegister(String name) {
+	public static Register findRegister(String name) throws InstructionFormatException {
 		for(Register reg : Register.values()) {
 			if(reg.regName.equalsIgnoreCase(name) 
 					|| ("$" + reg.regNum).equalsIgnoreCase(name)

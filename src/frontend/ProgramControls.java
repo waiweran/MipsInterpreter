@@ -82,6 +82,7 @@ public class ProgramControls implements ScreenObject {
 			}
 			catch(Exception e) {
 				gui.getCode().errorHighlight(currentLine);
+				gui.getCommandLine().printException(e);
 				playPause(true);
 				playPause.setDisable(true);
 				step.setDisable(true);

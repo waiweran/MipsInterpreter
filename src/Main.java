@@ -17,6 +17,7 @@ import backend.program.opcode.normal_mips.Syscall;
 import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
 import exceptions.ExecutionException;
+import exceptions.MIPSException;
 import frontend.MainGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -68,8 +69,13 @@ public class Main extends Application {
 		}
 		Program prog = makeProgram(arguments);
 		try {
-			TextParser parser = new TextParser(progLoc, prog);
-			prog = parser.getProgram();
+			try {
+				TextParser parser = new TextParser(progLoc, prog);
+				prog = parser.getProgram();
+			} catch (MIPSException e1) {
+				throw new RuntimeException("Syntax Error on line " + 
+						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e1);
+			}
 			setupProgramClose(prog);
 			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
 			int lastPC = -1;

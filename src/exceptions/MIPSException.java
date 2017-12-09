@@ -5,7 +5,7 @@ package exceptions;
  * @author Nathaniel
  * @version 12-08-2017
  */
-public class MIPSException extends RuntimeException {
+public class MIPSException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

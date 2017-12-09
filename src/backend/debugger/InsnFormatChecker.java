@@ -4,20 +4,18 @@ import java.util.ResourceBundle;
 
 import backend.program.Instruction;
 import backend.program.opcode.Opcode;
+import exceptions.InstructionFormatException;
 
 public class InsnFormatChecker {
 	
-	public static final ResourceBundle insnFormats = 
+	private static final ResourceBundle INSN_FORMATS = 
 			ResourceBundle.getBundle("backend.debugger.OpcodeFormats");
-
-	public InsnFormatChecker() {
-		
-	}
 	
-	public boolean checkFormat(String format, Instruction insn) {
+	public void checkFormat(String format, Instruction insn) throws InstructionFormatException {
 		Opcode op = insn.getOpcode();
-		String formatRef = insnFormats.getString(op.getName());
-		return format.equals(formatRef);
+		String formatRef = INSN_FORMATS.getString(op.getName());
+		if(format.equals(formatRef))
+			throw new InstructionFormatException("Improperly formatted instruction");
 	}
 
 }

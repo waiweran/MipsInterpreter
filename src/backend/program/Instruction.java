@@ -27,11 +27,11 @@ public class Instruction {
 	 * @param fpReg3 Third floating point register.
 	 * @param immediate Instruction immediate.
 	 * @param target Jump/Branch target.
+	 * @throws InstructionFormatException 
 	 */
 	public Instruction(Opcode opcode, Register reg1, Register reg2, 
 			Register reg3, FPRegister fpReg1, FPRegister fpReg2, 
 			FPRegister fpReg3, int immediate, String target) {
-		if(opcode == null) throw new InstructionFormatException("No Opcode Found");
 		op = opcode;
 		r1 = reg1;
 		r2 = reg2;

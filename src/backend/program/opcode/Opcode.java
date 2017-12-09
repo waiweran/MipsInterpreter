@@ -4,6 +4,7 @@ import backend.program.Instruction;
 import backend.program.Program;
 import backend.state.Data;
 import exceptions.DataFormatException;
+import exceptions.FPRegisterException;
 
 /**
  * Abstract class defining a MIPS Opcode
@@ -52,10 +53,11 @@ public abstract class Opcode {
 	 * @param value Data storing an integer value representing a float
 	 * in IEEE 32 bit floating point format.
 	 * @return the float value.
+	 * @throws DataFormatException if given data is not a float
 	 */
 	protected float convertToFloat(Data value) {
 		if(!value.getDataType().equals(Data.DataType.Float))
-			throw new DataFormatException("Data Not a Float: "
+			throw new FPRegisterException("Data Not a Float: "
 					+ value.getDataType() + " " + value.toString());
 		return Float.intBitsToFloat(value.getValue());
 	}

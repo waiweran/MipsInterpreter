@@ -70,8 +70,9 @@ public class Memory {
 	 * Adds an item to global data.
 	 * @param reference the String referencing the global data address.
 	 * @param values the Data items to add to global data.
+	 * @throws DataFormatException 
 	 */
-	public void addToGlobalData(String reference, List<Data> values) {
+	public void addToGlobalData(String reference, List<Data> values) throws DataFormatException {
 		if(dataRefs.containsKey(reference)) throw new DataFormatException("Memory address reference \""
 				+ reference + "\" already used");
 		List<GlobalDataValue> writeVals = new ArrayList<>();

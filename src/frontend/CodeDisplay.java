@@ -49,7 +49,8 @@ public class CodeDisplay implements ScreenObject {
 	}
 	
 	public void errorHighlight(Line line) {
-		MainGUI.setBackground(currentHighlight, Color.WHITE);
+		if(currentHighlight != null) 
+			MainGUI.setBackground(currentHighlight, Color.WHITE);
 		currentHighlight = lineDisps.get(line);
 		MainGUI.setBackground(currentHighlight, Color.ORANGERED);
 	}

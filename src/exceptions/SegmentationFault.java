@@ -20,11 +20,12 @@ public class SegmentationFault extends MemoryException {
 	 */
 	public SegmentationFault(int address, 
 			List<?> globalData, List<?> heap, List<?> stack) {
-		super("Segmentation Fault: " + address + 
-				" Global Data: 0 to " + (globalData.size()*4) + ", Heap: " + 
-				(globalData.size()*4 + " to " + (globalData.size()*4 + heap.size()*4) + 
-				", Stack: " + ((long)Integer.MAX_VALUE - stack.size()*4 + 1) + " to " + 
-				Integer.MAX_VALUE));
+		super("Segmentation Fault: Address = " + Integer.toHexString(address) + 
+				", Global Data: 0 to " + Integer.toHexString(globalData.size()*4) + 
+				", Heap: " + Integer.toHexString(globalData.size()*4) + " to " + 
+				Integer.toHexString(globalData.size()*4 + heap.size()*4) + ", Stack: " + 
+				Integer.toHexString(Integer.MAX_VALUE - stack.size()*4 + 1) + " to " + 
+				Integer.toHexString(Integer.MAX_VALUE + 1));
 	}
 
 }

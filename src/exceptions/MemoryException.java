@@ -5,7 +5,7 @@ package exceptions;
  * @author Nathaniel
  * @version 12-08-2017
  */
-public class MemoryException extends MIPSException {
+public class MemoryException extends ExecutionException {
 
 	private static final long serialVersionUID = 1L;
 

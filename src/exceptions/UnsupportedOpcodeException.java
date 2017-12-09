@@ -1,11 +1,11 @@
 package exceptions;
 
 /**
- * Exception class for problems caused by use of opcodes that are not supported.
+ * Exception class for problems caused by opcodes that are not supported.
  * @author Nathaniel
  * @version 12-08-2017
  */
-public class UnsupportedOpcodeException extends MIPSException {
+public class UnsupportedOpcodeException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

@@ -82,6 +82,11 @@ public class CommandLine implements ScreenObject {
 	public InputStream getInputStream() {
 		return in;
 	}
+	
+	public void printException(Exception e) {
+		print.println("\n******** ERROR ********\n\n" + e.getMessage() + "\n\n"
+				+ "************************\n");
+	}
 
 	@Override
 	public Node getGraphics() {

@@ -53,8 +53,9 @@ public enum FPRegister {
 	 * Finds the FPRegister with the given name.
 	 * @param name the name of the FPRegister.
 	 * @return FPRegister with that name.
+	 * @throws InstructionFormatException 
 	 */
-	public static FPRegister findRegister(String name) {
+	public static FPRegister findRegister(String name) throws InstructionFormatException {
 		for(FPRegister reg : FPRegister.values()) {
 			if(("$f" + reg.regNum).equalsIgnoreCase(name)) return reg;
 		}

@@ -5,7 +5,7 @@ package exceptions;
  * @author Nathaniel
  * @version 12-08-2017
  */
-public class FPRegisterException extends MIPSException {
+public class FPRegisterException extends ExecutionException {
 
 	private static final long serialVersionUID = 1L;
 

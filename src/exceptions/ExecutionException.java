@@ -1,6 +1,11 @@
 package exceptions;
 
-public class ExecutionException extends MIPSException {
+/**
+ * Exception class for problems caused by runtime errors in MIPS Code.
+ * @author Nathaniel
+ * @version 12-08-2017
+ */
+public class ExecutionException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
