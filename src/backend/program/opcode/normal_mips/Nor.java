@@ -15,7 +15,8 @@ public class Nor extends Opcode {
 	public void execute(Instruction insn, Program prog) {
 		prog.getRegFile().write(insn.getR1(), 
 				new Data(~(prog.getRegFile().read(insn.getR2()).getValue() | 
-				prog.getRegFile().read(insn.getR3()).getValue())));
+				prog.getRegFile().read(insn.getR3()).getValue()), 
+						prog.getRegFile().read(insn.getR2()).getDataType()));
 	}
 
 }

@@ -17,8 +17,10 @@ public class Multiply extends Opcode {
 				(long)prog.getRegFile().read(insn.getR2()).getValue();
 		long outLO = Long.rotateLeft(output, 32) >>> 32;
 		long outHI = output >>> 32;
-		prog.getRegFile().writeLO(new Data((int) outLO));
-		prog.getRegFile().writeHI(new Data((int) outHI));
+		prog.getRegFile().writeLO(new Data((int) outLO, 
+				prog.getRegFile().read(insn.getR1()).getDataType()));
+		prog.getRegFile().writeHI(new Data((int) outHI,
+				prog.getRegFile().read(insn.getR1()).getDataType()));
 	}
 
 }

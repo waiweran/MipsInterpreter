@@ -16,7 +16,7 @@ public class SetEqual extends Opcode {
 		prog.getRegFile().write(insn.getR1(), 
 				new Data((prog.getRegFile().read(insn.getR2()).getValue() == 
 				prog.getRegFile().read(insn.getR3()).getValue())?
-				1 : 0, Data.DataType.Integer));
+				1 : 0));
 	}
 
 }

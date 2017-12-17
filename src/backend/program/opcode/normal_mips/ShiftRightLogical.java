@@ -13,10 +13,11 @@ public class ShiftRightLogical extends Opcode {
 
 	@Override
 	public void execute(Instruction insn, Program prog) {
+		Data data = prog.getRegFile().read(insn.getR2() == null? 
+				insn.getR1() : insn.getR2());
 		prog.getRegFile().write(insn.getR1(), 
-				new Data(prog.getRegFile().read(insn.getR2() == null? 
-						insn.getR1() : insn.getR2()).getValue() >>> 
-				insn.getImmed()));
+				new Data(data.getValue() >>> 
+				insn.getImmed(), data.getDataType()));
 	}
 
 }

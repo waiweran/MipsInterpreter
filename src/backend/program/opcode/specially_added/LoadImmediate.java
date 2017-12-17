@@ -14,7 +14,7 @@ public class LoadImmediate extends Opcode {
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		prog.getRegFile().write(insn.getR1(), 
-				new Data(insn.getImmed(), Data.DataType.Integer));
+				new Data(insn.getImmed()));
 	}
 
 }
