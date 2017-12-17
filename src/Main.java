@@ -140,7 +140,7 @@ public class Main extends Application {
 	 */
 	private static void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(), 
-				Data.DataType.Address));
+				Data.DataType.J_Target));
 		prog.getProgramLines().add(new Line("", new Instruction(new LoadImmediate(), 
 				Register.v0, null, null, null, null, null, 10, "")));
 		prog.getProgramLines().add(new Line("", new Instruction(new Syscall(), 
