@@ -13,7 +13,7 @@ public class Instruction {
 	private Opcode op;
 	private Register r1, r2, r3;
 	private FPRegister f1, f2, f3;
-	private int immed;
+	private Integer immed;
 	private String jump;
 	
 	/**
@@ -31,7 +31,7 @@ public class Instruction {
 	 */
 	public Instruction(Opcode opcode, Register reg1, Register reg2, 
 			Register reg3, FPRegister fpReg1, FPRegister fpReg2, 
-			FPRegister fpReg3, int immediate, String target) {
+			FPRegister fpReg3, Integer immediate, String target) {
 		op = opcode;
 		r1 = reg1;
 		r2 = reg2;
@@ -103,7 +103,7 @@ public class Instruction {
 	/**
 	 * @return the immediate argument.
 	 */
-	public int getImmed() {
+	public Integer getImmed() {
 		return immed;
 	}
 	

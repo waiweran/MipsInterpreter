@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import backend.debugger.InsnFormatChecker;
 import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Line;
@@ -31,6 +32,7 @@ import exceptions.UnsupportedDataException;
 public class TextParser {
 	
 	private Program prog;
+	private InsnFormatChecker format;
 	
 	/**
 	 * Initializes the Text Parser.
@@ -41,6 +43,7 @@ public class TextParser {
 	 */
 	public TextParser(File code, Program program) throws FileNotFoundException, ProgramFormatException {
 		prog = program;
+		format = new InsnFormatChecker();
 		readFile(code);
 	}
 	
@@ -226,7 +229,7 @@ public class TextParser {
 		Register[] regs = new Register[3];
 		int fpRegNum = 0;
 		FPRegister[] fpRegs = new FPRegister[3];
-		int immed = 0;
+		Integer immed = null;
 		boolean immedUsed = false;
 		for(String comp : insnSplit) {
 			// If it's a line memory address reference
@@ -312,8 +315,10 @@ public class TextParser {
 			}
 		}
 		else {
-			Line madeLine = new Line(line, new Instruction(opcode, regs[0], 
-					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target));
+			Instruction madeInsn = new Instruction(opcode, regs[0], 
+					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target);
+			format.checkFormat(madeInsn);
+			Line madeLine = new Line(line, madeInsn);
 			prog.getProgramLines().add(madeLine);
 			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, madeLine);
 		}

@@ -8,7 +8,7 @@ import backend.state.Data;
 public class ExclusiveOr extends Opcode {
 
 	public ExclusiveOr() {
-		super("or");
+		super("xor");
 	}
 
 	@Override
