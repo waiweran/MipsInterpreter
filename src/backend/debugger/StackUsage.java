@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
-import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
 import backend.state.RegisterFile;
@@ -17,13 +17,15 @@ import backend.state.RegisterFile;
  */
 public class StackUsage {
 	
+	private RegisterFile registers;
 	private List<Register> saved;
-	private Map<Register, Data> values;
+	private Map<Integer, Stack<Map<Register, Data>>> values;
 
 	/**
 	 * Initializes the Stack usage checker.
 	 */
-	public StackUsage(Program program) {
+	public StackUsage(RegisterFile regs) {
+		registers = regs;
 		saved = new ArrayList<>();
 		initializeSavedRegisters();
 		values = new HashMap<>();
@@ -33,10 +35,15 @@ public class StackUsage {
 	 * Saves state of critical registers to check procedure call
 	 * did not modify them.
 	 */
-	public void startProcedureCallCheck(RegisterFile registers) {
+	public void startProcedureCheck() {
+		HashMap<Register, Data> regVals = new HashMap<>();
 		for(Register reg: saved) {
-			values.put(reg, registers.read(reg));
+			regVals.put(reg, registers.read(reg));
 		}
+		if(!values.containsKey(registers.read(Register.ra).getValue())) {
+			values.put(registers.read(Register.ra).getValue(), new Stack<>());
+		}
+		values.get(registers.read(Register.ra).getValue()).push(regVals);
 	}
 	
 	/**
@@ -44,9 +51,10 @@ public class StackUsage {
 	 * saving and restoring conventions.
 	 * @return true if registers properly restored, false if not.
 	 */
-	public boolean endProcedureCallCheck(RegisterFile registers) {
+	public boolean endProcedureCheck() {
+		Map<Register, Data> vals = values.get(registers.read(Register.ra).getValue()).pop();
 		for(Register reg : saved) {
-			if(!values.get(reg).equals(registers.read(reg))) {
+			if(!vals.get(reg).equals(registers.read(reg))) {
 				return false;
 			}
 		}

@@ -6,13 +6,17 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
+import Terminal.FlagParser;
 import backend.TextParser;
+import backend.debugger.StackUsage;
 import backend.program.Instruction;
 import backend.program.Line;
 import backend.program.Program;
 import backend.program.Register;
 import backend.program.opcode.normal_mips.Jump;
+import backend.program.opcode.normal_mips.JumpRegister;
 import backend.program.opcode.normal_mips.Syscall;
 import backend.program.opcode.specially_added.LoadImmediate;
 import backend.state.Data;
@@ -60,12 +64,18 @@ public class Main extends Application {
 		List<String> arguments = new ArrayList<>();
 		int runs = -1;
 		arguments.addAll(Arrays.asList(args));
-		if(arguments.get(0).equals("-h") || arguments.get(0).equals("--help")) {
+		FlagParser flagparse = new FlagParser(args);
+		if(flagparse.hasFlag("help")) {
 			printHelp();
 			return;
 		}
-		boolean verbose = arguments.get(0).equals("-v") || arguments.get(0).equals("--verbose");
-		if(verbose) arguments.remove(0);
+		boolean verbose = flagparse.hasFlag("verbose");
+		boolean stackCheck = flagparse.hasFlag("stackcheck");
+		for(int i = arguments.size() - 1; i >= 0; i--) {
+			if(arguments.get(i).startsWith("-")){
+				arguments.remove(i);
+			}
+		}
 		File progLoc = new File(arguments.remove(0));
 		if(!arguments.isEmpty() && arguments.get(arguments.size() - 1).matches("\\d+")) {
 			runs = Integer.parseInt(arguments.remove(arguments.size() - 1));
@@ -84,7 +94,9 @@ public class Main extends Application {
 			} catch (ProgramFormatException e) {
 				throw new RuntimeException("Syntax Error: General", e);
 			}
+			StackUsage stackChecker = new StackUsage(prog.getRegFile());
 			setupProgramClose(prog);
+			if(stackCheck) stackChecker.startProcedureCheck();
 			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
 			int lastPC = -1;
 			for(int i = 0; !prog.isDone() && i != runs; i++) {
@@ -94,7 +106,18 @@ public class Main extends Application {
 				lastPC = prog.getPC();
 				if(currentLine.isExecutable()) {
 					try {
-						currentLine.getInstruction().execute(prog);
+						Instruction insn = currentLine.getInstruction();
+						insn.execute(prog);
+						if(stackCheck) {
+							if(insn.getOpcode().getClass().getName().endsWith("AndLink")) {
+								stackChecker.startProcedureCheck();
+							}
+							if(insn.getOpcode() instanceof JumpRegister) {
+								if(!stackChecker.endProcedureCheck()) {
+									System.out.println("Improper Stack Usage Detected");
+								}
+							}
+						}
 					}
 					catch(Exception e) {
 						throw new ExecutionException("Program line " + currentLine + 
@@ -150,18 +173,17 @@ public class Main extends Application {
 	/**
 	 * Prints the Help text.
 	 */
-	private static void printHelp() { //TODO make this a file
-		System.out.println("MIPS I Interpreter\n");
-		System.out.println("See GitHub page for more information\n");
-		System.out.println("Command Line Arguments\n");
-		System.out.println("Flags: -h, -v, --help, --verbose");
-		System.out.println("\t-v, --verbose prints program lines as they execute");
-		System.out.println("Argument 1: program file");
-		System.out.println("Argument 2 (Optional): console input file");
-		System.out.println("Argument 3 (Optional, only available if Argument 2 "
-				+ "present): console output file");
-		System.out.println("Argument 4 (Optional, other arguments not "
-				+ "required): max instructions to execute");
+	private static void printHelp() { 
+		try {
+			Scanner in = new Scanner(new File("README.md"));
+			while(in.hasNextLine()) {
+				System.out.println(in.nextLine());
+			}
+			in.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("See Github page for details");
+		}
+		
 	}
 
 }
