@@ -68,6 +68,7 @@ public class TopMenu implements ScreenObject {
 		Menu dataDisp = new Menu("Data Format");
 		ToggleGroup toggle = new ToggleGroup();
 		RadioMenuItem auto = new RadioMenuItem("Auto");
+		auto.setSelected(true);
 		auto.setOnAction(e -> {
 			gui.getMemory().setDisplayType(DataDisplay.AUTO);
 			gui.getRegisters().setDisplayType(DataDisplay.AUTO);
