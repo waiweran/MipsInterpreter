@@ -39,3 +39,6 @@ Command Line Arguments:
 - Argument 2 (Optional): console input file
 - Argument 3 (Optional, only available if Argument 2 present): console output file
 - Argument 4 (Optional, other arguments not required): max instructions to execute
+
+## Notes
+- Memory is Big-Endian
