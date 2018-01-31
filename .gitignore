@@ -1,6 +1,3 @@
-.DS_Store
-.settings
-.project
-.classpath
-bin
+.settings/
+*.class
 
