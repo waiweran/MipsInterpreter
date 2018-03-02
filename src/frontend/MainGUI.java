@@ -44,6 +44,8 @@ public class MainGUI {
 	private ProgramControls control;
 	private File currentFile;
 	private Stage mainStage;
+	
+	private Program prog;
 
 	public MainGUI(Stage primaryStage) {
 		mainStage = primaryStage;
@@ -80,7 +82,7 @@ public class MainGUI {
 	}
 	
 	public void loadProgram() {
-		Program prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
+		prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
 		if(currentFile != null) {
 			try {
 				new TextParser(currentFile, prog);
@@ -152,6 +154,12 @@ public class MainGUI {
 		currentFile = code;
 	}
 	
+	public File saveFile(String title) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle(title);
+		return fileChooser.showSaveDialog(mainStage);
+	}
+	
 	private void setupProgramClose(Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
 				Data.DataType.J_Target));
@@ -187,6 +195,10 @@ public class MainGUI {
 	
 	public void setFile(File newFile) {
 		currentFile = newFile;
+	}
+	
+	public Program getProgram() {
+		return prog;
 	}
 	
 	public static void setBackground(Region line, Color color) {

@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import backend.assembler.Assembler;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * Top Menu of the MIPS Interpreter GUI.
@@ -30,6 +33,7 @@ public class TopMenu implements ScreenObject {
 	private Menu file;
 	private List<MenuItem> recentDisp;
 	private Menu display;
+	private Menu export;
 
 	/**
 	 * Initializes the Top Menu.
@@ -44,7 +48,9 @@ public class TopMenu implements ScreenObject {
 		makeFileMenu();
 		display = new Menu("Display");
 		makeDisplayMenu();
-		topBar.getMenus().addAll(file, display);
+		export = new Menu("Export");
+		makeExportMenu();
+		topBar.getMenus().addAll(file, display, export);
 	}
 
 	/**
@@ -100,6 +106,25 @@ public class TopMenu implements ScreenObject {
 		str.setToggleGroup(toggle);
 		dataDisp.getItems().addAll(auto, hex, dec, flo, str);
 		display.getItems().add(dataDisp);
+	}
+	
+	private void makeExportMenu() {
+		MenuItem binaryString = new MenuItem("Binary Text File");
+		binaryString.setOnAction(e -> {
+			Assembler assemble = new Assembler(gui.getProgram());
+			File file = gui.saveFile("Save Assembled Code");
+			if(file != null) {
+				try {
+					assemble.assembleProgram(file);
+				}
+				catch (IOException ex) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setHeaderText("Could Not Save");
+					alert.show();
+				}
+			}
+		});
+		export.getItems().add(binaryString);
 	}
 
 	@Override
