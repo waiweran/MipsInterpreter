@@ -90,6 +90,15 @@ public class Program {
 	}
 	
 	/**
+	 * Determines the PC that a jump to a given instruction target string would go to.
+	 * @param reference String target indicating the line to jump to.
+	 * @return the PC that would be jumped to.
+	 */
+	public int getJumpPC(String reference) {
+		return lines.indexOf(insnRefs.get(reference));
+	}
+	
+	/**
 	 * @return the current PC, 
 	 * index of next line to execute in the list of lines.
 	 */

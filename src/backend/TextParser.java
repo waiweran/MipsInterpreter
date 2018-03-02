@@ -78,10 +78,12 @@ public class TextParser {
 		boolean hasInsns = false;
 		while(in.hasNextLine()) {
 			String lineText = in.nextLine();
-			if(lineText.contains(".data")) {
+			String text = lineText;
+			if(lineText.indexOf('#') > 0) text = text.substring(0,  lineText.indexOf('#')); // Ignore Comments
+			if(text.contains(".data")) {
 				insnSect = false;
 			}
-			if(lineText.contains(".text")) {
+			if(text.contains(".text")) {
 				insnSect = true;
 				hasInsns = true;
 				continue;
@@ -107,11 +109,13 @@ public class TextParser {
 		boolean dataSect = false;
 		while(in.hasNextLine()) {
 			String lineText = in.nextLine();
-			if(lineText.contains(".data")) {
+			String text = lineText;
+			if(lineText.indexOf('#') > 0) text = text.substring(0,  lineText.indexOf('#')); // Ignore Comments
+			if(text.contains(".data")) {
 				dataSect = true;
 				continue;
 			}
-			if(lineText.contains(".text")) {
+			if(text.contains(".text")) {
 				dataSect = false;
 			}
 			if(dataSect) makeData(lineText);
