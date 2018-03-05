@@ -34,7 +34,9 @@ public enum Register {
 	s7 (23, "$s7"),
 	t8 (24, "$t8"),
 	t9 (25, "$t9"),
+	gp (28, "$gp"),
 	sp (29, "$sp"),
+	fp (30, "$fp"),
 	ra (31, "$ra");
 	
 	private int regNum;

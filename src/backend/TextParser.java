@@ -310,8 +310,8 @@ public class TextParser {
 			if(!reference.isEmpty() && regNum == 0  && fpRegNum == 0
 					&& !immedUsed && target.isEmpty()) {
 				Line madeLine = new Line(line);
+				prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 				prog.getProgramLines().add(madeLine);
-				prog.getInsnRefs().put(reference, madeLine);
 			}
 			else {
 				prog.getProgramLines().add(new Line(line));
@@ -323,8 +323,8 @@ public class TextParser {
 					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target);
 			format.checkFormat(madeInsn);
 			Line madeLine = new Line(line, madeInsn);
+			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 			prog.getProgramLines().add(madeLine);
-			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, madeLine);
 		}
 	}
 	

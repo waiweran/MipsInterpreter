@@ -14,7 +14,7 @@ public class LoadFloat extends Opcode {
 	public void execute(Instruction insn, Program prog) {
 		prog.getFPRegFile().write(insn.getFPR1(), 
 				prog.getMem().loadWord(insn.getImmed() + 
-				insn.getImmed() + ((insn.getR1() == null)? 
+				((insn.getR1() == null)? 
 				0 : prog.getRegFile().read(insn.getR1()).getValue())));
 	}
 

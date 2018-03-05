@@ -43,14 +43,14 @@ public class InsnFormatChecker {
 		if(insn.getFPR2() != null) numFpArgs++;
 		if(insn.getFPR3() != null) numFpArgs++;
 
-		if(numIntArgs + numGenArgs + numFpArgs > 3) {
-			throw new InstructionFormatException(
-					"Too many arguments in this instruction");
-		}
 		if(numGenArgs > 1) {
 			throw new InstructionFormatException(
 					"Instruction contains 2 immediates.  Can only have 1 immediate");			
 		}		
+		if(numIntArgs + numGenArgs + numFpArgs > 3) {
+			throw new InstructionFormatException(
+					"Too many arguments in this instruction");
+		}
 		if(numFpArgs != 0 && numIntArgs == 0 && numGenArgs != 0) {
 			throw new InstructionFormatException(
 					"FP Instructions, other than load/store, do not take immediates");					
@@ -64,7 +64,7 @@ public class InsnFormatChecker {
 	/**
 	 * Determines the instruction format from the given instruction.
 	 * @param insn the instruction to get the format of.
-	 * @return String describing instruction format (R, I, or J)
+	 * @return String describing instruction format (R, I, or J) and argument type (i or f).
 	 */
 	private String getFormat(Instruction insn) {
 		StringBuilder output = new StringBuilder();

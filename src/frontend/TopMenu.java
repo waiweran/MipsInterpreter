@@ -10,14 +10,15 @@ import java.util.List;
 import java.util.Scanner;
 
 import backend.assembler.Assembler;
+import exceptions.UnsupportedOpcodeException;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * Top Menu of the MIPS Interpreter GUI.
@@ -119,7 +120,13 @@ public class TopMenu implements ScreenObject {
 				}
 				catch (IOException ex) {
 					Alert alert = new Alert(AlertType.ERROR);
-					alert.setHeaderText("Could Not Save");
+					alert.setHeaderText("Could Not Save File");
+					alert.show();
+				}
+				catch (UnsupportedOpcodeException ex) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setHeaderText("Could Not Export");
+					alert.setContentText(ex.getMessage());
 					alert.show();
 				}
 			}

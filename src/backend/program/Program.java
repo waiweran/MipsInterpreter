@@ -24,7 +24,7 @@ public class Program {
 	private FPRegisterFile fpRegs;
 	private Memory mem;
 	private List<Line> lines;
-	private Map<String, Line> insnRefs;
+	private Map<String, Integer> insnRefs;
 	private InputStream in;
 	private PrintStream out;
 	private int pc;
@@ -70,7 +70,7 @@ public class Program {
 	/**
 	 * @return Map containing instruction target pairings for jumps.
 	 */
-	public Map<String, Line> getInsnRefs() {
+	public Map<String, Integer> getInsnRefs() {
 		return insnRefs;
 	}
 	
@@ -86,16 +86,7 @@ public class Program {
 	 * @param reference String target indicating the line to jump to.
 	 */
 	public void jump(String reference) {
-		pc = lines.indexOf(insnRefs.get(reference));
-	}
-	
-	/**
-	 * Determines the PC that a jump to a given instruction target string would go to.
-	 * @param reference String target indicating the line to jump to.
-	 * @return the PC that would be jumped to.
-	 */
-	public int getJumpPC(String reference) {
-		return lines.indexOf(insnRefs.get(reference));
+		pc = insnRefs.get(reference);
 	}
 	
 	/**
