@@ -5,13 +5,8 @@ import java.io.FileNotFoundException;
 
 import backend.TextParser;
 import backend.program.Instruction;
-import backend.program.Line;
 import backend.program.Program;
-import backend.program.Register;
 import backend.program.opcode.normal_mips.Jump;
-import backend.program.opcode.normal_mips.Syscall;
-import backend.program.opcode.specially_added.LoadImmediate;
-import backend.state.Data;
 import exceptions.DataFormatException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
@@ -87,7 +82,7 @@ public class MainGUI {
 			try {
 				new TextParser(currentFile, prog);
 				mainStage.setTitle(currentFile.getName());
-				setupProgramClose(prog);
+				prog.setupProgramClose();
 				new Instruction(new Jump(), null, null, null, null, null, null,
 						0, "main").execute(prog);
 			}
@@ -158,15 +153,6 @@ public class MainGUI {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
 		return fileChooser.showSaveDialog(mainStage);
-	}
-	
-	private void setupProgramClose(Program prog) {
-		prog.getRegFile().write(Register.ra, new Data(prog.getProgramLines().size(),
-				Data.DataType.J_Target));
-		prog.getProgramLines().add(new Line("", new Instruction(new LoadImmediate(), 
-				Register.v0, null, null, null, null, null, 10, "")));
-		prog.getProgramLines().add(new Line("", new Instruction(new Syscall(), 
-				null, null, null, null, null, null, 0, "")));
 	}
 	
 	public CodeDisplay getCode() {

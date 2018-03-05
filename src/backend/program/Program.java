@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import backend.program.opcode.normal_mips.Syscall;
+import backend.program.opcode.specially_added.LoadImmediate;
+import backend.state.Data;
 import backend.state.FPRegisterFile;
 import backend.state.Memory;
 import backend.state.RegisterFile;
@@ -162,6 +165,18 @@ public class Program {
 	 */
 	public boolean isDone() {
 		return done;
+	}
+	
+	/**
+	 * Sets up lines of code added to the end of the program to properly exit.
+	 * Used if program runs off bottom of file or exits via a return Jump Register.
+	 */
+	public void setupProgramClose() {
+		regs.write(Register.ra, new Data(lines.size(), Data.DataType.J_Target));
+		lines.add(new Line("", new Instruction(new LoadImmediate(), 
+				Register.v0, null, null, null, null, null, 10, "")));
+		lines.add(new Line("", new Instruction(new Syscall(), 
+				null, null, null, null, null, null, 0, "")));
 	}
 
 }
