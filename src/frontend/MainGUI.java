@@ -152,6 +152,7 @@ public class MainGUI {
 	public File saveFile(String title) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
+		fileChooser.setInitialFileName(currentFile.getName().replace(".s", ".txt"));
 		return fileChooser.showSaveDialog(mainStage);
 	}
 	

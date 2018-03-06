@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import Terminal.FlagParser;
 import backend.TextParser;
 import backend.debugger.StackUsage;
 import backend.program.Instruction;
@@ -24,6 +23,7 @@ import exceptions.ProgramFormatException;
 import frontend.MainGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import terminal.FlagParser;
 
 /**
  * Main class of MIPS Interpreter.
