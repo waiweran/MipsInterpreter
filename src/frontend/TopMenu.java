@@ -109,6 +109,9 @@ public class TopMenu implements ScreenObject {
 		display.getItems().add(dataDisp);
 	}
 	
+	/**
+	 * Sets up everything under the Export menu.
+	 */
 	private void makeExportMenu() {
 		MenuItem binaryString = new MenuItem("Binary Text File");
 		binaryString.setOnAction(e -> {
@@ -144,6 +147,9 @@ public class TopMenu implements ScreenObject {
 		// do nothing
 	}
 	
+	/**
+	 * Opens the most recent file (on program start).
+	 */
 	public void openMostRecent() {
 		if(!recents.isEmpty()) {
 			gui.setFile(recents.get(0));

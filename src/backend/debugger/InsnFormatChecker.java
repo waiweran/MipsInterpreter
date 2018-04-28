@@ -6,6 +6,11 @@ import backend.program.Instruction;
 import backend.program.opcode.Opcode;
 import exceptions.InstructionFormatException;
 
+/**
+ * Checks that instructions follow the proper format.
+ * @author Nathaniel
+ * @version 01-08-2018
+ */
 public class InsnFormatChecker {
 	
 	private static final ResourceBundle INSN_FORMATS = 

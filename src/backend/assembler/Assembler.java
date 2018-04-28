@@ -14,6 +14,11 @@ import backend.program.Line;
 import backend.program.Program;
 import exceptions.UnsupportedOpcodeException;
 
+/**
+ * Assembles MIPS Code into binary.
+ * @author Nathaniel
+ * @version 03-18-2018
+ */
 public class Assembler {
 
 	private static final ResourceBundle ASSEMBLE_FORMATS = 
@@ -22,12 +27,21 @@ public class Assembler {
 	private Program prog;
 	private Map<Integer, Integer> targets;
 
+	/**
+	 * Initializes the program assembler.
+	 * @param program the program to initialize with.
+	 */
 	public Assembler(Program program) {
 		prog = program;
 		targets = new HashMap<>();
 		mapTargets();
 	}
 
+	/**
+	 * Assembles the program, writing the binary code to the given file.
+	 * @param file The file to write the code to.
+	 * @throws IOException if the file could not be opened.
+	 */
 	public void assembleProgram(File file) throws IOException {
 		FileWriter fw = new FileWriter(file);
 		PrintWriter pw = new PrintWriter(fw);
@@ -44,6 +58,12 @@ public class Assembler {
 		fw.close();
 	}
 
+	/**
+	 * Assembles a single instruction.
+	 * @param insn the instruction to assemble.
+	 * @param insnNum The instruction number in the program (for relative branches).
+	 * @return The binary string of the assembled instruction.
+	 */
 	public String assemble(Instruction insn, int insnNum) {
 		try {
 			StringBuilder output = new StringBuilder();
@@ -94,7 +114,9 @@ public class Assembler {
 		}
 	}
 
-
+	/**
+	 * Maps jump targets to PCs for assembling immediates.
+	 */
 	private void mapTargets() {
 		int insnNum = 0;
 		int lineNum = 0;
@@ -109,6 +131,12 @@ public class Assembler {
 		}
 	}
 
+	/**
+	 * Converts a number into a fixed length binary string.
+	 * @param val The number to convert.
+	 * @param length The length of the output binary string.
+	 * @return the converted binary value.
+	 */
 	private String makeBinaryValue(int val, int length) {
 		StringBuilder output = new StringBuilder();
 		String binaryVal = Integer.toBinaryString(val);

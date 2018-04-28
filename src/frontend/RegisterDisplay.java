@@ -19,6 +19,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * Displays the register contents for debugging.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class RegisterDisplay implements ScreenObject {
 
 	private VBox regs, fpRegs;
@@ -28,6 +33,10 @@ public class RegisterDisplay implements ScreenObject {
 	private Program prog;
 	private DataDisplay displayType;
 	
+	/**
+	 * Initializes the RegisterDisplay.
+	 * @param program the program whose register values should be displayed.
+	 */
 	public RegisterDisplay(Program program) {
 		regs = new VBox();
 		fpRegs = new VBox();
@@ -39,6 +48,9 @@ public class RegisterDisplay implements ScreenObject {
 		initializeFPRegs();
 	}
 	
+	/**
+	 * Initializes the integer register display window.
+	 */
 	private void initializeIntRegs() {
 		MainGUI.setBackground(regs, Color.WHITE);
 		regs.setPadding(new Insets(5, 10, 10, 10));
@@ -72,6 +84,9 @@ public class RegisterDisplay implements ScreenObject {
 		regs.getChildren().add(regLO);
 	}
 	
+	/**
+	 * Initializes the floating point register display window.
+	 */
 	private void initializeFPRegs() {
 		MainGUI.setBackground(fpRegs, Color.WHITE);
 		fpRegs.setPadding(new Insets(5, 10, 10, 10));
@@ -135,6 +150,11 @@ public class RegisterDisplay implements ScreenObject {
 		}
 	}
 	
+	/**
+	 * Converts the give data into a properly displayed String.
+	 * @param input the data to convert.
+	 * @return a String representing the data.
+	 */
 	private String dataToString(Data input) {
 		if(displayType.equals(DataDisplay.AUTO)) return input.toString();
 		if(displayType.equals(DataDisplay.HEX)) return input.toHex();
@@ -143,6 +163,10 @@ public class RegisterDisplay implements ScreenObject {
 		return input.toCharString();
 	}
 	
+	/**
+	 * Sets the format in which the memory contents are displayed.
+	 * @param type the new display format.
+	 */
 	public void setDisplayType(DataDisplay type) {
 		displayType = type;
 		update();

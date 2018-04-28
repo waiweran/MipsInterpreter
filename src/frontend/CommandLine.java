@@ -8,8 +8,16 @@ import java.io.PrintStream;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 
+/**
+ * Holds the command line for interacting with the program.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class CommandLine implements ScreenObject {
 
+	/**
+	 * Defines an OutputStream that prints to the command line text area.
+	 */
 	private class CustomOutputStream extends OutputStream {
 
 		@Override
@@ -22,6 +30,9 @@ public class CommandLine implements ScreenObject {
 		
 	}
 	
+	/**
+	 * Defines an input stream that reads from the command line text area.
+	 */
 	private class CustomInputStream extends InputStream {
 		
 		@Override
@@ -53,6 +64,9 @@ public class CommandLine implements ScreenObject {
 	private PrintStream print;
 	private TextArea cmds;
 	
+	/**
+	 * Initializes the command line.
+	 */
 	public CommandLine() {
 		currentText = new StringBuilder();
 		input = new StringBuilder();
@@ -69,20 +83,34 @@ public class CommandLine implements ScreenObject {
 		
 	}
 	
+	/**
+	 * Clears the command line of both input and output.
+	 */
 	public void clear() {
 		input.setLength(0);
 		currentText.setLength(0);
 		cmds.clear();
 	}
 	
+	/**
+	 * @return the PrintStream that prints to the command line.
+	 */
 	public PrintStream getPrintStream() {
 		return print;
 	}
 	
+	/**
+	 * @return the InputStream that reads from the command line.
+	 */
 	public InputStream getInputStream() {
 		return in;
 	}
 	
+	/**
+	 * Prints an exception to the command line.
+	 * Used for displaying runtime errors caused by misbehaving MIPS.
+	 * @param e the exception to print.
+	 */
 	public void printException(Exception e) {
 		print.println("\n******** ERROR ********\n\n" + e.getMessage() + "\n\n"
 				+ "************************\n");
@@ -96,8 +124,7 @@ public class CommandLine implements ScreenObject {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
 	}
 
 }

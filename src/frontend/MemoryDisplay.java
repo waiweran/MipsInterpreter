@@ -9,12 +9,21 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * Displays the contents of memory for debugging.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class MemoryDisplay implements ScreenObject {
 
 	private VBox memoryArea;
 	private Program prog;
 	private DataDisplay displayType;
 	
+	/**
+	 * Initializes the MemoryDisplay.
+	 * @param program the program whose virtual memory is to be displayed.
+	 */
 	public MemoryDisplay(Program program) {
 		prog = program;
 		memoryArea = new VBox();
@@ -22,6 +31,9 @@ public class MemoryDisplay implements ScreenObject {
 		initialize();
 	}
 	
+	/**
+	 * Iniitalizes the memory display.
+	 */
 	private void initialize() {
 		MainGUI.setBackground(memoryArea, Color.WHITE);
 		memoryArea.getChildren().add(new Text(memoryToString()));
@@ -46,7 +58,9 @@ public class MemoryDisplay implements ScreenObject {
 		((Text)memoryArea.getChildren().get(0)).setText(memoryToString());
 	}
 	
-	
+	/**
+	 * @return The text to display to represent the memory contents onscreen.
+	 */
 	private String memoryToString() {
 		if(displayType.equals(DataDisplay.AUTO)) return prog.getMem().toString();
 		if(displayType.equals(DataDisplay.HEX)) return prog.getMem().toHexString();
@@ -55,6 +69,10 @@ public class MemoryDisplay implements ScreenObject {
 		return prog.getMem().toCharString();
 	}
 	
+	/**
+	 * Sets the format in which the memory contents are displayed.
+	 * @param type the new display format.
+	 */
 	public void setDisplayType(DataDisplay type) {
 		displayType = type;
 		update();

@@ -26,6 +26,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+/**
+ * Runs the main GUI for the MIPS Interpreter.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class MainGUI {
 	
 	public static final double SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
@@ -42,6 +47,10 @@ public class MainGUI {
 	
 	private Program prog;
 
+	/**
+	 * Initializes the main GUI.
+	 * @param primaryStage the stage to initialize the GUI inside.
+	 */
 	public MainGUI(Stage primaryStage) {
 		mainStage = primaryStage;
 		mainStage.setResizable(false);
@@ -57,6 +66,10 @@ public class MainGUI {
 		}
 	}
 
+	/**
+	 * Initializes the GUI components given a program.
+	 * @param program the program to initialize with.
+	 */
 	private void initialize(Program program) {
 		regs = new RegisterDisplay(program);
 		mem = new MemoryDisplay(program);
@@ -76,6 +89,9 @@ public class MainGUI {
 		cmd.clear();
 	}
 	
+	/**
+	 * Loads the current program file into the MIPS Interpreter.
+	 */
 	public void loadProgram() {
 		prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
 		if(currentFile != null) {
@@ -140,6 +156,9 @@ public class MainGUI {
 		else control.unlock();
 	}
 
+	/**
+	 * Opens a MIPS File to interpret.
+	 */
 	public void openFile() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open MIPS File");
@@ -149,6 +168,11 @@ public class MainGUI {
 		currentFile = code;
 	}
 	
+	/**
+	 * Gets a file to save output into.
+	 * @param title the title of the File Chooser.
+	 * @return the File selected by the user.
+	 */
 	public File saveFile(String title) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
@@ -156,38 +180,69 @@ public class MainGUI {
 		return fileChooser.showSaveDialog(mainStage);
 	}
 	
+	/**
+	 * @return the Code Display.
+	 */
 	public CodeDisplay getCode() {
 		return code;
 	}
 	
+	/**
+	 * @return the Register Display.
+	 */
 	public RegisterDisplay getRegisters() {
 		return regs;
 	}
 	
+	/**
+	 * @return the Memory Display.
+	 */
 	public MemoryDisplay getMemory() {
 		return mem;
 	}
 	
+	/**
+	 * @return the Command Line.
+	 */
 	public CommandLine getCommandLine() {
 		return cmd;
 	}
 	
+	/**
+	 * @return the top menu.
+	 */
 	public TopMenu getMenu() {
 		return menu;
 	}
 	
+	/**
+	 * @return the currently loaded MIPS File.
+	 */
 	public File getFile() {
 		return currentFile;
 	}
 	
+	/**
+	 * Sets the currently loaded MIPS File.
+	 * @param newFile the file to set the current file to.
+	 */
 	public void setFile(File newFile) {
 		currentFile = newFile;
 	}
 	
+	/**
+	 * @return the processed Program representing the MIPS File.
+	 */
 	public Program getProgram() {
 		return prog;
 	}
 	
+	/**
+	 * Sets the background of a given JavaFX Region.
+	 * Used to color executing lines of code, among other things.
+	 * @param line the region to set the background of.
+	 * @param color the color to set the background to.
+	 */
 	public static void setBackground(Region line, Color color) {
 		line.setBackground(new Background(new BackgroundFill(color, 
 				new CornerRadii(0.01), new Insets(0, 0, 0, 0))));

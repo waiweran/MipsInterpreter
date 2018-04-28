@@ -15,6 +15,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Holds the controls that set execution parameters for the program.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class ProgramControls implements ScreenObject {
 
 	private HBox controls;
@@ -24,6 +29,11 @@ public class ProgramControls implements ScreenObject {
 	private Button playPause, step, reset;
 	private Slider rate;
 	
+	/**
+	 * Initializes the program controls window.
+	 * @param program the program that will be executing.
+	 * @param mainGui the GUI holding the other program display components.
+	 */
 	public ProgramControls(Program program, MainGUI mainGui) {
 		prog = program;
 		gui = mainGui;
@@ -35,6 +45,9 @@ public class ProgramControls implements ScreenObject {
 		
 	}
 	
+	/**
+	 * Initializes the program controls.  
+	 */
 	private void initialize() {
 		controls.setPadding(new Insets(5, 5, 5, 5));
 		controls.setAlignment(Pos.CENTER_LEFT);
@@ -54,6 +67,10 @@ public class ProgramControls implements ScreenObject {
 		controls.getChildren().addAll(playPause, step, reset, new Text("     Speed:"), rate);
 	}
 	
+	/**
+	 * Plays or pauses the program execution.
+	 * @param True if program playing, false if not.  Determines play or pause functionality.
+	 */
 	private void playPause(boolean isPlaying) {
 		if(isPlaying) {
 			runProg.pause();
@@ -67,6 +84,10 @@ public class ProgramControls implements ScreenObject {
 		}
 	}
 	
+	/**
+	 * Steps the program by 1 instruction.
+	 * Pauses execution if execution playing.
+	 */
 	private void step() {
 		if(prog.isDone()) {
 			playPause(true);
@@ -100,18 +121,28 @@ public class ProgramControls implements ScreenObject {
 		}
 	}
 	
+	/**
+	 * Unlocks the play/pause, reset, and step features.
+	 */
 	public void unlock() {
 		playPause.setDisable(false);
 		step.setDisable(false);
 		reset.setDisable(false);
 	}
 	
+	/**
+	 * Locks the play/pause, reset, and step features.
+	 * Typically used if error is detected in the program.
+	 */
 	public void lock() {
 		playPause.setDisable(true);
 		step.setDisable(true);
 		reset.setDisable(true);
 	}
 	
+	/**
+	 * Updates the animation rate based on the slider position.
+	 */
 	public void updateAnimationRate() {
 		if(rate.getValue() < rate.getMax()) {
 			runProg.setRate(rate.getValue());

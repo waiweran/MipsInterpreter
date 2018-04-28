@@ -15,12 +15,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Holds the area that displays the MIPS Code.
+ * @author Nathaniel
+ * @version 11-08-2017
+ */
 public class CodeDisplay implements ScreenObject {
 	
 	private VBox progDisp;
 	private Map<Line, VBox> lineDisps;
 	private VBox currentHighlight;
 	
+	/**
+	 * Initializes the CodeDisplay.
+	 * @param program the program to display.
+	 */
 	public CodeDisplay(Program program) {
 		progDisp = new VBox(2);
 		progDisp.setPadding(new Insets(10, 10, 0, 2));
@@ -29,6 +38,10 @@ public class CodeDisplay implements ScreenObject {
 		initialize(program.getProgramLines());
 	}
 	
+	/**
+	 * Initializes the display of MIPS code.
+	 * @param lines the program lines to display.
+	 */
 	private void initialize(List<Line> lines) {
 		for(int i = 0; i < lines.size(); i++) {
 			VBox line = new VBox();
@@ -41,6 +54,10 @@ public class CodeDisplay implements ScreenObject {
 		}
 	}
 	
+	/**
+	 * Highlights a given line as currently executing.
+	 * @param line the line to highlight.
+	 */
 	public void executionHighlight(Line line) {
 		if(currentHighlight != null) 
 			MainGUI.setBackground(currentHighlight, Color.WHITE);
@@ -48,6 +65,10 @@ public class CodeDisplay implements ScreenObject {
 		MainGUI.setBackground(currentHighlight, Color.GREENYELLOW);
 	}
 	
+	/**
+	 * Highlights a given line as having an error.
+	 * @param line the line to highlight.
+	 */
 	public void errorHighlight(Line line) {
 		if(currentHighlight != null) 
 			MainGUI.setBackground(currentHighlight, Color.WHITE);
