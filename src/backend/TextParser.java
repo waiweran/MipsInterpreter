@@ -202,8 +202,21 @@ public class TextParser {
 		else if(dataType.equals(".asciiz")) {
 			prog.getMem().addToGlobalData(reference, stringToDataArray(processString(dataVal)));
 		}
-		else if(dataType.equals(".halfword") || dataType.equals(".byte")) {
-			throw new UnsupportedDataException("Data types .halfword and .byte are not supported");
+		else if(dataType.equals(".byte")) {
+			StringBuilder output = new StringBuilder();
+			String[] dataVals = dataVal.split(",");
+			for(int i = 0; i < dataVals.length; i ++) {
+				output.append((char)Integer.parseInt(dataVal.trim()));
+			}
+			ArrayList<Data> outputVals = new ArrayList<>();
+			List<Data> byteVals = stringToDataArray(processString(output.toString()));
+			for(Data byteD : byteVals) {
+				outputVals.add(new Data(byteD.getValue(), Data.DataType.Byte));
+			}
+			prog.getMem().addToGlobalData(reference, outputVals);
+		}
+		else if(dataType.equals(".halfword")) {
+			throw new UnsupportedDataException("Data type .halfword is not supported");
 		}
 		else {
 			throw new DataFormatException("Improper Data Type: " + dataType);
