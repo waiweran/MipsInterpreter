@@ -20,7 +20,7 @@ public class Line {
 	public Line(String lineText, Instruction instruction) {
 		text = lineText;
 		insn = instruction;
-		hex = "********";
+		hex = "--------";
 	}
 	
 	/**
