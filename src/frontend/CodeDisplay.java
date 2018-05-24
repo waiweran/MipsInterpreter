@@ -45,7 +45,9 @@ public class CodeDisplay implements ScreenObject {
 	private void initialize(List<Line> lines) {
 		for(int i = 0; i < lines.size(); i++) {
 			VBox line = new VBox();
-			Text text = new Text("   ".substring((i + "").length())+ i + ":\t" + lines.get(i).getText());
+			Text text = new Text("   ".substring((i + "").length()) + i + ": " 
+					+ lines.get(i).getHex() + "\t"
+					+ lines.get(i).getText());
 			text.setFont(Font.font("Courier", 12));
 			line.getChildren().add(text);
 			MainGUI.setBackground(line, Color.WHITE);

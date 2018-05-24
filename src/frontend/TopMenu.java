@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import backend.assembler.Assembler;
-import exceptions.UnsupportedOpcodeException;
+import exceptions.InstructionFormatException;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -126,7 +126,7 @@ public class TopMenu implements ScreenObject {
 					alert.setHeaderText("Could Not Save File");
 					alert.show();
 				}
-				catch (UnsupportedOpcodeException ex) {
+				catch (InstructionFormatException ex) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setHeaderText("Could Not Export");
 					alert.setContentText(ex.getMessage());

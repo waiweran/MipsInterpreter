@@ -7,7 +7,7 @@ import backend.program.opcode.Opcode;
 public class LoadDouble extends Opcode {
 
 	public LoadDouble() {
-		super("ldc1");
+		super("l.d");
 	}
 
 	@Override

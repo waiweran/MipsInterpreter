@@ -113,5 +113,18 @@ public class Instruction {
 	public String getTarget() {
 		return jump;
 	}
+	
+	public String makeUsedList() {
+		StringBuilder output = new StringBuilder();
+		if(r1 != null) output.append("reg1 ");
+		if(r2 != null) output.append("reg2 ");
+		if(r3 != null) output.append("reg3 ");
+		if(f1 != null) output.append("fpr1 ");
+		if(f2 != null) output.append("fpr2 ");
+		if(f3 != null) output.append("fpr3 ");
+		if(immed != null) output.append("immediate ");
+		if(jump != null) output.append("jump_target ");
+		return output.toString().trim();
+	}
 
 }

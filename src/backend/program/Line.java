@@ -10,6 +10,7 @@ public class Line {
 	
 	private Instruction insn;
 	private String text;
+	private String hex;
 	
 	/**
 	 * Initializes a new line in the program, with an instruction.
@@ -19,6 +20,7 @@ public class Line {
 	public Line(String lineText, Instruction instruction) {
 		text = lineText;
 		insn = instruction;
+		hex = "********";
 	}
 	
 	/**
@@ -26,8 +28,7 @@ public class Line {
 	 * @param lineText the String representation of the line.
 	 */
 	public Line(String lineText) {
-		text = lineText;
-		insn = null;
+		this(lineText, null);
 	}
 	
 	/**
@@ -49,6 +50,21 @@ public class Line {
 	 */
 	public Instruction getInstruction() {
 		return insn;
+	}
+	
+	/**
+	 * Sets the assembled hex representation of this line.
+	 * @param hexText
+	 */
+	public void setHex(String hexText) {
+		hex = hexText;
+	}
+	
+	/**
+	 * @return the assembled hex representation of this line.
+	 */
+	public String getHex() {
+		return hex;
 	}
 	
 	@Override

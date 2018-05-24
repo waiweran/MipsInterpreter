@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import backend.program.opcode.Syscall;
-import backend.program.opcode.pseudoinstruction.LoadImmediate;
+import backend.program.opcode.arithmetic.AddImmediate;
+import backend.program.opcode.jumpbranch.Jump;
 import backend.state.Data;
 import backend.state.FPRegisterFile;
 import backend.state.Memory;
@@ -82,6 +83,14 @@ public class Program {
 	 */
 	public List<Line> getProgramLines() {
 		return lines;
+	}
+	
+	/**
+	 * Starts program execution.
+	 */
+	public void start() {
+		new Instruction(new Jump(), null, null, null, null, null, null,
+				null, "main").execute(this);
 	}
 		
 	/**
@@ -173,10 +182,10 @@ public class Program {
 	 */
 	public void setupProgramClose() {
 		regs.write(Register.ra, new Data(lines.size(), Data.DataType.J_Target));
-		lines.add(new Line("", new Instruction(new LoadImmediate(), 
-				Register.v0, null, null, null, null, null, 10, "")));
+		lines.add(new Line("", new Instruction(new AddImmediate(), 
+				Register.v0, Register.zero, null, null, null, null, 10, null)));
 		lines.add(new Line("", new Instruction(new Syscall(), 
-				null, null, null, null, null, null, 0, "")));
+				null, null, null, null, null, null, null, null)));
 	}
 
 }

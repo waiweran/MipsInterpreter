@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import backend.TextParser;
-import backend.program.Instruction;
+import backend.assembler.Assembler;
+import backend.program.Line;
 import backend.program.Program;
-import backend.program.opcode.jumpbranch.Jump;
 import exceptions.DataFormatException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
@@ -99,8 +99,8 @@ public class MainGUI {
 				new TextParser(currentFile, prog);
 				mainStage.setTitle(currentFile.getName());
 				prog.setupProgramClose();
-				new Instruction(new Jump(), null, null, null, null, null, null,
-						0, "main").execute(prog);
+				assembleProgram();
+				prog.start();
 			}
 			catch(FileNotFoundException e) {
 				currentFile = null;
@@ -154,6 +154,34 @@ public class MainGUI {
 		initialize(prog);
 		if(currentFile == null) control.lock();
 		else control.unlock();
+	}
+
+	/**
+	 * Assembles the program.
+	 */
+	private void assembleProgram() {
+		Assembler assemble = new Assembler(prog);
+		int insnNum = 0;
+		for(Line l : prog.getProgramLines()) {
+			try {
+				if(l.isExecutable()) 
+					l.setHex(assemble.assemble(l.getInstruction(), insnNum++));
+			}
+			catch(InstructionFormatException e) {
+				System.out.println("Failure on line " + l);
+				e.printStackTrace();
+				initialize(prog);
+				control.lock();
+				getCommandLine().printException(e);
+				getCode().errorHighlight(l);
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setHeaderText("Syntax Error: Instruction Section");
+				alert.setContentText(e.getMessage());
+				alert.show();
+				throw new RuntimeException("Syntax Error: Instruction Section, "
+						+ "line " + l, e);
+			}
+		}
 	}
 
 	/**

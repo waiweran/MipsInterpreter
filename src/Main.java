@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import backend.TextParser;
+import backend.assembler.Assembler;
 import backend.debugger.StackUsage;
 import backend.program.Instruction;
 import backend.program.Line;
 import backend.program.Program;
-import backend.program.opcode.jumpbranch.Jump;
 import backend.program.opcode.jumpbranch.JumpRegister;
 import exceptions.DataFormatException;
 import exceptions.ExecutionException;
@@ -56,7 +56,7 @@ public class Main extends Application {
 	 * Runs the MIPS Interpreter in the command line.
 	 * @param args command line arguments specifying code file, I/O, run configurations.
 	 */
-	public static void runFromTerminal(String[] args) {
+	private static void runFromTerminal(String[] args) {
 		List<String> arguments = new ArrayList<>();
 		int runs = -1;
 		arguments.addAll(Arrays.asList(args));
@@ -92,8 +92,19 @@ public class Main extends Application {
 			}
 			StackUsage stackChecker = new StackUsage(prog.getRegFile());
 			prog.setupProgramClose();
+			Assembler assemble = new Assembler(prog);
+			int insnNum = 0;
+			for(Line l : prog.getProgramLines()) {
+				try {
+					if(l.isExecutable()) assemble.assemble(l.getInstruction(), insnNum++);
+				}
+				catch(InstructionFormatException e) {
+					throw new RuntimeException("Syntax Error: Instruction Section, "
+							+ "line " + l, e);
+				}
+			}
 			if(stackCheck) stackChecker.startProcedureCheck();
-			new Instruction(new Jump(), null, null, null, null, null, null, 0, "main").execute(prog);
+			prog.start();
 			int lastPC = -1;
 			for(int i = 0; !prog.isDone() && i != runs; i++) {
 				Line currentLine = prog.getNextLine();

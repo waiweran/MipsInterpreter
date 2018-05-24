@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import backend.debugger.InsnFormatChecker;
 import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Line;
@@ -32,7 +31,6 @@ import exceptions.UnsupportedDataException;
 public class TextParser {
 	
 	private Program prog;
-	private InsnFormatChecker format;
 	
 	/**
 	 * Initializes the Text Parser.
@@ -43,7 +41,6 @@ public class TextParser {
 	 */
 	public TextParser(File code, Program program) throws FileNotFoundException, ProgramFormatException {
 		prog = program;
-		format = new InsnFormatChecker();
 		readFile(code);
 	}
 	
@@ -133,7 +130,7 @@ public class TextParser {
 		for(Line l : prog.getProgramLines()) {
 			if(l.isExecutable()) {
 				String target = l.getInstruction().getTarget();
-				if(!target.isEmpty() && !prog.getInsnRefs().containsKey(target)) {
+				if(target != null && !prog.getInsnRefs().containsKey(target)) {
 					throw new JumpTargetException("Improper Jump Target Detected: " + l.toString());
 				}
 			}
@@ -215,8 +212,8 @@ public class TextParser {
 			}
 			prog.getMem().addToGlobalData(reference, outputVals);
 		}
-		else if(dataType.equals(".halfword")) {
-			throw new UnsupportedDataException("Data type .halfword is not supported");
+		else if(dataType.equals(".halfword") || dataType.equals(".half")) {
+			throw new UnsupportedDataException("Data types .half, .halfword are not supported");
 		}
 		else {
 			throw new DataFormatException("Improper Data Type: " + dataType);
@@ -240,7 +237,7 @@ public class TextParser {
 		}
 		List<String> insnSplit = Arrays.asList(text.split("\\s+")); // Split around remaining whitespace
 		String reference = "";
-		String target = "";
+		String target = null;
 		Opcode opcode = null;
 		int regNum = 0;
 		Register[] regs = new Register[3];
@@ -308,7 +305,7 @@ public class TextParser {
 				}
 				catch(NumberFormatException e) {	
 					// Only thing left is jump target
-					if(target.isEmpty()) {
+					if(target == null) {
 						target = comp;
 					}
 					else {
@@ -321,7 +318,7 @@ public class TextParser {
 		}
 		if(opcode == null) {
 			if(!reference.isEmpty() && regNum == 0  && fpRegNum == 0
-					&& !immedUsed && target.isEmpty()) {
+					&& !immedUsed && target == null) {
 				Line madeLine = new Line(line);
 				prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 				prog.getProgramLines().add(madeLine);
@@ -334,7 +331,6 @@ public class TextParser {
 		else {
 			Instruction madeInsn = new Instruction(opcode, regs[0], 
 					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target);
-			format.checkFormat(madeInsn);
 			Line madeLine = new Line(line, madeInsn);
 			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 			prog.getProgramLines().add(madeLine);
