@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import backend.program.opcode.normal_mips.Syscall;
-import backend.program.opcode.specially_added.LoadImmediate;
+import backend.program.opcode.Syscall;
+import backend.program.opcode.pseudoinstruction.LoadImmediate;
 import backend.state.Data;
 import backend.state.FPRegisterFile;
 import backend.state.Memory;

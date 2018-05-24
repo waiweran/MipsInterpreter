@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import backend.TextParser;
 import backend.program.Instruction;
 import backend.program.Program;
-import backend.program.opcode.normal_mips.Jump;
+import backend.program.opcode.jumpbranch.Jump;
 import exceptions.DataFormatException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
