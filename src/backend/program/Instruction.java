@@ -1,6 +1,8 @@
 package backend.program;
 
+import backend.debugger.CallingConventionChecker;
 import backend.program.opcode.Opcode;
+import backend.program.opcode.jumpbranch.JumpRegister;
 import exceptions.InstructionFormatException;
 
 /**
@@ -15,6 +17,7 @@ public class Instruction {
 	private FPRegister f1, f2, f3;
 	private Integer immed;
 	private String jump;
+	private CallingConventionChecker call;
 	
 	/**
 	 * Constructs an instruction.
@@ -49,6 +52,10 @@ public class Instruction {
 	 */
 	public void execute(Program program) {
 		op.execute(this, program);
+		if(call != null) {
+			if(op.getClass().getName().endsWith("AndLink")) call.startProcedure();
+			if(op instanceof JumpRegister) call.endProcedure();
+		}
 	}
 	
 	/**
@@ -114,6 +121,9 @@ public class Instruction {
 		return jump;
 	}
 	
+	/**
+	 * @return a list of all components used by the current instruction.
+	 */
 	public String makeUsedList() {
 		StringBuilder output = new StringBuilder();
 		if(r1 != null) output.append("reg1 ");
@@ -126,5 +136,15 @@ public class Instruction {
 		if(jump != null) output.append("jump_target ");
 		return output.toString().trim();
 	}
+	
+	/**
+	 * Sets the calling conventions checker.
+	 * Initializes process of checking calling conventions.
+	 * @param checker
+	 */
+	public void checkCallingConventions(CallingConventionChecker checker) {
+		call = checker;
+	}
+
 
 }

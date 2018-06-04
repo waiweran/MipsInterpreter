@@ -2,6 +2,7 @@ package backend.state;
 import java.util.HashMap;
 import java.util.Map;
 
+import backend.debugger.CallingConventionChecker;
 import backend.program.Register;
 
 /**
@@ -13,6 +14,7 @@ public class RegisterFile {
 	
 	private Map<Register, Data> vals;
 	private Data lo, hi;
+	private CallingConventionChecker call;
 	
 	/**
 	 * Initializes the register file.
@@ -38,6 +40,7 @@ public class RegisterFile {
 		if(!write.equals(Register.zero)) {
 			vals.put(write, value);
 		}
+		if(call != null) call.writeReg(write);
 	}
 	
 	/**
@@ -46,6 +49,7 @@ public class RegisterFile {
 	 * @return the value in this register.
 	 */
 	public Data read(Register read) {
+		if(call != null) call.readReg(read);
 		return vals.get(read);
 	}
 	
@@ -77,6 +81,15 @@ public class RegisterFile {
 	 */
 	public Data readHI() {
 		return hi;
+	}
+	
+	/**
+	 * Sets the calling conventions checker.
+	 * Initializes process of checking calling conventions.
+	 * @param checker
+	 */
+	public void checkCallingConventions(CallingConventionChecker checker) {
+		call = checker;
 	}
 
 }

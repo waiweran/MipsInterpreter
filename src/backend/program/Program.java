@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import backend.debugger.CallingConventionChecker;
 import backend.program.opcode.Syscall;
 import backend.program.opcode.arithmetic.AddImmediate;
 import backend.program.opcode.jumpbranch.Jump;
@@ -186,6 +187,19 @@ public class Program {
 				Register.v0, Register.zero, null, null, null, null, 10, null)));
 		lines.add(new Line("", new Instruction(new Syscall(), 
 				null, null, null, null, null, null, null, null)));
+	}
+	
+	/**
+	 * Sets the calling conventions checker for current instructions 
+	 * and the register file.  Does not set checker for instructions added later.
+	 * Initializes process of checking calling conventions.
+	 * @param checker
+	 */
+	public void checkCallingConventions(CallingConventionChecker checker) {
+		regs.checkCallingConventions(checker);
+		for(Line l : lines) {
+			if(l.isExecutable()) l.getInstruction().checkCallingConventions(checker);
+		}
 	}
 
 }

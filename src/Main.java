@@ -10,11 +10,10 @@ import java.util.Scanner;
 
 import backend.TextParser;
 import backend.assembler.Assembler;
-import backend.debugger.StackUsage;
+import backend.debugger.CallingConventionChecker;
 import backend.program.Instruction;
 import backend.program.Line;
 import backend.program.Program;
-import backend.program.opcode.jumpbranch.JumpRegister;
 import exceptions.DataFormatException;
 import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
@@ -66,7 +65,7 @@ public class Main extends Application {
 			return;
 		}
 		boolean verbose = flagparse.hasFlag("verbose");
-		boolean stackCheck = flagparse.hasFlag("stackcheck");
+		boolean checkCalls = flagparse.hasFlag("stackcheck");
 		for(int i = arguments.size() - 1; i >= 0; i--) {
 			if(arguments.get(i).startsWith("-")){
 				arguments.remove(i);
@@ -90,7 +89,6 @@ public class Main extends Application {
 			} catch (ProgramFormatException e) {
 				throw new RuntimeException("Syntax Error: General", e);
 			}
-			StackUsage stackChecker = new StackUsage(prog.getRegFile());
 			prog.setupProgramClose();
 			Assembler assemble = new Assembler(prog);
 			int insnNum = 0;
@@ -103,7 +101,12 @@ public class Main extends Application {
 							+ "line " + l, e);
 				}
 			}
-			if(stackCheck) stackChecker.startProcedureCheck();
+			CallingConventionChecker callChecker = 
+					new CallingConventionChecker(prog.getRegFile());
+			if(checkCalls) {
+				prog.checkCallingConventions(callChecker);
+				callChecker.startProcedure();
+			}
 			prog.start();
 			int lastPC = -1;
 			for(int i = 0; !prog.isDone() && i != runs; i++) {
@@ -115,22 +118,16 @@ public class Main extends Application {
 					try {
 						Instruction insn = currentLine.getInstruction();
 						insn.execute(prog);
-						if(stackCheck) {
-							if(insn.getOpcode().getClass().getName().endsWith("AndLink")) {
-								stackChecker.startProcedureCheck();
-							}
-							if(insn.getOpcode() instanceof JumpRegister) {
-								if(!stackChecker.endProcedureCheck()) {
-									System.out.println("Improper Stack Usage Detected");
-								}
-							}
-						}
 					}
 					catch(Exception e) {
 						throw new ExecutionException("Program line " + currentLine + 
 								" caused exception", e);
 					}
 				}
+			}
+			if(checkCalls) {
+				System.out.println("Found " + callChecker.getNumViolations() 
+						+ " violations of calling conventions.");
 			}
 		} catch(FileNotFoundException e) {
 			throw new RuntimeException("Program File not found", e);
