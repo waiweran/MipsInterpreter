@@ -229,7 +229,7 @@ public class TextParser {
 		OpcodeFactory opFactory = new OpcodeFactory();
 		String text = line;
 		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
-		if(text.startsWith(".align")) return; // Skip alignment commands
+		if(text.startsWith(".")) return; // Skip assembler commands
 		text = text.replaceAll("[,()]", " "); // Remove unnecessary characters
 		text = text.trim(); // Remove leading and trailing whitespace
 		if(text.length() == 0) {
@@ -305,14 +305,27 @@ public class TextParser {
 					immedUsed = true;
 				}
 				catch(NumberFormatException e) {	
-					// Only thing left is jump target
-					if(target == null) {
-						target = comp;
+					
+					// If it's a float immediate
+					try {
+						immed = Float.floatToIntBits(Float.parseFloat(comp));
+						if(immedUsed) {
+							prog.getProgramLines().add(new Line(line));
+							throw new InstructionFormatException("Only one immediate allowed");
+						}
+						immedUsed = true;
 					}
-					else {
-						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException(
-								"Unrecognized Instruction Component: " + comp);
+					catch(NumberFormatException e2) {	
+
+						// Only thing left is jump target
+						if(target == null) {
+							target = comp;
+						}
+						else {
+							prog.getProgramLines().add(new Line(line));
+							throw new InstructionFormatException(
+									"Unrecognized Instruction Component: " + comp);
+						}
 					}
 				}
 			}	
