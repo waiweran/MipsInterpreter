@@ -20,7 +20,7 @@ public class CallingConventionChecker {
 	private RegisterFile registers;
 	private int numViolations;
 	private List<Register> saved, unsaved, unknown, arguments, returns;
-	private Map<Integer, Stack<Map<Register, Data>>> values;
+	private Stack<Map<Register, Data>> values;
 
 	/**
 	 * Initializes the Stack usage checker.
@@ -28,8 +28,10 @@ public class CallingConventionChecker {
 	public CallingConventionChecker(RegisterFile regs) {
 		registers = regs;
 		numViolations = 0;
-		initializeSavedRegisters();
-		values = new HashMap<>();
+		initializeRegisterLists();
+		values = new Stack<>();
+		values.push(new HashMap<>());
+		values.get(0).put(Register.ra, registers.read(Register.ra));
 	}
 	
 	/**
@@ -41,10 +43,7 @@ public class CallingConventionChecker {
 		for(Register reg: saved) {
 			regVals.put(reg, registers.read(reg));
 		}
-		if(!values.containsKey(registers.read(Register.ra).getValue())) {
-			values.put(registers.read(Register.ra).getValue(), new Stack<>());
-		}
-		values.get(registers.read(Register.ra).getValue()).push(regVals);
+		values.push(regVals);
 		unknown.addAll(unsaved);
 		unknown.addAll(returns);
 	}
@@ -55,9 +54,9 @@ public class CallingConventionChecker {
 	 */
 	public boolean endProcedure() {
 		boolean fine = true;
-		Map<Register, Data> vals = values.get(registers.read(Register.ra).getValue()).pop();
+		Map<Register, Data> vals = values.pop();
 		for(Register reg : saved) {
-			if(!vals.get(reg).equals(registers.read(reg))) {
+			if(vals.containsKey(reg) && !vals.get(reg).equals(registers.read(reg))) {
 				numViolations++;
 				fine = false;
 			}
@@ -100,7 +99,9 @@ public class CallingConventionChecker {
 	/**
 	 * Initializes lists of registers.
 	 */
-	private void initializeSavedRegisters() {
+	private void initializeRegisterLists() {
+		unknown = new ArrayList<>();
+		
 		saved = new ArrayList<>();
 		saved.add(Register.s0);
 		saved.add(Register.s1);

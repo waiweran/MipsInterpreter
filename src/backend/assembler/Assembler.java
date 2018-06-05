@@ -161,7 +161,7 @@ public class Assembler {
 			}
 		}
 		catch(Exception e) {
-			throw new InstructionFormatException("Instruction " + insn.toString() 
+			throw new InstructionFormatException("Instruction " + insn.getOpcode().getName()
 			+ " missing a value", e);
 		}
 		if(output.toString().equals("UNSUPPORTED")) return output.toString();

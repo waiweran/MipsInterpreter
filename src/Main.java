@@ -58,7 +58,7 @@ public class Main {
 			return;
 		}
 		boolean verbose = flagparse.hasFlag("verbose");
-		boolean checkCalls = flagparse.hasFlag("stackcheck");
+		boolean checkCalls = flagparse.hasFlag("callcheck");
 		for(int i = arguments.size() - 1; i >= 0; i--) {
 			if(arguments.get(i).startsWith("-")){
 				arguments.remove(i);
@@ -98,7 +98,6 @@ public class Main {
 					new CallingConventionChecker(prog.getRegFile());
 			if(checkCalls) {
 				prog.checkCallingConventions(callChecker);
-				callChecker.startProcedure();
 			}
 			prog.start();
 			int lastPC = -1;
@@ -119,7 +118,7 @@ public class Main {
 				}
 			}
 			if(checkCalls) {
-				System.out.println("Found " + callChecker.getNumViolations() 
+				System.out.println("\n\nFound " + callChecker.getNumViolations() 
 						+ " violations of calling conventions.");
 			}
 		} catch(FileNotFoundException e) {
