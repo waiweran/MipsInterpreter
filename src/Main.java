@@ -19,9 +19,7 @@ import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
 import exceptions.JumpTargetException;
 import exceptions.ProgramFormatException;
-import frontend.MainGUI;
-import javafx.application.Application;
-import javafx.stage.Stage;
+import frontend.GUIStarter;
 import terminal.FlagParser;
 
 /**
@@ -30,7 +28,7 @@ import terminal.FlagParser;
  * @author Nathaniel
  * @version 11-17-2017
  */
-public class Main extends Application {
+public class Main {
 
 	/**
 	 * Entry point for the MIPS Interpreter.
@@ -39,16 +37,11 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		if(args.length == 0) {
-			launch(args);
+			GUIStarter.runGUI(args);
 		}
 		else {
 			runFromTerminal(args);
 		}
-	}
-	
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		new MainGUI(primaryStage);
 	}
 	
 	/**

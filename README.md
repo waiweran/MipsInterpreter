@@ -33,10 +33,10 @@ Starts if program run with no command line arguments.
 ## Terminal Interface
 
 Command Line Arguments:
-- Flags: -h, -v, -s, --help, --verbose, --stackcheck
+- Flags: -h, -v, -c, --help, --verbose, --callcheck
 	- -h, --help prints help message
 	- -v, --verbose prints program lines as they execute
-	- -s, --stackcheck checks procedure calls for register saving conventions
+	- -c, --callcheck checks procedure calls for register saving conventions
 - Argument 1: program file
 - Argument 2 (Optional): console input file
 - Argument 3 (Optional, only available if Argument 2 present): console output file

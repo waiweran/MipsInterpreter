@@ -81,7 +81,7 @@ public class FlagParser {
 	private void listFlags() {
 		possibleFlags.add(new Flag("help", 'h'));
 		possibleFlags.add(new Flag("verbose", 'v'));
-		possibleFlags.add(new Flag("stackcheck", 's'));
+		possibleFlags.add(new Flag("callcheck", 'c'));
 	}
 	
 	/**
