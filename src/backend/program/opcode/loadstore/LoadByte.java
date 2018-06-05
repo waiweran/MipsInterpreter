@@ -15,7 +15,7 @@ public class LoadByte extends Opcode {
 		prog.getRegFile().write(insn.getR1(), 
 				prog.getMem().loadByte(insn.getImmed() + 
 				((insn.getR2() == null)? 0 : 
-				prog.getRegFile().read(insn.getR2()).getValue())));
+				prog.getRegFile().read(insn.getR2()).getValue()), true));
 	}
 
 }

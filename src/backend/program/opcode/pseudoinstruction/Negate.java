@@ -5,10 +5,10 @@ import backend.program.Program;
 import backend.program.opcode.Opcode;
 import backend.state.Data;
 
-public class NegateUnsigned extends Opcode {
+public class Negate extends Opcode {
 
-	public NegateUnsigned() {
-		super("negu");
+	public Negate() {
+		super("neg");
 	}
 
 	@Override

@@ -144,7 +144,7 @@ public class TextParser {
 	 */
 	private void makeData(String line) throws DataFormatException {
 		String text = line;
-		if(line.indexOf('#') > 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
+		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
 		text = text.trim(); // Remove leading and trailing whitespace
 		if(text.startsWith(".align")) return; // Skip alignment commands
 		if(text.isEmpty()) return; // Skip empty lines
@@ -229,6 +229,7 @@ public class TextParser {
 		OpcodeFactory opFactory = new OpcodeFactory();
 		String text = line;
 		if(line.indexOf('#') >= 0) text = text.substring(0,  line.indexOf('#')); // Remove Comments
+		if(text.startsWith(".align")) return; // Skip alignment commands
 		text = text.replaceAll("[,()]", " "); // Remove unnecessary characters
 		text = text.trim(); // Remove leading and trailing whitespace
 		if(text.length() == 0) {

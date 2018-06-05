@@ -175,9 +175,11 @@ public class Memory {
 	 * @param address the memory address.
 	 * @return Data holding the byte at that address.
 	 */
-	public Data loadByte(int address) {
+	public Data loadByte(int address, boolean signed) {
 		Data word = loadWord(address - (address % 4));
-		int val = (word.getValue() << 8*(address % 4)) >>> 24;
+		int val;
+		if(signed) val = (word.getValue() << 8*(address % 4)) >> 24;
+		else val = (word.getValue() << 8*(address % 4)) >>> 24;
 		return new Data(val, Data.DataType.Byte);
 	}
 	
