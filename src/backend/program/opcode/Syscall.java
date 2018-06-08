@@ -2,7 +2,7 @@ package backend.program.opcode;
 
 import java.util.List;
 
-import backend.TextParser;
+import backend.parser.DataParser;
 import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Program;
@@ -34,7 +34,7 @@ public class Syscall extends Opcode {
 		// print string
 		else if(type == 4) {
 			int address = prog.getRegFile().read(Register.a0).getValue();
-			String out = TextParser.dataArrayToString(prog.getMem().loadArray(address));
+			String out = DataParser.dataArrayToString(prog.getMem().loadArray(address));
 			prog.getOutput().print(out);
 		}
 		// read int
@@ -80,7 +80,7 @@ public class Syscall extends Opcode {
 				if(inputString.length() >= length) {
 					inputString = inputString.substring(0, length);
 				}
-				List<Data> in = TextParser.stringToDataArray(inputString);
+				List<Data> in = DataParser.stringToDataArray(inputString);
 				prog.getMem().storeArray(address, in);
 			}
 			// If input not ready, stall

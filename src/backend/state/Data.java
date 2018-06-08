@@ -3,7 +3,7 @@ package backend.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.TextParser;
+import backend.parser.DataParser;
 
 /**
  * Stores a single word-length data value in register files or memory.
@@ -105,7 +105,7 @@ public class Data {
 		List<Data> string = new ArrayList<Data>();
 		string.add(this);
 		string.add(new Data());
-		return TextParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
+		return DataParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
 	}
 	
 	/**

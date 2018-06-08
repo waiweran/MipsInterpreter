@@ -3,8 +3,8 @@ package frontend;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import backend.TextParser;
 import backend.assembler.Assembler;
+import backend.parser.TextParser;
 import backend.program.Line;
 import backend.program.Program;
 import exceptions.DataFormatException;

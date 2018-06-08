@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import backend.TextParser;
 import backend.assembler.Assembler;
 import backend.debugger.CallingConventionChecker;
+import backend.parser.TextParser;
 import backend.program.Instruction;
 import backend.program.Line;
 import backend.program.Program;

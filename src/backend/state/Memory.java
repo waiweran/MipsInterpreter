@@ -67,14 +67,10 @@ public class Memory {
 	}
 	
 	/**
-	 * Adds an item to global data.
-	 * @param reference the String referencing the global data address.
+	 * Adds values to global data.
 	 * @param values the Data items to add to global data.
-	 * @throws DataFormatException 
 	 */
-	public void addToGlobalData(String reference, List<Data> values) throws DataFormatException {
-		if(dataRefs.containsKey(reference)) throw new DataFormatException("Memory address reference \""
-				+ reference + "\" already used");
+	public void addToGlobalData(List<Data> values) {
 		List<GlobalDataValue> writeVals = new ArrayList<>();
 		for(Data val : values) {
 			if(val.getDataType().equals(Data.DataType.Space)) {
@@ -84,8 +80,19 @@ public class Memory {
 				writeVals.add(new GlobalDataValue(val, true));
 			}
 		}
-		dataRefs.put(reference, globalData.size()*4);
 		globalData.addAll(writeVals);
+	}
+	
+	/**
+	 * Adds a global data reference label.
+	 * @param reference the String referencing the global data address.
+	 * @throws DataFormatException if the reference already exists.
+	 */
+	public void addDataReference(String reference) throws DataFormatException {
+		if(dataRefs.containsKey(reference)) 
+			throw new DataFormatException("Memory address reference \""
+				+ reference + "\" already used");
+		dataRefs.put(reference, globalData.size()*4);
 	}
 	
 	/**

@@ -2,21 +2,12 @@
 
 Interpreter for MIPS I Assembly Code
 
-Does not implement unsigned instructions
+Does not implement exception handling
 
-Implements instructions listed here:
-<http://www.mrc.uidaho.edu/mrc/people/jff/digital/MIPSir.html>
-- Excludes all unsigned operations listed
-
-Implements Floating Point Coprocessor with limited functionality
-- Add, Sub, Mult, Div (Float and Double)
-- Load, Store (Float and Double)
-- Type Conversion (Int, Float, Double)
-- Comparisons (Float and Double)
-- Branching based on comparison value
-
-Uses program format and Syscall conventions listed here:
-<http://logos.cs.uic.edu/366/notes/mips%20quick%20tutorial.htm>
+Implements most instructions listed here:
+<http://spimsimulator.sourceforge.net/HP_AppA.pdf>
+- Most unimplemented instructions are pseudo-instructions.
+- Does not implement exceptions or coprocessor 0.
 
 Supported Data Types:
 - .space
