@@ -140,22 +140,29 @@ public class Assembler {
 				else if(s.startsWith("immediate")) {
 					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
 					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					output.append(makeBinaryValue(insn.getImmed(), start, end));
-					used.append("immediate ");
+					if(insn.getImmed() == null && insn.getLabel() != null 
+							&& prog.getMem().isDataReference(insn.getLabel())) {
+						output.append(makeBinaryValue(prog.getMem().getMemoryAddress(insn.getLabel()), start, end));
+						used.append("label ");
+					}
+					else {
+						output.append(makeBinaryValue(insn.getImmed(), start, end));
+						used.append("immediate ");
+					}
 				}
 				else if(s.startsWith("target_absolute")) {
 					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
 					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = targets.get(prog.getInsnRefs().get(insn.getTarget()));
+					int targetPC = targets.get(prog.getInsnRefs().get(insn.getLabel()));
 					output.append(makeBinaryValue(targetPC, start, end));
-					used.append("jump_target ");
+					used.append("label ");
 				}
 				else if(s.startsWith("target_relative")) {
 					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
 					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = targets.get(prog.getInsnRefs().get(insn.getTarget()));
+					int targetPC = targets.get(prog.getInsnRefs().get(insn.getLabel()));
 					output.append(makeBinaryValue(targetPC - insnNum + 1, start, end));
-					used.append("jump_target ");
+					used.append("label ");
 				}
 				else {
 					output.append(s);

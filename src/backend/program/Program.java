@@ -15,6 +15,7 @@ import backend.state.Data;
 import backend.state.FPRegisterFile;
 import backend.state.Memory;
 import backend.state.RegisterFile;
+import exceptions.LabelException;
 
 /**
  * Stores all lines in the MIPS Program.
@@ -189,6 +190,26 @@ public class Program {
 				null, null, null, null, null, null, null, null)));
 	}
 	
+	/**
+	 * Loads immediates into instructions that used labels.
+	 * Checks that all labels are valid.
+	 * @throws LabelException if invalid label found
+	 */
+	public void loadLabels() throws LabelException {
+		for(Line l : getProgramLines()) {
+			if(l.isExecutable()) {
+				String label = l.getInstruction().getLabel();
+				if(label != null && !getInsnRefs().containsKey(label)
+						&& !getMem().isDataReference(label)) {
+					throw new LabelException("No match for label " + label, l);
+				}
+				if(label != null && getMem().isDataReference(label)) {
+					l.getInstruction().setImmediate(getMem().getMemoryAddress(label));
+				}
+			}
+		}
+	}
+
 	/**
 	 * Sets the calling conventions checker for current instructions 
 	 * and the register file.  Does not set checker for instructions added later.

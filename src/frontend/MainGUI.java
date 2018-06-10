@@ -9,7 +9,7 @@ import backend.program.Line;
 import backend.program.Program;
 import exceptions.DataFormatException;
 import exceptions.InstructionFormatException;
-import exceptions.JumpTargetException;
+import exceptions.LabelException;
 import exceptions.ProgramFormatException;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -94,13 +94,20 @@ public class MainGUI {
 	 */
 	public void loadProgram() {
 		prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
-		if(currentFile != null) {
+		if(currentFile == null) {
+			initialize(prog);
+			control.lock();
+		}
+		else {
+			mainStage.setTitle(currentFile.getName());
 			try {
-				new TextParser(currentFile, prog);
-				mainStage.setTitle(currentFile.getName());
+				new TextParser(prog).readFile(currentFile);
 				prog.setupProgramClose();
 				assembleProgram();
+				prog.loadLabels();
 				prog.start();
+				initialize(prog);
+				control.unlock();
 			}
 			catch(FileNotFoundException e) {
 				currentFile = null;
@@ -109,36 +116,32 @@ public class MainGUI {
 				alert.setContentText("Try opening a different file");
 				alert.show();
 			}
-			catch(JumpTargetException e) {
+			catch(LabelException e) {
 				initialize(prog);
 				control.lock();
+				code.errorHighlight(e.getLine());
 				getCommandLine().printException(e);
 				Alert alert = new Alert(AlertType.ERROR);
-				alert.setHeaderText("Syntax Error: Jump Target");
-				alert.setContentText(e.getMessage());
+				alert.setHeaderText("Syntax Error: Jump or Data Label");
+				alert.setContentText(e.getMessage() + ": " + e.getLine());
 				alert.show();
 			}
 			catch(InstructionFormatException e) {
 				initialize(prog);
 				control.lock();
+				code.errorHighlight(e.getLine());
 				getCommandLine().printException(e);
-				getCode().errorHighlight(prog.getProgramLines().get(
-						prog.getProgramLines().size() - 1));
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setHeaderText("Syntax Error: Instruction Section");
-				alert.setContentText(e.getMessage());
+				alert.setContentText(e.getMessage() + ": " + e.getLine());
 				alert.show();
 			} catch (DataFormatException e) {
-				initialize(prog);
-				control.lock();
 				getCommandLine().printException(e);
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setHeaderText("Syntax Error: Data Section");
 				alert.setContentText(e.getMessage());
 				alert.show();
 			} catch (ProgramFormatException e) {
-				initialize(prog);
-				control.lock();
 				getCommandLine().printException(e);
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setHeaderText("Syntax Error: General");
@@ -146,35 +149,16 @@ public class MainGUI {
 				alert.show();
 			}
 		}
-		initialize(prog);
-		if(currentFile == null) control.lock();
-		else control.unlock();
 	}
 
 	/**
 	 * Assembles the program.
 	 */
-	private void assembleProgram() {
+	private void assembleProgram() throws InstructionFormatException {
 		Assembler assemble = new Assembler(prog);
 		int insnNum = 0;
 		for(Line l : prog.getProgramLines()) {
-			try {
-				if(l.isExecutable()) l.setHex(assemble.assemble(l, insnNum++));
-			}
-			catch(InstructionFormatException e) {
-				System.out.println("Failure on line " + l);
-				e.printStackTrace();
-				initialize(prog);
-				control.lock();
-				getCommandLine().printException(e);
-				getCode().errorHighlight(l);
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setHeaderText("Syntax Error: Instruction Section");
-				alert.setContentText(e.getMessage());
-				alert.show();
-				throw new RuntimeException("Syntax Error: Instruction Section, "
-						+ "line " + l, e);
-			}
+			if(l.isExecutable()) l.setHex(assemble.assemble(l, insnNum++));
 		}
 	}
 

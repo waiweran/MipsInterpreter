@@ -34,7 +34,7 @@ public class Instruction {
 	 */
 	public Instruction(Opcode opcode, Register reg1, Register reg2, 
 			Register reg3, FPRegister fpReg1, FPRegister fpReg2, 
-			FPRegister fpReg3, Integer immediate, String target) {
+			FPRegister fpReg3, Integer immediate, String label) {
 		op = opcode;
 		r1 = reg1;
 		r2 = reg2;
@@ -43,7 +43,7 @@ public class Instruction {
 		f2 = fpReg2;
 		f3 = fpReg3;
 		immed = immediate;
-		jump = target;
+		jump = label;
 	}
 	
 	/**
@@ -117,8 +117,16 @@ public class Instruction {
 	/**
 	 * @return the jump target.
 	 */
-	public String getTarget() {
+	public String getLabel() {
 		return jump;
+	}
+	
+	/**
+	 * Sets the immediate for the instruction if labels were used.
+	 * @param immediate the new immediate value.
+	 */
+	public void setImmediate(int immediate) {
+		immed = immediate;
 	}
 	
 	/**
@@ -133,7 +141,7 @@ public class Instruction {
 		if(f2 != null) output.append("fpr2 ");
 		if(f3 != null) output.append("fpr3 ");
 		if(immed != null) output.append("immediate ");
-		if(jump != null) output.append("jump_target ");
+		if(jump != null) output.append("label ");
 		return output.toString().trim();
 	}
 	

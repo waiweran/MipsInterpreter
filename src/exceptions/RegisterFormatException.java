@@ -1,11 +1,11 @@
 package exceptions;
 
 /**
- * Exception class for incorrectly formatted register names.
+ * Exception class for incorrect register names.
  * @author Nathaniel
  * @version 12-09-2017
  */
-public class RegisterFormatException extends ProgramFormatException {
+public class RegisterFormatException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

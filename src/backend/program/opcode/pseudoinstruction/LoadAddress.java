@@ -14,7 +14,8 @@ public class LoadAddress extends Opcode {
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		prog.getRegFile().write(insn.getR1(), 
-				new Data(insn.getImmed(), Data.DataType.Address));
+				new Data(prog.getMem().getMemoryAddress(insn.getLabel()), 
+						Data.DataType.Address));
 	}
 
 }

@@ -48,7 +48,7 @@ public class InstructionParser {
 		}
 		List<String> insnSplit = Arrays.asList(text.split("\\s+")); // Split around remaining whitespace
 		String reference = "";
-		String target = null;
+		String label = null;
 		Opcode opcode = null;
 		int regNum = 0;
 		Register[] regs = new Register[3];
@@ -104,11 +104,7 @@ public class InstructionParser {
 					throw new InstructionFormatException("Two opcodes detected in one line", l);
 				}
 				opcode = opFactory.findOpcode(comp);
-			}
-			// If it's a data memory address reference
-			else if(prog.getMem().isDataReference(comp)) {
-				immed = prog.getMem().getMemoryAddress(comp);
-			}			
+			}		
 			else {
 				// If it's an integer immediate
 				try {
@@ -134,9 +130,9 @@ public class InstructionParser {
 					}
 					catch(NumberFormatException e2) {	
 
-						// Only thing left is jump target
-						if(target == null) {
-							target = comp;
+						// Only thing left is address label
+						if(label == null) {
+							label = comp;
 						}
 						else {
 							Line l = new Line(line);
@@ -150,7 +146,7 @@ public class InstructionParser {
 		}
 		if(opcode == null) {
 			if(!reference.isEmpty() && regNum == 0  && fpRegNum == 0
-					&& !immedUsed && target == null) {
+					&& !immedUsed && label == null) {
 				Line madeLine = new Line(line);
 				prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 				prog.getProgramLines().add(madeLine);
@@ -163,7 +159,7 @@ public class InstructionParser {
 		}
 		else {
 			Instruction madeInsn = new Instruction(opcode, regs[0], 
-					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, target);
+					regs[1], regs[2], fpRegs[0], fpRegs[1], fpRegs[2], immed, label);
 			Line madeLine = new Line(line, madeInsn);
 			if(!reference.isEmpty()) prog.getInsnRefs().put(reference, prog.getProgramLines().size());
 			prog.getProgramLines().add(madeLine);

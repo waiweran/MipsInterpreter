@@ -12,7 +12,7 @@ public class Jump extends Opcode {
 
 	@Override
 	public void execute(Instruction insn, Program prog) {
-		prog.jump(insn.getTarget());
+		prog.jump(insn.getLabel());
 	}
 
 }

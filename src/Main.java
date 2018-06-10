@@ -17,7 +17,7 @@ import backend.program.Program;
 import exceptions.DataFormatException;
 import exceptions.ExecutionException;
 import exceptions.InstructionFormatException;
-import exceptions.JumpTargetException;
+import exceptions.LabelException;
 import exceptions.ProgramFormatException;
 import frontend.GUIStarter;
 import terminal.FlagParser;
@@ -71,9 +71,16 @@ public class Main {
 		Program prog = makeProgram(arguments);
 		try {
 			try {
-				new TextParser(progLoc, prog);
-			} catch(JumpTargetException e) {
-				throw new RuntimeException("Syntax Error: Jump Target, line "
+				new TextParser(prog).readFile(progLoc);
+				prog.setupProgramClose();
+				Assembler assemble = new Assembler(prog);
+				int insnNum = 0;
+				for(Line l : prog.getProgramLines()) {
+					if(l.isExecutable()) assemble.assemble(l, insnNum++);
+				}
+				prog.loadLabels();
+			} catch(LabelException e) {
+				throw new RuntimeException("Syntax Error: Label, line "
 						+ e.getLine(), e);
 			} catch(InstructionFormatException e) {
 				throw new RuntimeException("Syntax Error: Instruction Section, line "
@@ -82,18 +89,6 @@ public class Main {
 				throw new RuntimeException("Syntax Error: Data Section", e);
 			} catch (ProgramFormatException e) {
 				throw new RuntimeException("Syntax Error: General", e);
-			}
-			prog.setupProgramClose();
-			Assembler assemble = new Assembler(prog);
-			int insnNum = 0;
-			for(Line l : prog.getProgramLines()) {
-				try {
-					if(l.isExecutable()) assemble.assemble(l, insnNum++);
-				}
-				catch(InstructionFormatException e) {
-					System.out.println("Syntax Error: Instruction Section, line "
-							+ e.getLine() + " --> " + e.getMessage());
-				}
 			}
 			CallingConventionChecker callChecker = 
 					new CallingConventionChecker(prog.getRegFile());
@@ -123,7 +118,7 @@ public class Main {
 						+ " violations of calling conventions.");
 			}
 		} catch(FileNotFoundException e) {
-			System.out.println("Program File not found");
+			throw new RuntimeException("Program File not found");
 		}
 	}
 
@@ -139,14 +134,14 @@ public class Main {
 			try {
 				in = new FileInputStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				System.out.println("Improper input file specified");
+				throw new RuntimeException("Improper input file specified");
 			}
 		}		
 		if(!arguments.isEmpty()) {
 			try {
 				out = new PrintStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				System.out.println("Improper output file specified");
+				throw new RuntimeException("Improper output file specified");
 			}
 		}
 		Program prog = new Program(in, out);

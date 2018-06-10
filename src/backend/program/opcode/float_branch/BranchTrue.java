@@ -13,7 +13,7 @@ public class BranchTrue extends Opcode {
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		if(prog.getFPRegFile().readCond()) {
-			prog.jump(insn.getTarget());
+			prog.jump(insn.getLabel());
 		}
 	}
 

@@ -15,7 +15,7 @@ public class JumpAndLink extends Opcode {
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		prog.getRegFile().write(Register.ra, new Data(prog.getPC(), Data.DataType.J_Target));
-		prog.jump(insn.getTarget());
+		prog.jump(insn.getLabel());
 	}
 
 }
