@@ -73,10 +73,11 @@ public class Main {
 			try {
 				new TextParser(progLoc, prog);
 			} catch(JumpTargetException e) {
-				throw new RuntimeException("Syntax Error: Jump Target", e);
+				throw new RuntimeException("Syntax Error: Jump Target, line "
+						+ e.getLine(), e);
 			} catch(InstructionFormatException e) {
-				throw new RuntimeException("Syntax Error: Instruction Section, Line " + 
-						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e);
+				throw new RuntimeException("Syntax Error: Instruction Section, line "
+						+ e.getLine(), e);
 			} catch (DataFormatException e) {
 				throw new RuntimeException("Syntax Error: Data Section", e);
 			} catch (ProgramFormatException e) {
@@ -87,11 +88,11 @@ public class Main {
 			int insnNum = 0;
 			for(Line l : prog.getProgramLines()) {
 				try {
-					if(l.isExecutable()) assemble.assemble(l.getInstruction(), insnNum++);
+					if(l.isExecutable()) assemble.assemble(l, insnNum++);
 				}
 				catch(InstructionFormatException e) {
-					throw new RuntimeException("Syntax Error: Instruction Section, "
-							+ "line " + l, e);
+					System.out.println("Syntax Error: Instruction Section, line "
+							+ e.getLine() + " --> " + e.getMessage());
 				}
 			}
 			CallingConventionChecker callChecker = 
@@ -122,7 +123,7 @@ public class Main {
 						+ " violations of calling conventions.");
 			}
 		} catch(FileNotFoundException e) {
-			throw new RuntimeException("Program File not found", e);
+			System.out.println("Program File not found");
 		}
 	}
 
@@ -138,14 +139,14 @@ public class Main {
 			try {
 				in = new FileInputStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				throw new RuntimeException("Improper input file");
+				System.out.println("Improper input file specified");
 			}
 		}		
 		if(!arguments.isEmpty()) {
 			try {
 				out = new PrintStream(new File(arguments.remove(0)));
 			} catch (FileNotFoundException e) {
-				throw new RuntimeException("Improper output file");
+				System.out.println("Improper output file specified");
 			}
 		}
 		Program prog = new Program(in, out);

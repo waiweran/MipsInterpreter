@@ -5,7 +5,7 @@ package exceptions;
  * @author Nathaniel
  * @version 12-09-2017
  */
-public class RegisterFormatException extends InstructionFormatException {
+public class RegisterFormatException extends ProgramFormatException {
 
 	private static final long serialVersionUID = 1L;
 

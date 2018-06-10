@@ -63,8 +63,9 @@ public class InstructionParser {
 					reference = comp.substring(0, comp.length() - 1);
 				}
 				else {
-					prog.getProgramLines().add(new Line(line));
-					throw new InstructionFormatException("Two references detected in one line");
+					Line l = new Line(line);
+					prog.getProgramLines().add(l);
+					throw new InstructionFormatException("Two references detected in one line", l);
 				}
 			}
 			// If it's a register name
@@ -74,8 +75,9 @@ public class InstructionParser {
 					regNum++;
 				}
 				catch(IndexOutOfBoundsException e) {
-					prog.getProgramLines().add(new Line(line));
-					throw new InstructionFormatException("Too many registers specified", e);
+					Line l = new Line(line);
+					prog.getProgramLines().add(l);
+					throw new InstructionFormatException("Too many registers specified", e, l);
 				}
 				catch(RegisterFormatException e1) {
 					try {
@@ -83,20 +85,23 @@ public class InstructionParser {
 						fpRegNum++;
 					}
 					catch(RegisterFormatException e2) {
-						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException("Invalid or reserved register", e2);
+						Line l = new Line(line);
+						prog.getProgramLines().add(l);
+						throw new InstructionFormatException("Invalid or reserved register", e2, l);
 					}
 					catch(IndexOutOfBoundsException e3) {
-						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException("Too many registers specified", e3);
+						Line l = new Line(line);
+						prog.getProgramLines().add(l);
+						throw new InstructionFormatException("Too many registers specified", e3, l);
 					}
 				}
 			}
 			// If it's an opcode
 			else if(opFactory.isOpcode(comp)) {
 				if(opcode != null) {
-					prog.getProgramLines().add(new Line(line));
-					throw new InstructionFormatException("Two opcodes detected in one line");
+					Line l = new Line(line);
+					prog.getProgramLines().add(l);
+					throw new InstructionFormatException("Two opcodes detected in one line", l);
 				}
 				opcode = opFactory.findOpcode(comp);
 			}
@@ -109,8 +114,9 @@ public class InstructionParser {
 				try {
 					immed = Integer.parseInt(comp);
 					if(immedUsed) {
-						prog.getProgramLines().add(new Line(line));
-						throw new InstructionFormatException("Only one immediate allowed");
+						Line l = new Line(line);
+						prog.getProgramLines().add(l);
+						throw new InstructionFormatException("Only one immediate allowed", l);
 					}
 					immedUsed = true;
 				}
@@ -120,8 +126,9 @@ public class InstructionParser {
 					try {
 						immed = Float.floatToIntBits(Float.parseFloat(comp));
 						if(immedUsed) {
-							prog.getProgramLines().add(new Line(line));
-							throw new InstructionFormatException("Only one immediate allowed");
+							Line l = new Line(line);
+							prog.getProgramLines().add(l);
+							throw new InstructionFormatException("Only one immediate allowed", l);
 						}
 						immedUsed = true;
 					}
@@ -132,9 +139,10 @@ public class InstructionParser {
 							target = comp;
 						}
 						else {
-							prog.getProgramLines().add(new Line(line));
+							Line l = new Line(line);
+							prog.getProgramLines().add(l);
 							throw new InstructionFormatException(
-									"Unrecognized Instruction Component: " + comp);
+									"Unrecognized Instruction Component: " + comp, l);
 						}
 					}
 				}
@@ -148,8 +156,9 @@ public class InstructionParser {
 				prog.getProgramLines().add(madeLine);
 			}
 			else {
-				prog.getProgramLines().add(new Line(line));
-				throw new InstructionFormatException("No Opcode Found in Line: " + line);
+				Line l = new Line(line);
+				prog.getProgramLines().add(l);
+				throw new InstructionFormatException("No Opcode Found in Line", l);
 			}
 		}
 		else {

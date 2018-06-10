@@ -52,7 +52,7 @@ public class Assembler {
 		int insnNum = 0;
 		for(Line l : prog.getProgramLines()) {
 			if(l.isExecutable()) {
-				pw.println(assemble(l.getInstruction(), insnNum++));
+				pw.println(assemble(l, insnNum++));
 			}
 		}
 		pw.flush();
@@ -63,19 +63,20 @@ public class Assembler {
 
 	/**
 	 * Assembles a single instruction.
-	 * @param insn the instruction to assemble.
+	 * @param line the instruction to assemble.  Must be an executable line.
 	 * @param insnNum The instruction number in the program (for relative branches).
 	 * @return The binary string of the assembled instruction.
 	 * @throws InstructionFormatException if instruction improperly formatted.
 	 */
-	public String assemble(Instruction insn, int insnNum) throws InstructionFormatException {
+	public String assemble(Line line, int insnNum) throws InstructionFormatException {
+		Instruction insn = line.getInstruction();
 		if(ASSEMBLE_FORMATS.containsKey(insn.getOpcode().getName())) {
 			String formatRef = ASSEMBLE_FORMATS.getString(insn.getOpcode().getName());
-			return processInstruction(insn, insnNum, formatRef);
+			return processInstruction(line, insnNum, formatRef);
 		}
 		else if(PSEUDO_FORMATS.containsKey(insn.getOpcode().getName())) {
 			String formatRef = PSEUDO_FORMATS.getString(insn.getOpcode().getName());
-			checkUsage(formatRef, insn.makeUsedList());
+			checkUsage(line, formatRef, insn.makeUsedList());
 			return "COMPOUND";
 		}
 		else {
@@ -93,8 +94,9 @@ public class Assembler {
 	 * @return The binary string representation of the instruction.
 	 * @throws InstructionFormatException if the instruction is improperly formatted.
 	 */
-	private String processInstruction(Instruction insn, int insnNum, String formatRef)
+	private String processInstruction(Line line, int insnNum, String formatRef)
 			throws InstructionFormatException {
+		Instruction insn = line.getInstruction();
 		StringBuilder output = new StringBuilder();
 		StringBuilder used = new StringBuilder();
 		String[] pieces = formatRef.split(" ");
@@ -161,11 +163,10 @@ public class Assembler {
 			}
 		}
 		catch(Exception e) {
-			throw new InstructionFormatException("Instruction " + insn.getOpcode().getName()
-			+ " missing a value", e);
+			throw new InstructionFormatException("Instruction missing a value", e, line);
 		}
 		if(output.toString().equals("UNSUPPORTED")) return output.toString();
-		checkUsage(insn.makeUsedList(), used.toString());
+		checkUsage(line, insn.makeUsedList(), used.toString());
 		return toHex(output.toString());
 	}
 
@@ -218,11 +219,11 @@ public class Assembler {
 	 * @param read The components in the instruction from the user.
 	 * @throws InstructionFormatException if the lists don't match up.
 	 */
-	private void checkUsage(String format, String read) throws InstructionFormatException {
+	private void checkUsage(Line line, String format, String read) throws InstructionFormatException {
 		String[] components = read.split(" ");
 		for(String c : components) {
 			if(!format.contains(c)) {
-				throw new InstructionFormatException("Opcode not expecting " + c);
+				throw new InstructionFormatException("Opcode not expecting " + c, line);
 			}
 		}
 	}

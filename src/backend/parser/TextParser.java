@@ -88,7 +88,7 @@ public class TextParser {
 			if(l.isExecutable()) {
 				String target = l.getInstruction().getTarget();
 				if(target != null && !prog.getInsnRefs().containsKey(target)) {
-					throw new JumpTargetException("Improper Jump Target Detected: " + l.toString());
+					throw new JumpTargetException("Improper Jump Target", l);
 				}
 			}
 		}

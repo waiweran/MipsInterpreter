@@ -117,7 +117,6 @@ public class MainGUI {
 				alert.setHeaderText("Syntax Error: Jump Target");
 				alert.setContentText(e.getMessage());
 				alert.show();
-				throw new RuntimeException("Syntax Error: Jump Target", e);
 			}
 			catch(InstructionFormatException e) {
 				initialize(prog);
@@ -129,8 +128,6 @@ public class MainGUI {
 				alert.setHeaderText("Syntax Error: Instruction Section");
 				alert.setContentText(e.getMessage());
 				alert.show();
-				throw new RuntimeException("Syntax Error: Instruction Section, Line " + 
-						prog.getProgramLines().get(prog.getProgramLines().size() - 1), e);
 			} catch (DataFormatException e) {
 				initialize(prog);
 				control.lock();
@@ -139,7 +136,6 @@ public class MainGUI {
 				alert.setHeaderText("Syntax Error: Data Section");
 				alert.setContentText(e.getMessage());
 				alert.show();
-				throw new RuntimeException("Syntax Error: Data Section", e);
 			} catch (ProgramFormatException e) {
 				initialize(prog);
 				control.lock();
@@ -148,7 +144,6 @@ public class MainGUI {
 				alert.setHeaderText("Syntax Error: General");
 				alert.setContentText(e.getMessage());
 				alert.show();
-				throw new RuntimeException("Syntax Error: General", e);
 			}
 		}
 		initialize(prog);
@@ -164,8 +159,7 @@ public class MainGUI {
 		int insnNum = 0;
 		for(Line l : prog.getProgramLines()) {
 			try {
-				if(l.isExecutable()) 
-					l.setHex(assemble.assemble(l.getInstruction(), insnNum++));
+				if(l.isExecutable()) l.setHex(assemble.assemble(l, insnNum++));
 			}
 			catch(InstructionFormatException e) {
 				System.out.println("Failure on line " + l);
