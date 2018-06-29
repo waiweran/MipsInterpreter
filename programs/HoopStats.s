@@ -4,7 +4,8 @@ intro: .asciiz "Enter a Player\n"
 enter: .asciiz "\n"
 .align 2
 head: .space 4
-done: .word 1146048069
+# done: .word 1146048069  # Big Endian
+done: .word 1162760004  # Little Endian
 
 .text
 

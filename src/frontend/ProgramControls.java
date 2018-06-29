@@ -26,7 +26,7 @@ public class ProgramControls implements ScreenObject {
 	private Timeline runProg;
 	private Program prog;
 	private MainGUI gui;
-	private Button playPause, step, reset;
+	private Button playPause, step, reload;
 	private Slider rate;
 	
 	/**
@@ -53,25 +53,25 @@ public class ProgramControls implements ScreenObject {
 		controls.setAlignment(Pos.CENTER_LEFT);
 		playPause = new Button("Play ");
 		step = new Button("Step");
-		reset = new Button("Reset");
+		reload = new Button("Reload");
 		rate = new Slider(1, 50, 20);
 		rate.setMinWidth(200);
 		runProg.setRate(rate.getValue());
 		playPause.setOnAction(e -> playPause(runProg.getStatus() == Status.RUNNING));
 		step.setOnAction(e -> step());
-		reset.setOnAction(e -> {
+		reload.setOnAction(e -> {
 			playPause(true);
 			gui.loadProgram();
 		});
 		rate.setOnMouseDragged(e -> updateAnimationRate());
-		controls.getChildren().addAll(playPause, step, reset, new Text("     Speed:"), rate);
+		controls.getChildren().addAll(playPause, step, reload, new Text("     Speed:"), rate);
 	}
 	
 	/**
 	 * Plays or pauses the program execution.
-	 * @param True if program playing, false if not.  Determines play or pause functionality.
+	 * @param isPlaying True if program playing, false if not.  Determines play or pause functionality.
 	 */
-	private void playPause(boolean isPlaying) {
+	public void playPause(boolean isPlaying) {
 		if(isPlaying) {
 			runProg.pause();
 			playPause.setText("Play ");
@@ -127,7 +127,7 @@ public class ProgramControls implements ScreenObject {
 	public void unlock() {
 		playPause.setDisable(false);
 		step.setDisable(false);
-		reset.setDisable(false);
+		reload.setDisable(false);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class ProgramControls implements ScreenObject {
 	public void lock() {
 		playPause.setDisable(true);
 		step.setDisable(true);
-		reset.setDisable(true);
+		reload.setDisable(true);
 	}
 	
 	/**

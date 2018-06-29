@@ -59,6 +59,11 @@ public class Main {
 		}
 		boolean verbose = flagparse.hasFlag("verbose");
 		boolean checkCalls = flagparse.hasFlag("callcheck");
+		boolean bigEndian = flagparse.hasFlag("bigendian");
+		if(bigEndian && flagparse.hasFlag("littleendian")) {
+			System.err.println("Cannot have big endian and little endian at same time");
+			return;
+		}
 		for(int i = arguments.size() - 1; i >= 0; i--) {
 			if(arguments.get(i).startsWith("-")){
 				arguments.remove(i);
@@ -69,6 +74,7 @@ public class Main {
 			runs = Integer.parseInt(arguments.remove(arguments.size() - 1));
 		}
 		Program prog = makeProgram(arguments);
+		prog.getMem().setEndianness(bigEndian);
 		try {
 			try {
 				new TextParser(prog).readFile(progLoc);

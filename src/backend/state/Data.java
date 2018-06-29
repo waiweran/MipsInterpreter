@@ -1,10 +1,5 @@
 package backend.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import backend.parser.DataParser;
-
 /**
  * Stores a single word-length data value in register files or memory.
  * Stores information regarding the data type held, for debugging.
@@ -102,10 +97,13 @@ public class Data {
 	 * @return String representing the data as a string.
 	 */
 	public String toCharString() {
-		List<Data> string = new ArrayList<Data>();
-		string.add(this);
-		string.add(new Data());
-		return DataParser.dataArrayToString(string).replaceAll("\\n", "\\\\n");
+		StringBuilder output = new StringBuilder();
+		for(int j = 3; j >= 0; j--) {
+			char nextChar = (char) ((getValue() >> 8*j) & 255);
+			if(nextChar == (char)10) output.append("\\n");
+			else output.append(nextChar);
+		}
+		return output.toString();
 	}
 	
 	/**

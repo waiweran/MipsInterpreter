@@ -1,8 +1,5 @@
 package backend.program.opcode;
 
-import java.util.List;
-
-import backend.parser.DataParser;
 import backend.program.FPRegister;
 import backend.program.Instruction;
 import backend.program.Program;
@@ -34,7 +31,7 @@ public class Syscall extends Opcode {
 		// print string
 		else if(type == 4) {
 			int address = prog.getRegFile().read(Register.a0).getValue();
-			String out = DataParser.dataArrayToString(prog.getMem().loadArray(address));
+			String out = prog.getMem().loadString(address);
 			prog.getOutput().print(out);
 		}
 		// read int
@@ -80,8 +77,7 @@ public class Syscall extends Opcode {
 				if(inputString.length() >= length) {
 					inputString = inputString.substring(0, length);
 				}
-				List<Data> in = DataParser.stringToDataArray(inputString);
-				prog.getMem().storeArray(address, in);
+				prog.getMem().storeString(address, inputString);
 			}
 			// If input not ready, stall
 			else {

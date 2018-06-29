@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import backend.program.Register;
+import backend.state.Data.DataType;
 import exceptions.DataFormatException;
+import exceptions.ExecutionException;
 import exceptions.MemoryException;
 import exceptions.SegmentationFault;
 
@@ -22,6 +24,7 @@ public class Memory {
 	private Map<String, Integer> dataRefs;
 	private List<Data> heap;
 	private List<Data> stack;
+	private boolean bigEndian;
 
 	/**
 	 * Initializes the main memory
@@ -34,6 +37,7 @@ public class Memory {
 		dataRefs = new HashMap<>();
 		heap = new ArrayList<>();
 		stack = new ArrayList<>();
+		bigEndian = false;
 	}
 	
 	/**
@@ -50,7 +54,20 @@ public class Memory {
 	 * @param values the Data items to add to global data.
 	 */
 	public void addToGlobalData(List<Data> values) {
-		globalData.addAll(values);
+		for(Data value : values) {
+			if(bigEndian) globalData.add(value);
+			else globalData.add(reverseEndian(value));
+		}
+	}
+	
+	/**
+	 * Adds Strings to global data.
+	 * @param values the Data items to add to global data.
+	 */
+	public void addStringsToGlobalData(List<Data> values) {
+		for(Data value : values) {
+			globalData.add(value);
+		}
 	}
 	
 	/**
@@ -98,22 +115,25 @@ public class Memory {
 	 * @return the Data at that address.
 	 */
 	public Data loadWord(int address) {
+		Data output;
 		int word = getWordAddress(address);
 		// Global data
 		if(word < globalData.size()) {
-			return globalData.get(word);
+			output =  globalData.get(word);
 		}
 		// Heap
 		else if(word - globalData.size() < heap.size()) {
-			return heap.get(word - globalData.size());
+			output =  heap.get(word - globalData.size());
 		}
 		// Stack
 		else if(word >= Integer.MAX_VALUE/4 + 1 - stack.size()) {
-			return stack.get(Integer.MAX_VALUE/4 - word);
+			output =  stack.get(Integer.MAX_VALUE/4 - word);
 		}
 		else {
 			throw new SegmentationFault(address, globalData, heap, stack);
 		}
+		if(!bigEndian) output = reverseEndian(output);
+		return output;
 	}
 	
 	/**
@@ -123,6 +143,7 @@ public class Memory {
 	 * @param address location in memory to store the data.
 	 */
 	public void storeWord(Data data, int address) {
+		if(!bigEndian) data = reverseEndian(data);
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
@@ -151,10 +172,10 @@ public class Memory {
 	 * @return Data holding the byte at that address.
 	 */
 	public Data loadByte(int address, boolean signed) {
-		Data word = loadWord(address - (address % 4));
-		int val;
-		if(signed) val = (word.getValue() << 8*(address % 4)) >> 24;
-		else val = (word.getValue() << 8*(address % 4)) >>> 24;
+		int byteAddr = getByteAddress(address);
+		Data word = loadWord(address - (address & 3));
+		int val = (word.getValue() & (255 << (8*byteAddr))) >>> (8*byteAddr);
+		if(signed && val > 127) val = val | (-1 << (8*(byteAddr + 1)));
 		return new Data(val, Data.DataType.Byte);
 	}
 	
@@ -165,12 +186,14 @@ public class Memory {
 	 * @param address the memory location to write to.
 	 */
 	public void storeByte(Data data, int address) {
-		int offset = address % 4;
-		Data word = loadWord(address - offset);
-		int top = (offset == 0)? 0 : (word.getValue() >>> 8*(4 - offset)) << 8*(4 - offset);
-		int bottom = word.getValue() - ((word.getValue() >>> 8*(3 - offset)) << 8*(3 - offset));
-		int mid = (data.getValue() % 256) << 8*(3 - offset);
-		storeWord(new Data(top | mid | bottom, word.getDataType()), address - offset);
+		int byteAddr = getByteAddress(address);
+		Data word = loadWord(address - (address & 3));
+		int top = byteAddr == 3? 0 : word.getValue() & (-1 << (8*byteAddr + 8));
+		int bottom = word.getValue() & ((1 << (8*byteAddr)) - 1);
+		int mid = (data.getValue() & 255) << (8*byteAddr);
+		Data.DataType datatype = word.getDataType();
+		if(datatype == Data.DataType.Space) datatype = Data.DataType.Byte;
+		storeWord(new Data(top | mid | bottom, datatype), address - (address & 3));
 	}
 	
 	/**
@@ -179,31 +202,42 @@ public class Memory {
 	 * @return contents of Global Data, Heap, or Stack,
 	 *  starting at that address and continuing to end of memory sector. 
 	 */
-	public List<Data> loadArray(int address) {
+	public String loadString(int address) {
 		ArrayList<Data> values = new ArrayList<>();
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
 			for(int i = 0; word + i < globalData.size(); i++) {
-				values.add(globalData.get(word + i));
+				Data value = globalData.get(word + i);
+				values.add(value);
 			}
 		}
 		// Heap
 		else if(word - globalData.size() < heap.size()) {			
 			for(int i = 0; word - globalData.size() + i < heap.size(); i++) {
-				values.add(heap.get(word - globalData.size() + i));
+				Data value = heap.get(word - globalData.size() + i);
+				values.add(value);
 			}
 		}
 		// Stack
 		else if(word >= Integer.MAX_VALUE/4 + 1 - stack.size()) {
 			for(int i = 0; Integer.MAX_VALUE/4 + 1 - word + i < values.size(); i++) {
-				values.add(stack.get(Integer.MAX_VALUE/4 + 1 - word + i));
+				Data value = stack.get(Integer.MAX_VALUE/4 + 1 - word + i);
+				values.add(value);
 			}
 		}
 		else {
 			throw new SegmentationFault(address, globalData, heap, stack);
 		}
-		return values;
+		StringBuilder sb = new StringBuilder();
+		for(Data value : values) {
+			for(int i = 3; i >= 0; i--) {
+				char letter = (char) ((value.getValue() & (255 << 8*i)) >>> 8*i);
+				sb.append(letter);
+				if(letter == (char)0) return sb.toString();
+			}
+		}
+		throw new ExecutionException("String has no null termination: " + sb.toString());
 	}
 
 	/**
@@ -211,7 +245,23 @@ public class Memory {
 	 * @param address the Address to store the first data value at.
 	 * @param values the list of Data values to store.
 	 */
-	public void storeArray(int address, List<Data> values) {
+	public void storeString(int address, String value) {
+		List<Data> values = new ArrayList<>();
+		for(int wordNum = 0; true; wordNum++) {
+			int dataVal = 0;
+			boolean end = false;
+			for(int byteNum = 0; byteNum < 4; byteNum++) {
+				int index = wordNum*4 + byteNum;
+				if(index < value.length()) {
+					dataVal = dataVal | (((int)value.charAt(index)) << (8*(3-byteNum)));
+				}
+				else {
+					end = true;
+				}
+			}
+			values.add(new Data(dataVal, DataType.String));
+			if(end) break;
+		}
 		int word = getWordAddress(address);
 		// Global Data
 		if(word < globalData.size()) {
@@ -253,6 +303,14 @@ public class Memory {
 		else {
 			throw new SegmentationFault(address, globalData, heap, stack);
 		}
+	}
+	
+	/**
+	 * Sets the endianness of the memory.
+	 * @param bigEndian True to set to big endian, false to set to little endian.
+	 */
+	public void setEndianness(boolean bigEndian) {
+		this.bigEndian = bigEndian;
 	}
 	
 	@Override
@@ -388,10 +446,34 @@ public class Memory {
 	 * @throws MemoryException if non-word aligned address input.
 	 */
 	private int getWordAddress(int address) {
-		if(address%4 != 0) {
+		if((address & 3) != 0) {
 			throw new MemoryException("Misaligned Word Access: " + address);
 		}
-		return address/4;
+		return address >>> 2;
+	}
+	
+	/**
+	 * Gets the byte index within an integer representing the given address.
+	 * @param address The memory address.
+	 * @return Byte index within the loaded integer.
+	 */
+	private int getByteAddress(int address) {
+		if(bigEndian) return 3 - (address & 3);
+		else return address & 3;
+	}
+	
+	/**
+	 * Reverses the endianness of a Data value.
+	 * Used to convert natively big-endian data to little-endian.
+	 * @param input The input data.
+	 * @return The same data but in the opposite endianness.
+	 */
+	private Data reverseEndian(Data input) {
+		int byte0 = (input.getValue() & (255 << 24)) >>> 24; // MSB to LSB
+		int byte1 = (input.getValue() & (255 << 16)) >>> 8;
+		int byte2 = (input.getValue() & (255 << 8)) << 8;
+		int byte3 = (input.getValue() & 255) << 24; // LSB to MSB
+		return new Data(byte0 | byte1 | byte2 | byte3, input.getDataType());
 	}
 
 }

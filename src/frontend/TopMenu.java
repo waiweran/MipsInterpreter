@@ -32,9 +32,9 @@ public class TopMenu implements ScreenObject {
 	private List<File> recents;
 	
 	private Menu file;
-	private List<MenuItem> recentDisp;
-	private Menu display;
+	private Menu settings;
 	private Menu export;
+	private List<MenuItem> recentDisp;
 
 	/**
 	 * Initializes the Top Menu.
@@ -47,11 +47,11 @@ public class TopMenu implements ScreenObject {
 		recentDisp = new ArrayList<>();
 		file = new Menu("File");
 		makeFileMenu();
-		display = new Menu("Display");
-		makeDisplayMenu();
+		settings = new Menu("Settings");
+		makeSettingsMenu();
 		export = new Menu("Export");
 		makeExportMenu();
-		topBar.getMenus().addAll(file, display, export);
+		topBar.getMenus().addAll(file, settings, export);
 	}
 
 	/**
@@ -71,42 +71,54 @@ public class TopMenu implements ScreenObject {
 	/**
 	 * Sets up everything under Display menu.
 	 */
-	private void makeDisplayMenu() {
+	private void makeSettingsMenu() {
+		Menu endianness = new Menu("Memory Endianness");
+		ToggleGroup endianToggle = new ToggleGroup();
+		RadioMenuItem little = new RadioMenuItem("Little Endian");
+		little.setSelected(true);
+		little.setOnAction(e -> {
+			gui.setEndianness(false);
+		});
+		little.setToggleGroup(endianToggle);
+		RadioMenuItem big = new RadioMenuItem("Big Endian");
+		big.setOnAction(e -> {
+			gui.setEndianness(true);
+		});
+		big.setToggleGroup(endianToggle);
+		endianness.getItems().addAll(little, big);
+		settings.getItems().add(endianness);
+		
 		Menu dataDisp = new Menu("Data Format");
-		ToggleGroup toggle = new ToggleGroup();
+		ToggleGroup dispToggle = new ToggleGroup();
 		RadioMenuItem auto = new RadioMenuItem("Auto");
 		auto.setSelected(true);
 		auto.setOnAction(e -> {
 			gui.getMemory().setDisplayType(DataDisplay.AUTO);
 			gui.getRegisters().setDisplayType(DataDisplay.AUTO);
 		});
-		auto.setToggleGroup(toggle);
+		auto.setToggleGroup(dispToggle);
 		RadioMenuItem hex = new RadioMenuItem("Hexadecimal");
 		hex.setOnAction(e -> {
-			gui.getMemory().setDisplayType(DataDisplay.HEX);
-			gui.getRegisters().setDisplayType(DataDisplay.HEX);
+			gui.setDisplayType(DataDisplay.HEX);
 		});		
-		hex.setToggleGroup(toggle);
+		hex.setToggleGroup(dispToggle);
 		RadioMenuItem dec = new RadioMenuItem("Decimal");
 		dec.setOnAction(e -> {
-			gui.getMemory().setDisplayType(DataDisplay.DECIMAL);
-			gui.getRegisters().setDisplayType(DataDisplay.DECIMAL);
+			gui.setDisplayType(DataDisplay.DECIMAL);
 		});	
-		dec.setToggleGroup(toggle);
+		dec.setToggleGroup(dispToggle);
 		RadioMenuItem flo = new RadioMenuItem("Floating Point");
 		flo.setOnAction(e -> {
-			gui.getMemory().setDisplayType(DataDisplay.FLOAT);
-			gui.getRegisters().setDisplayType(DataDisplay.FLOAT);
+			gui.setDisplayType(DataDisplay.FLOAT);
 		});	
-		flo.setToggleGroup(toggle);
+		flo.setToggleGroup(dispToggle);
 		RadioMenuItem str = new RadioMenuItem("String");
 		str.setOnAction(e -> {
-			gui.getMemory().setDisplayType(DataDisplay.STRING);
-			gui.getRegisters().setDisplayType(DataDisplay.STRING);
+			gui.setDisplayType(DataDisplay.STRING);
 		});
-		str.setToggleGroup(toggle);
+		str.setToggleGroup(dispToggle);
 		dataDisp.getItems().addAll(auto, hex, dec, flo, str);
-		display.getItems().add(dataDisp);
+		settings.getItems().add(dataDisp);
 	}
 	
 	/**

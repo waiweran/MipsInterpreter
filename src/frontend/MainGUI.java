@@ -45,6 +45,9 @@ public class MainGUI {
 	private File currentFile;
 	private Stage mainStage;
 	
+	private DataDisplay display;
+	private boolean endianness;
+	
 	private Program prog;
 
 	/**
@@ -52,6 +55,8 @@ public class MainGUI {
 	 * @param primaryStage the stage to initialize the GUI inside.
 	 */
 	public MainGUI(Stage primaryStage) {
+		display = DataDisplay.AUTO;
+		endianness = false;
 		mainStage = primaryStage;
 		mainStage.setResizable(false);
 		cmd = new CommandLine();
@@ -72,7 +77,9 @@ public class MainGUI {
 	 */
 	private void initialize(Program program) {
 		regs = new RegisterDisplay(program);
+		regs.setDisplayType(display);
 		mem = new MemoryDisplay(program);
+		mem.setDisplayType(display);
 		code = new CodeDisplay(program);
 		control = new ProgramControls(program, this);
 		BorderPane root = new BorderPane();
@@ -94,6 +101,7 @@ public class MainGUI {
 	 */
 	public void loadProgram() {
 		prog = new Program(cmd.getInputStream(), cmd.getPrintStream());
+		prog.getMem().setEndianness(endianness);
 		if(currentFile == null) {
 			initialize(prog);
 			control.lock();
@@ -184,6 +192,23 @@ public class MainGUI {
 		fileChooser.setTitle(title);
 		fileChooser.setInitialFileName(currentFile.getName().replace(".s", ".txt"));
 		return fileChooser.showSaveDialog(mainStage);
+	}
+	
+	/**
+	 * Sets the endianness of the memory system.
+	 * Restarts the system to reflect the update.
+	 * @param bigEndian true for big endian, false for little endian.
+	 */
+	public void setEndianness(boolean bigEndian) {
+		endianness = bigEndian;
+		control.playPause(true);
+		loadProgram();
+	}
+	
+	public void setDisplayType(DataDisplay displayType) {
+		display = displayType;
+		mem.setDisplayType(display);
+		regs.setDisplayType(display);
 	}
 	
 	/**

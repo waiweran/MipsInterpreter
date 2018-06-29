@@ -82,6 +82,8 @@ public class FlagParser {
 		possibleFlags.add(new Flag("help", 'h'));
 		possibleFlags.add(new Flag("verbose", 'v'));
 		possibleFlags.add(new Flag("callcheck", 'c'));
+		possibleFlags.add(new Flag("bigendian", 'b'));
+		possibleFlags.add(new Flag("littleendian", 'l'));
 	}
 	
 	/**

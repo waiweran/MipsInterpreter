@@ -1,12 +1,10 @@
 package backend.parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import backend.program.Program;
 import backend.state.Data;
 import exceptions.DataFormatException;
-import exceptions.ExecutionException;
 import exceptions.UnsupportedDataException;
 
 /**
@@ -85,7 +83,7 @@ public class DataParser {
 				}
 			}
 		}
-		prog.getMem().addToGlobalData(memOutput);
+		prog.getMem().addStringsToGlobalData(memOutput);
 	}
 
 	/**
@@ -191,53 +189,4 @@ public class DataParser {
 		return inString;
 	}
 	
-	/**
-	 * Converts a String to a list of Data.
-	 * Splits string into chars, stores each char as a byte, 
-	 * clumps 4 consecutive bytes into a word, and saves that
-	 * as a Data value.
-	 * @param dataVal the String to convert.
-	 * @return List of Data values produced from the string.
-	 */
-	public static List<Data> stringToDataArray(String dataVal) {
-		ArrayList<Data> memOutput = new ArrayList<>();
-		char[] charArray = (dataVal + "\0").toCharArray();		
-		for(int i = 0; i < charArray.length; i += 4) {
-			memOutput.add(new Data());
-			for(int j = i; j < i + 4; j++) {
-				if(j < charArray.length) {
-					memOutput.set(i/4, new Data((memOutput.get(i/4).getValue() << 8)
-							+ charArray[j], Data.DataType.String));
-				}
-				else {
-					memOutput.set(i/4, new Data(memOutput.get(i/4).getValue() << 8, 
-							Data.DataType.String));
-				}
-			}
-		}
-		return memOutput;
-	}
-	
-	/**
-	 * Converts a list of Data values to a String.
-	 * Takes each Data value, splits it into 4 bytes, converts
-	 * each byte into a character, and concatenates the characters
-	 * into the output string.
-	 * @param input the list of Data values to convert to a String.
-	 * @return output String produced from Data values.
-	 */
-	public static String dataArrayToString(List<Data> input) {
-		StringBuilder output = new StringBuilder();
-		for(int i = 0; i < input.size(); i++) {
-			for(int j = 3; j >= 0; j--) {
-				char nextChar = (char) ((input.get(i).getValue() >> 8*j) % 256);
-				if(nextChar == (char)0) {
-					return output.toString();
-				}
-				output.append(nextChar);
-			}
-		}
-		throw new ExecutionException("String missing null termination: " + output.toString());
-	}
-
 }

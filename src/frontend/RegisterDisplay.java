@@ -141,11 +141,15 @@ public class RegisterDisplay implements ScreenObject {
 		hiVal.setText(dataToString(prog.getRegFile().readHI()));
 		loVal.setText(dataToString(prog.getRegFile().readLO()));
 		for(Register r : Register.values()) {
-			regDisplays.get(r).setText(prog.getRegFile().read(r).getDataType() + "\t" +
+			String dataType = prog.getRegFile().read(r).getDataType().toString();
+			if(dataType.length() < 5) dataType = dataType + "\t";
+			regDisplays.get(r).setText(dataType + "\t" +
 					dataToString(prog.getRegFile().read(r)));
 		}
 		for(FPRegister r : FPRegister.values()) {
-			fpRegDisplays.get(r).setText(prog.getFPRegFile().read(r).getDataType() + "\t" +
+			String dataType = prog.getFPRegFile().read(r).getDataType().toString();
+			if(dataType.length() > 5) dataType = dataType + "    ";
+			fpRegDisplays.get(r).setText(dataType + "\t" +
 					dataToString(prog.getFPRegFile().read(r)));
 		}
 	}
