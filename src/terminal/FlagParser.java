@@ -30,6 +30,7 @@ public class FlagParser {
 	public void parseFlags(String[] args) {
 		for(String s : args) {
 			if(s.startsWith("--")) {
+				boolean realFlag = false; 
 				for(Flag f : flags) {
 					String fname = s.substring(2);
 					String fval = null;
@@ -40,21 +41,23 @@ public class FlagParser {
 					if(fname.equals(f.getName())) {
 						f.setUsed();
 						f.setValue(fval);
+						realFlag = true;
 						break;
 					}
-					else {
-						throw new RuntimeException("Invalid Flag " + fname);
-					}
 				}
+				if(!realFlag) throw new RuntimeException("Invalid Flag: " + s.substring(2));
 			}
 			else if(s.startsWith("-")) {
 				for(int i = 1; i < s.length(); i++) {
+					boolean realFlag = false;
 					for(Flag f : flags) {
 						if(s.charAt(i) == f.getAbbreviation()) {
 							f.setUsed();
+							realFlag = true;
 							break;
 						}
 					}
+					if(!realFlag) throw new RuntimeException("Invalid Flag: " + s.charAt(i));
 				}
 			}
 			else {
