@@ -88,7 +88,7 @@ public class Program {
 	}
 	
 	/**
-	 * Starts program execution.
+	 * Jumps to 'main' section of program, initializing PC.
 	 */
 	public void start() {
 		new Instruction(new Jump(), null, null, null, null, null, null,

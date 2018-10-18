@@ -191,7 +191,7 @@ public class Main {
 			}
 		}
 		if(checkCalls) {
-			System.out.println("\n\nFound " + callChecker.getNumViolations() 
+			System.err.println("\n\nFound " + callChecker.getNumViolations() 
 			+ " violations of calling conventions.");
 		}
 	}
