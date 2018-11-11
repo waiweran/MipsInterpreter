@@ -1,3 +1,6 @@
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/HoopStats.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/stress.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/arithmetic_2.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/arithmetic_1.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/control_1.s
+/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/control_2.s
 /Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/recurse.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/SyntaxError.s
