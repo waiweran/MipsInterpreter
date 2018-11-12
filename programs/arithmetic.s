@@ -10,9 +10,9 @@ main: # Initialize Values
 	sub $4 $0 $4	# r4 = -35
 	 
 	# Positive Value Tests
-	add $5 $2 $1	# r5 = r2 + r1 = 24
-	sub $6 $2 $1	# r6 = r2 - r1 = 18
-	and $7 $2 $1	# r7 = r2 & r1 = 1
+	add $5 $2 $20	# r5 = r2 + r1 = 24
+	sub $6 $2 $20	# r6 = r2 - r1 = 18
+	and $7 $2 $20	# r7 = r2 & r1 = 1
 	or $8 $2 $20 	# r8 = r2 | r1 = 23
 	sll $9 $20 4 	# r9 = r1 << 4 = 48
 	sra $10 $2 2	# r10 = r2 >> 2 = 5

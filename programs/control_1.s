@@ -6,7 +6,7 @@
 main: # Initialize Values
 	addi $22 $0 4		# r1 = 4
 	addi $2 $0 5		# r2 = 5
-	sub $3 $0 $1		# r3 = -4
+	sub $3 $0 $22		# r3 = -4
 	sub $4 $0 $2		# r4 = -5
 	
 	# Basic Test of BNE
