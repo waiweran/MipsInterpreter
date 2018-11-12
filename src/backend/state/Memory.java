@@ -319,17 +319,20 @@ public class Memory {
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
 			output.append(getHex(i*4) + ":\t" 
-					+ globalData.get(i).getDataType() + "\t" + globalData.get(i) + "\n");
+					+ globalData.get(i).getDataType() + "\t" 
+					+ printWithEndian(globalData.get(i)) + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
 			output.append(getHex((i + globalData.size())*4) + ":\t"
-					+ heap.get(i).getDataType() + "\t" + heap.get(i) + "\n");
+					+ heap.get(i).getDataType() + "\t" 
+					+ printWithEndian(heap.get(i)) + "\n");
 		}
 		output.append("\nStack: \n");
 		for(int i = 0; i < stack.size(); i++) {
 			output.append(getHex((Integer.MAX_VALUE/4 - i)*4) + ":\t"
-					+ stack.get(i).getDataType() + "\t" + stack.get(i) + "\n");
+					+ stack.get(i).getDataType() + "\t" 
+					+ printWithEndian(stack.get(i)) + "\n");
 		}
 		return output.toString();
 	}
@@ -391,17 +394,22 @@ public class Memory {
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
 			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
-					+ "\t" + globalData.get(i).toDecimal() + "\n");
+					+ "\t" + (bigEndian? globalData.get(i).toDecimal() : 
+						reverseEndian(globalData.get(i)).toDecimal()) + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
 			output.append(getHex((i + globalData.size())*4) + ":\t"
-					+ heap.get(i).getDataType() + "\t" + heap.get(i).toDecimal() + "\n");
+					+ heap.get(i).getDataType() + "\t" + 
+					(bigEndian? heap.get(i).toDecimal() : 
+						reverseEndian(heap.get(i)).toDecimal()) + "\n");
 		}
 		output.append("\nStack: \n");
 		for(int i = 0; i < stack.size(); i++) {
 			output.append(getHex((Integer.MAX_VALUE/4 - i)*4) + ":\t"
-					+ stack.get(i).getDataType() + "\t" + stack.get(i).toDecimal() + "\n");
+					+ stack.get(i).getDataType() + "\t" + 
+					(bigEndian? stack.get(i).toDecimal() : 
+						reverseEndian(stack.get(i)).toDecimal()) + "\n");
 		}
 		return output.toString();
 	}
@@ -414,17 +422,22 @@ public class Memory {
 		output.append("Global Data: \n");
 		for(int i = 0; i < globalData.size(); i++) {
 			output.append(getHex(i*4) + ":\t" + globalData.get(i).getDataType()
-					+ "\t" + globalData.get(i).toFloatString() + "\n");
+					+ "\t" + (bigEndian? globalData.get(i).toFloatString() : 
+						reverseEndian(globalData.get(i)).toFloatString()) + "\n");
 		}
 		output.append("\nHeap: \n");
 		for(int i = 0; i < heap.size(); i++) {
 			output.append(getHex((i + globalData.size())*4) + ":\t"
-					+ heap.get(i).getDataType() + "\t" + heap.get(i).toFloatString() + "\n");
+					+ heap.get(i).getDataType() + "\t" + 
+					(bigEndian? heap.get(i).toFloatString() : 
+						reverseEndian(heap.get(i)).toFloatString()) + "\n");
 		}
 		output.append("\nStack: \n");
 		for(int i = 0; i < stack.size(); i++) {
 			output.append(getHex((Integer.MAX_VALUE/4 - i)*4) + ":\t"
-					+ stack.get(i).getDataType() + "\t" + stack.get(i).toFloatString() + "\n");
+					+ stack.get(i).getDataType() + "\t" + 
+					(bigEndian? stack.get(i).toFloatString() : 
+						reverseEndian(stack.get(i)).toFloatString()) + "\n");
 		}
 		return output.toString();
 	}
@@ -437,6 +450,16 @@ public class Memory {
 	private String getHex(int value) {
 		String output = Integer.toHexString(value);
 		return "00000000".substring(output.length()) + output.toUpperCase();
+	}
+	
+	private String printWithEndian(Data value) {
+		Data.DataType type = value.getDataType();
+		if(!bigEndian && type != Data.DataType.String && type != Data.DataType.Byte) {
+			return reverseEndian(value).toString();
+		}
+		else {
+			return value.toString();
+		}
 	}
 	
 	/**

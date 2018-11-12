@@ -86,6 +86,7 @@ public class CodeDisplay implements ScreenObject {
 		scroll.setContent(progDisp);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
 		scroll.setMinViewportWidth(MainGUI.SCREEN_WIDTH/2);
+		scroll.setMaxWidth(MainGUI.SCREEN_WIDTH/2);
 		scroll.setMinHeight(MainGUI.SCREEN_HEIGHT*2/3);
 		scroll.setMaxHeight(MainGUI.SCREEN_HEIGHT*2/3);
 		return scroll;

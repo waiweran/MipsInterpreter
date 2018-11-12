@@ -93,8 +93,7 @@ public class TopMenu implements ScreenObject {
 		RadioMenuItem auto = new RadioMenuItem("Auto");
 		auto.setSelected(true);
 		auto.setOnAction(e -> {
-			gui.getMemory().setDisplayType(DataDisplay.AUTO);
-			gui.getRegisters().setDisplayType(DataDisplay.AUTO);
+			gui.setDisplayType(DataDisplay.AUTO);
 		});
 		auto.setToggleGroup(dispToggle);
 		RadioMenuItem hex = new RadioMenuItem("Hexadecimal");

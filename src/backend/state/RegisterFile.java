@@ -27,6 +27,7 @@ public class RegisterFile {
 		for(Register r : Register.values()) {
 			vals.put(r, new Data());
 		}
+		vals.put(Register.zero, new Data(0, Data.DataType.Integer));
 		vals.put(Register.sp, new Data(Integer.MAX_VALUE + 1, Data.DataType.Address));
 		vals.put(Register.gp, new Data(32768, Data.DataType.Address));
 	}
