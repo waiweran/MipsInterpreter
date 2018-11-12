@@ -1,5 +1,6 @@
 package backend.program.opcode;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 
 import exceptions.UnsupportedOpcodeException;
@@ -25,10 +26,12 @@ public class OpcodeFactory {
 		String className = OPCODES.getString(name);
 		try {
 			Class<?> opClass = Class.forName(className);
-			Object o = opClass.newInstance();
+			Object o = opClass.getConstructor(String.class).newInstance(name);
 			return (Opcode) o;
 		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException | ClassCastException e) {
+				| IllegalAccessException | ClassCastException
+				| NoSuchMethodException | SecurityException 
+				| IllegalArgumentException | InvocationTargetException e) {
 			throw new UnsupportedOpcodeException("Opcode " + name + " not supported", e);
 		}
 

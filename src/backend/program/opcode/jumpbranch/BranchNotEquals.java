@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class BranchNotEquals extends Opcode {
 
-	public BranchNotEquals() {
-		super("bne");
+	public BranchNotEquals(String name) {
+		super(name);
 	}
 
 	@Override

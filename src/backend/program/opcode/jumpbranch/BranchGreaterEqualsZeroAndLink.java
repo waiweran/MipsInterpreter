@@ -8,8 +8,8 @@ import backend.state.Data;
 
 public class BranchGreaterEqualsZeroAndLink extends Opcode {
 
-	public BranchGreaterEqualsZeroAndLink() {
-		super("bgezal");
+	public BranchGreaterEqualsZeroAndLink(String name) {
+		super(name);
 	}
 
 	@Override

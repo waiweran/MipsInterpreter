@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class AndImmediate extends Opcode {
 
-	public AndImmediate() {
-		super("andi");
+	public AndImmediate(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareEqual extends Opcode {
 
-	public CompareEqual() {
-		super("c.eq.s");
+	public CompareEqual(String name) {
+		super(name);
 	}
 
 	@Override

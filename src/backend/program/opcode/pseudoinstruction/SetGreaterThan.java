@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetGreaterThan extends Opcode {
 
-	public SetGreaterThan() {
-		super("sgt");
+	public SetGreaterThan(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class BranchGreaterEquals extends Opcode {
 
-	public BranchGreaterEquals() {
-		super("bge");
+	public BranchGreaterEquals(String name) {
+		super(name);
 	}
 
 	@Override

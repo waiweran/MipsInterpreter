@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareGreaterThan extends Opcode {
 
-	public CompareGreaterThan() {
-		super("c.gt.s");
+	public CompareGreaterThan(String name) {
+		super(name);
 	}
 
 	@Override

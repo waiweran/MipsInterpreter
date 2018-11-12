@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class LoadByte extends Opcode {
 
-	public LoadByte() {
-		super("lb");
+	public LoadByte(String name) {
+		super(name);
 	}
 
 	@Override

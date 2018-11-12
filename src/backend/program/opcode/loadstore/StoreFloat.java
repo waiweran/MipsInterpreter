@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class StoreFloat extends Opcode {
 
-	public StoreFloat() {
-		super("swc1");
+	public StoreFloat(String name) {
+		super(name);
 	}
 
 	@Override

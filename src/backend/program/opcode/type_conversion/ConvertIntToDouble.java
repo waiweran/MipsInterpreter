@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class ConvertIntToDouble extends Opcode {
 
-	public ConvertIntToDouble() {
-		super("cvt.d.w");
+	public ConvertIntToDouble(String name) {
+		super(name);
 	}
 
 	@Override

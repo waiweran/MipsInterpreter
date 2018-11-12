@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class BranchGreaterZero extends Opcode {
 
-	public BranchGreaterZero() {
-		super("bgtz");
+	public BranchGreaterZero(String name) {
+		super(name);
 	}
 
 	@Override

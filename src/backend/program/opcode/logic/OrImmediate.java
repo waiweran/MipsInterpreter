@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class OrImmediate extends Opcode {
 
-	public OrImmediate() {
-		super("ori");
+	public OrImmediate(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class StoreDouble extends Opcode {
 
-	public StoreDouble() {
-		super("sdc1");
+	public StoreDouble(String name) {
+		super(name);
 	}
 
 	@Override

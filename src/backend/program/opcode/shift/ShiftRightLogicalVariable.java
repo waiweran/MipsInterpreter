@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ShiftRightLogicalVariable extends Opcode {
 
-	public ShiftRightLogicalVariable() {
-		super("srlv");
+	public ShiftRightLogicalVariable(String name) {
+		super(name);
 	}
 
 	@Override

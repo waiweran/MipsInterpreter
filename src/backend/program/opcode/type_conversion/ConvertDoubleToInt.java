@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ConvertDoubleToInt extends Opcode {
 
-	public ConvertDoubleToInt() {
-		super("cvt.w.d");
+	public ConvertDoubleToInt(String name) {
+		super(name);
 	}
 
 	@Override

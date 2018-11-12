@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveToHI extends Opcode {
 
-	public MoveToHI() {
-		super("mthi");
+	public MoveToHI(String name) {
+		super(name);
 	}
 
 	@Override

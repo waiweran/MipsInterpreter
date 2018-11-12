@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class DivideFloat extends Opcode {
 
-	public DivideFloat() {
-		super("div.s");
+	public DivideFloat(String name) {
+		super(name);
 	}
 
 	@Override

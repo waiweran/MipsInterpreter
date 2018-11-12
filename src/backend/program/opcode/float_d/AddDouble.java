@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class AddDouble extends Opcode {
 
-	public AddDouble() {
-		super("add.d");
+	public AddDouble(String name) {
+		super(name);
 	}
 
 	@Override

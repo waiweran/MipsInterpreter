@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MultiplyFloat extends Opcode {
 
-	public MultiplyFloat() {
-		super("mult.s");
+	public MultiplyFloat(String name) {
+		super(name);
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetEqual extends Opcode {
 
-	public SetEqual() {
-		super("seq");
+	public SetEqual(String name) {
+		super(name);
 	}
 
 	@Override

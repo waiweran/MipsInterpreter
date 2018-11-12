@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetNotEqual extends Opcode {
 
-	public SetNotEqual() {
-		super("sne");
+	public SetNotEqual(String name) {
+		super(name);
 	}
 
 	@Override

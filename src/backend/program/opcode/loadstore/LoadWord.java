@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class LoadWord extends Opcode {
 
-	public LoadWord() {
-		super("lw");
+	public LoadWord(String name) {
+		super(name);
 	}
 
 	@Override

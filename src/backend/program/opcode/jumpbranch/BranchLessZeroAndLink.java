@@ -8,8 +8,8 @@ import backend.state.Data;
 
 public class BranchLessZeroAndLink extends Opcode {
 
-	public BranchLessZeroAndLink() {
-		super("bltzal");
+	public BranchLessZeroAndLink(String name) {
+		super(name);
 	}
 
 	@Override

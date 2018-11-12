@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class StoreWord extends Opcode {
 
-	public StoreWord() {
-		super("sw");
+	public StoreWord(String name) {
+		super(name);
 	}
 
 	@Override

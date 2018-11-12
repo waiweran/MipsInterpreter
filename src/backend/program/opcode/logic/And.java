@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class And extends Opcode {
 
-	public And() {
-		super("and");
+	public And(String name) {
+		super(name);
 	}
 
 	@Override

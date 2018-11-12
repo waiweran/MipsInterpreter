@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class SubtractDouble extends Opcode {
 
-	public SubtractDouble() {
-		super("sub.d");
+	public SubtractDouble(String name) {
+		super(name);
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Or extends Opcode {
 
-	public Or() {
-		super("or");
+	public Or(String name) {
+		super(name);
 	}
 
 	@Override

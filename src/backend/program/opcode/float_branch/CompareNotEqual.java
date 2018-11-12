@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareNotEqual extends Opcode {
 
-	public CompareNotEqual() {
-		super("c.ne.s");
+	public CompareNotEqual(String name) {
+		super(name);
 	}
 
 	@Override

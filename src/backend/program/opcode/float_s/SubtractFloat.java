@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class SubtractFloat extends Opcode {
 
-	public SubtractFloat() {
-		super("sub.s");
+	public SubtractFloat(String name) {
+		super(name);
 	}
 
 	@Override

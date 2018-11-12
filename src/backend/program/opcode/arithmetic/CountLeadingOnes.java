@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class CountLeadingOnes extends Opcode {
 
-	public CountLeadingOnes() {
-		super("clo");
+	public CountLeadingOnes(String name) {
+		super(name);
 	}
 
 	@Override

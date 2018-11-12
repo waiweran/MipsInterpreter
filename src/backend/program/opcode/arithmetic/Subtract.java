@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Subtract extends Opcode {
 
-	public Subtract() {
-		super("sub");
+	public Subtract(String name) {
+		super(name);
 	}
 
 	@Override

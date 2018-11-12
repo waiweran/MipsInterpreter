@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Add extends Opcode {
 
-	public Add() {
-		super("add");
+	public Add(String name) {
+		super(name);
 	}
 
 	@Override

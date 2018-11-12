@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Multiply extends Opcode {
 
-	public Multiply() {
-		super("mult");
+	public Multiply(String name) {
+		super(name);
 	}
 
 	@Override

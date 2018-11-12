@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class LoadImmediateFloat extends Opcode {
 
-	public LoadImmediateFloat() {
-		super("li.s");
+	public LoadImmediateFloat(String name) {
+		super(name);
 	}
 
 	@Override

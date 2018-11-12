@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ExclusiveOrImmediate extends Opcode {
 
-	public ExclusiveOrImmediate() {
-		super("xori");
+	public ExclusiveOrImmediate(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveZero extends Opcode {
 
-	public MoveZero() {
-		super("movn");
+	public MoveZero(String name) {
+		super(name);
 	}
 
 	@Override

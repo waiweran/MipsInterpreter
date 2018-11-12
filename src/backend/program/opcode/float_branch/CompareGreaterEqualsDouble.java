@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareGreaterEqualsDouble extends Opcode {
 
-	public CompareGreaterEqualsDouble() {
-		super("c.ge.d");
+	public CompareGreaterEqualsDouble(String name) {
+		super(name);
 	}
 
 	@Override

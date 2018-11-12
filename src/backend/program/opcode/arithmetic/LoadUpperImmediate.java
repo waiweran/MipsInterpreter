@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class LoadUpperImmediate extends Opcode {
 
-	public LoadUpperImmediate() {
-		super("lui");
+	public LoadUpperImmediate(String name) {
+		super(name);
 	}
 
 	@Override

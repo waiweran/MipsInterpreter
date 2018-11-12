@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class ConvertFloatToDouble extends Opcode {
 
-	public ConvertFloatToDouble() {
-		super("cvt.d.s");
+	public ConvertFloatToDouble(String name) {
+		super(name);
 	}
 
 	@Override

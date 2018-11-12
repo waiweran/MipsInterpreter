@@ -8,8 +8,8 @@ import backend.state.Data;
 
 public class JumpAndLink extends Opcode {
 
-	public JumpAndLink() {
-		super("jal");
+	public JumpAndLink(String name) {
+		super(name);
 	}
 
 	@Override

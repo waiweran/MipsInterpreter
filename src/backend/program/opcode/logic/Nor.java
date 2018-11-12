@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Nor extends Opcode {
 
-	public Nor() {
-		super("nor");
+	public Nor(String name) {
+		super(name);
 	}
 
 	@Override

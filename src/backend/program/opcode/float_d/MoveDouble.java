@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveDouble extends Opcode {
 
-	public MoveDouble() {
-		super("mov.d");
+	public MoveDouble(String name) {
+		super(name);
 	}
 
 	@Override

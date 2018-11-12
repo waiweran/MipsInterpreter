@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class JumpRegister extends Opcode {
 
-	public JumpRegister() {
-		super("jr");
+	public JumpRegister(String name) {
+		super(name);
 	}
 
 	@Override

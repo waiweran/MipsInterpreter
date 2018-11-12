@@ -9,8 +9,8 @@ import exceptions.ExecutionException;
 
 public class Syscall extends Opcode {
 
-	public Syscall() {
-		super("syscall");
+	public Syscall(String name) {
+		super(name);
 	}
 
 	@Override

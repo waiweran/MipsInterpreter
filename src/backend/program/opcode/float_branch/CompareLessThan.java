@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareLessThan extends Opcode {
 
-	public CompareLessThan() {
-		super("c.lt.s");
+	public CompareLessThan(String name) {
+		super(name);
 	}
 
 	@Override

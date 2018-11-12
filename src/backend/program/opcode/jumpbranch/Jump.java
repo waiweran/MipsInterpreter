@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class Jump extends Opcode {
 
-	public Jump() {
-		super("j");
+	public Jump(String name) {
+		super(name);
 	}
 
 	@Override

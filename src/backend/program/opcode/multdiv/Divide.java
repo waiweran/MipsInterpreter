@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Divide extends Opcode {
 
-	public Divide() {
-		super("div");
+	public Divide(String name) {
+		super(name);
 	}
 
 	@Override

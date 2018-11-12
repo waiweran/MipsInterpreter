@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ShiftRightArithmeticVariable extends Opcode {
 
-	public ShiftRightArithmeticVariable() {
-		super("srav");
+	public ShiftRightArithmeticVariable(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class BranchTrue extends Opcode {
 
-	public BranchTrue() {
-		super("bc1t");
+	public BranchTrue(String name) {
+		super(name);
 	}
 
 	@Override

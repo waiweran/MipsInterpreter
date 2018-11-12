@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetLessThanImmediate extends Opcode {
 
-	public SetLessThanImmediate() {
-		super("slti");
+	public SetLessThanImmediate(String name) {
+		super(name);
 	}
 
 	@Override

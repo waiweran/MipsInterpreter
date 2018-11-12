@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MultiplyDouble extends Opcode {
 
-	public MultiplyDouble() {
-		super("mult.d");
+	public MultiplyDouble(String name) {
+		super(name);
 	}
 
 	@Override

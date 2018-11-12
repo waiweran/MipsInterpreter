@@ -6,10 +6,10 @@ import backend.program.opcode.Opcode;
 
 public class MoveNonzero extends Opcode {
 
-	public MoveNonzero() {
-		super("movz");
+	public MoveNonzero(String name) {
+		super(name);
 	}
-
+	
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		if(prog.getRegFile().read(insn.getR3()).getValue() == 0)

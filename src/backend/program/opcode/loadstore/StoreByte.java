@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class StoreByte extends Opcode {
 
-	public StoreByte() {
-		super("sb");
+	public StoreByte(String name) {
+		super(name);
 	}
 
 	@Override

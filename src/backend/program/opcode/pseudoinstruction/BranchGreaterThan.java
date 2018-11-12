@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class BranchGreaterThan extends Opcode {
 
-	public BranchGreaterThan() {
-		super("bgt");
+	public BranchGreaterThan(String name) {
+		super(name);
 	}
 
 	@Override

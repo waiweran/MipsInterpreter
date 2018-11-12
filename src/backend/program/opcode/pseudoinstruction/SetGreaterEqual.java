@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetGreaterEqual extends Opcode {
 
-	public SetGreaterEqual() {
-		super("sge");
+	public SetGreaterEqual(String name) {
+		super(name);
 	}
 
 	@Override

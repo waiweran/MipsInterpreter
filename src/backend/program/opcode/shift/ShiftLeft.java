@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ShiftLeft extends Opcode {
 
-	public ShiftLeft() {
-		super("sll");
+	public ShiftLeft(String name) {
+		super(name);
 	}
 
 	@Override

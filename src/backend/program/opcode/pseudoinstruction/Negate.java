@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Negate extends Opcode {
 
-	public Negate() {
-		super("neg");
+	public Negate(String name) {
+		super(name);
 	}
 
 	@Override

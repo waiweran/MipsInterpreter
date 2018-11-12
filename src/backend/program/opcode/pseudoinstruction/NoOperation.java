@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class NoOperation extends Opcode {
 
-	public NoOperation() {
-		super("noop");
+	public NoOperation(String name) {
+		super(name);
 	}
 
 	@Override

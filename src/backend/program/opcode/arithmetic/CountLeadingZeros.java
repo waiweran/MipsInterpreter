@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class CountLeadingZeros extends Opcode {
 
-	public CountLeadingZeros() {
-		super("clz");
+	public CountLeadingZeros(String name) {
+		super(name);
 	}
 
 	@Override

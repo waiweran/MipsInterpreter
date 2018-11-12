@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class LoadAddress extends Opcode {
 
-	public LoadAddress() {
-		super("la");
+	public LoadAddress(String name) {
+		super(name);
 	}
 
 	@Override

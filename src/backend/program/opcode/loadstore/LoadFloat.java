@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class LoadFloat extends Opcode {
 
-	public LoadFloat() {
-		super("lwc1");
+	public LoadFloat(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class DivideDouble extends Opcode {
 
-	public DivideDouble() {
-		super("div.d");
+	public DivideDouble(String name) {
+		super(name);
 	}
 
 	@Override

@@ -8,8 +8,8 @@ import backend.state.Data;
 
 public class JumpAndLinkRegister extends Opcode {
 
-	public JumpAndLinkRegister() {
-		super("jalr");
+	public JumpAndLinkRegister(String name) {
+		super(name);
 	}
 
 	@Override

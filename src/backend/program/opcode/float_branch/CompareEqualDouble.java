@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class CompareEqualDouble extends Opcode {
 
-	public CompareEqualDouble() {
-		super("c.eq.d");
+	public CompareEqualDouble(String name) {
+		super(name);
 	}
 
 	@Override

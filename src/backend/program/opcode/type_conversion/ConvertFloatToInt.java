@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ConvertFloatToInt extends Opcode {
 
-	public ConvertFloatToInt() {
-		super("cvt.w.s");
+	public ConvertFloatToInt(String name) {
+		super(name);
 	}
 
 	@Override

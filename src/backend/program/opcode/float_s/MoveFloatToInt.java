@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveFloatToInt extends Opcode {
 
-	public MoveFloatToInt() {
-		super("mfc1");
+	public MoveFloatToInt(String name) {
+		super(name);
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class AddImmediate extends Opcode {
 
-	public AddImmediate() {
-		super("addi");
+	public AddImmediate(String name) {
+		super(name);
 	}
 
 	@Override

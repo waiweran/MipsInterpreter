@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class Not extends Opcode {
 
-	public Not() {
-		super("not");
+	public Not(String name) {
+		super(name);
 	}
 
 	@Override

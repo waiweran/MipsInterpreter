@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class AddFloat extends Opcode {
 
-	public AddFloat() {
-		super("add.s");
+	public AddFloat(String name) {
+		super(name);
 	}
 
 	@Override

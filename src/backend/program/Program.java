@@ -91,7 +91,7 @@ public class Program {
 	 * Jumps to 'main' section of program, initializing PC.
 	 */
 	public void start() {
-		new Instruction(new Jump(), null, null, null, null, null, null,
+		new Instruction(new Jump("j"), null, null, null, null, null, null,
 				null, "main").execute(this);
 	}
 		
@@ -184,9 +184,9 @@ public class Program {
 	 */
 	public void setupProgramClose() {
 		regs.write(Register.ra, new Data(lines.size(), Data.DataType.J_Target));
-		lines.add(new Line("", new Instruction(new AddImmediate(), 
+		lines.add(new Line("", new Instruction(new AddImmediate("addi"), 
 				Register.v0, Register.zero, null, null, null, null, 10, null)));
-		lines.add(new Line("", new Instruction(new Syscall(), 
+		lines.add(new Line("", new Instruction(new Syscall("syscall"), 
 				null, null, null, null, null, null, null, null)));
 	}
 	

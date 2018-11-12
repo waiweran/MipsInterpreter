@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class ConvertDoubleToFloat extends Opcode {
 
-	public ConvertDoubleToFloat() {
-		super("cvt.s.d");
+	public ConvertDoubleToFloat(String name) {
+		super(name);
 	}
 
 	@Override

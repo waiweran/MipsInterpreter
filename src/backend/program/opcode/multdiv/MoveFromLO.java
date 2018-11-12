@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveFromLO extends Opcode {
 
-	public MoveFromLO() {
-		super("mflo");
+	public MoveFromLO(String name) {
+		super(name);
 	}
 
 	@Override

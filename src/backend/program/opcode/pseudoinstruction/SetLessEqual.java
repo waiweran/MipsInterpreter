@@ -7,8 +7,8 @@ import backend.state.Data;
 
 public class SetLessEqual extends Opcode {
 
-	public SetLessEqual() {
-		super("sle");
+	public SetLessEqual(String name) {
+		super(name);
 	}
 
 	@Override

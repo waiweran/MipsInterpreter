@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class LoadDouble extends Opcode {
 
-	public LoadDouble() {
-		super("l.d");
+	public LoadDouble(String name) {
+		super(name);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import backend.program.opcode.Opcode;
 
 public class MoveFloat extends Opcode {
 
-	public MoveFloat() {
-		super("mov.s");
+	public MoveFloat(String name) {
+		super(name);
 	}
 
 	@Override
