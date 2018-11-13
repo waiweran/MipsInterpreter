@@ -154,7 +154,8 @@ public class Memory {
 			heap.set(word - globalData.size(), data);
 		}
 		// Stack
-		else if(word >= regs.read(Register.sp).getValue()/4) {
+		else if(regs.read(Register.sp).getValue() > 0 
+				&& word >= regs.read(Register.sp).getValue()/4) {
 			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1
 					- regs.read(Register.sp).getValue()/4; i++) {
 				stack.add(new Data());

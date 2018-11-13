@@ -52,7 +52,7 @@ public class CodeDisplay implements ScreenObject {
 			line.getChildren().add(text);
 			MainGUI.setBackground(line, Color.WHITE);
 			lineDisps.put(lines.get(i), line);
-			if(i > 0 && i < lines.size() - 2) progDisp.getChildren().add(line);
+			if(i < lines.size() - 2) progDisp.getChildren().add(line);
 		}
 	}
 	
