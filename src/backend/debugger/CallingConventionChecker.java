@@ -19,8 +19,9 @@ public class CallingConventionChecker {
 	
 	private RegisterFile registers;
 	private int numViolations;
-	private List<Register> saved, unsaved, unknown, arguments, returns;
+	private List<Register> saved, specific, unsaved, unknown, arguments, returns;
 	private Stack<Map<Register, Data>> values;
+	private List<Integer> stackwrites;
 
 	/**
 	 * Initializes the Stack usage checker.
@@ -31,7 +32,8 @@ public class CallingConventionChecker {
 		initializeRegisterLists();
 		values = new Stack<>();
 		values.push(new HashMap<>());
-		values.get(0).put(Register.ra, registers.read(Register.ra));
+		values.get(0).put(Register.ra, registers.readSafe(Register.ra));
+		stackwrites = new ArrayList<>();
 	}
 	
 	/**
@@ -39,11 +41,16 @@ public class CallingConventionChecker {
 	 * did not modify them.
 	 */
 	public void startProcedure() {
+		stackwrites.clear();
 		HashMap<Register, Data> regVals = new HashMap<>();
 		for(Register reg: saved) {
-			regVals.put(reg, registers.read(reg));
+			regVals.put(reg, registers.readSafe(reg));
+		}
+		for(Register reg: specific) {
+			regVals.put(reg, registers.readSafe(reg));
 		}
 		values.push(regVals);
+		unknown.clear();
 		unknown.addAll(unsaved);
 		unknown.addAll(returns);
 	}
@@ -53,14 +60,22 @@ public class CallingConventionChecker {
 	 * @return true if saved registers properly restored, false if not.
 	 */
 	public boolean endProcedure() {
+		stackwrites.clear();
 		boolean fine = true;
 		Map<Register, Data> vals = values.pop();
 		for(Register reg : saved) {
-			if(vals.containsKey(reg) && !vals.get(reg).equals(registers.read(reg))) {
+			if(vals.containsKey(reg) && !vals.get(reg).equals(registers.readSafe(reg))) {
 				numViolations++;
 				fine = false;
 			}
 		}
+		for(Register reg : specific) {
+			if(vals.containsKey(reg) && !vals.get(reg).equals(registers.readSafe(reg))) {
+				numViolations++;
+				fine = false;
+			}
+		}
+		unknown.clear();
 		unknown.addAll(unsaved);
 		unknown.addAll(arguments);
 		return fine;
@@ -71,7 +86,7 @@ public class CallingConventionChecker {
 	 * @param reg The register that was written.
 	 */
 	public void writeReg(Register reg) {
-		unsaved.remove(reg);
+		unknown.remove(reg);
 	}
 	
 	/**
@@ -82,7 +97,32 @@ public class CallingConventionChecker {
 	 * from procedure call, false if it does.
 	 */
 	public boolean readReg(Register reg) {
-		if(unsaved.contains(reg)) {
+		if(unknown.contains(reg)) {
+			numViolations++;
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Notes that an address in the stack was written to.
+	 * @param address.
+	 */
+	public void writeStack(int address) {
+		int stackStart = registers.readSafe(Register.sp).getValue();
+		if(stackStart > 0 && address > stackStart) {
+			stackwrites.add(address);
+		}
+	}
+	
+	/**
+	 * Checks to see if the program reads off the bottom of the stack.
+	 * @param address.
+	 * @return true if program does not read off bottom of stack, false if it does.
+	 */
+	public boolean readStack(int address) {
+		int stackStart = registers.readSafe(Register.sp).getValue();
+		if(stackStart > 0 && address > stackStart && !stackwrites.contains(address)) {
 			numViolations++;
 			return false;
 		}
@@ -99,9 +139,9 @@ public class CallingConventionChecker {
 	/**
 	 * Initializes lists of registers.
 	 */
-	private void initializeRegisterLists() {
+	private void initializeRegisterLists() {		
 		unknown = new ArrayList<>();
-		
+
 		saved = new ArrayList<>();
 		saved.add(Register.s0);
 		saved.add(Register.s1);
@@ -111,9 +151,11 @@ public class CallingConventionChecker {
 		saved.add(Register.s5);
 		saved.add(Register.s6);
 		saved.add(Register.s7);
-		saved.add(Register.sp);
-		saved.add(Register.fp);
-		saved.add(Register.ra);
+		
+		specific = new ArrayList<>();
+		specific.add(Register.sp);
+		specific.add(Register.fp);
+		specific.add(Register.ra);
 		
 		unsaved = new ArrayList<>();
 		unsaved.add(Register.t0);

@@ -55,6 +55,16 @@ public class RegisterFile {
 	}
 	
 	/**
+	 * Reads the value from the specified register
+	 * without invoking calling convention checker.
+	 * @param read this register
+	 * @return the value in this register
+	 */
+	public Data readSafe(Register read) {
+		return vals.get(read);
+	}
+	
+	/**
 	 * Writes the given value to the LO register.
 	 * @param value
 	 */

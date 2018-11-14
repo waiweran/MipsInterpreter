@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data.DataType;
 import exceptions.DataFormatException;
@@ -19,6 +20,7 @@ import exceptions.SegmentationFault;
  */
 public class Memory {
 	
+	private Program prog;
 	private RegisterFile regs;
 	private List<Data> globalData;
 	private Map<String, Integer> dataRefs;
@@ -31,7 +33,8 @@ public class Memory {
 	 * @param registers the Register File.
 	 * Used to read the value of the stack pointer.
 	 */
-	public Memory(RegisterFile registers) {
+	public Memory(Program program, RegisterFile registers) {
+		prog = program;
 		regs = registers;
 		globalData = new ArrayList<>();
 		dataRefs = new HashMap<>();
@@ -154,8 +157,7 @@ public class Memory {
 			heap.set(word - globalData.size(), data);
 		}
 		// Stack
-		else if(regs.read(Register.sp).getValue() > 0 
-				&& word >= regs.read(Register.sp).getValue()/4) {
+		else if(word > 0 && word >= regs.read(Register.sp).getValue()/4) {
 			for(int i = stack.size(); i < Integer.MAX_VALUE/4 + 1
 					- regs.read(Register.sp).getValue()/4; i++) {
 				stack.add(new Data());
@@ -456,10 +458,16 @@ public class Memory {
 	private String printWithEndian(Data value) {
 		Data.DataType type = value.getDataType();
 		if(!bigEndian && type != Data.DataType.String && type != Data.DataType.Byte) {
-			return reverseEndian(value).toString();
+			if(type == Data.DataType.J_Target) 
+				return "Line " + prog.getLine(reverseEndian(value).getValue());
+			else 
+				return reverseEndian(value).toString();
 		}
 		else {
-			return value.toString();
+			if(type == Data.DataType.J_Target) 
+				return "Line " + prog.getLine(value.getValue());
+			else 
+				return value.toString();
 		}
 	}
 	

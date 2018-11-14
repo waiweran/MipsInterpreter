@@ -1,6 +1,0 @@
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/palindromes.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/recurse.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/HoopStats.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/control_2.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/stress.s
-/Users/Nathaniel/Dropbox/Java Projects/MIPSInterpreter/programs/control_1.s

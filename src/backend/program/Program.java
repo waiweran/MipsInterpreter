@@ -46,7 +46,7 @@ public class Program {
 	public Program(InputStream input, PrintStream output) {
 		regs = new RegisterFile();
 		fpRegs = new FPRegisterFile();
-		mem = new Memory(regs);
+		mem = new Memory(this, regs);
 		lines = new ArrayList<>();
 		lineRefs = new HashMap<>();
 		insnRefs = new ArrayList<>();
