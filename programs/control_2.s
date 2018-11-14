@@ -6,7 +6,7 @@
 .text
 main: # Test JR
 	jal s1				# Set r31
-s1: addi $ra $ra 4		# r31 += 4
+s1: addi $ra $ra 16		# r31 += 4 lines
 	jr $ra 				# PC = r31 = 14
 	addi $20 $20 1		# r20 += 1 (Incorrect)
 	addi $20 $20 1		# r20 += 1 (Incorrect)

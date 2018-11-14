@@ -172,13 +172,13 @@ public class Main {
 			prog.checkCallingConventions(callChecker);
 		}
 		prog.start();
-		int lastPC = -1;
+		int lastLineNum = -1;
 		for(int i = 0; !prog.isDone() && i != runs; i++) {
 			Line currentLine = prog.getNextLine();
-			if(verbose && lastPC != prog.getPC()) 
+			if(verbose && lastLineNum != prog.getLineNum()) 
 				System.out.println(currentLine);
-			if(lastPC == prog.getPC()) i--;
-			lastPC = prog.getPC();
+			if(lastLineNum == prog.getLineNum()) i--;
+			lastLineNum = prog.getLineNum();
 			if(currentLine.isExecutable()) {
 				try {
 					Instruction insn = currentLine.getInstruction();

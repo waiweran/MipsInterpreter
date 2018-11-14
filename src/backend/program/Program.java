@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +31,11 @@ public class Program {
 	private FPRegisterFile fpRegs;
 	private Memory mem;
 	private List<Line> lines;
-	private Map<String, Integer> insnRefs;
+	private Map<String, Integer> lineRefs;
+	private List<Integer> insnRefs;
 	private InputStream in;
 	private PrintStream out;
-	private int pc;
+	private int lineIndex;
 	private boolean done;
 	
 	/**
@@ -46,7 +48,8 @@ public class Program {
 		fpRegs = new FPRegisterFile();
 		mem = new Memory(regs);
 		lines = new ArrayList<>();
-		insnRefs = new HashMap<>();
+		lineRefs = new HashMap<>();
+		insnRefs = new ArrayList<>();
 		in = input;
 		out = output;
 		done = false;
@@ -74,17 +77,29 @@ public class Program {
 	}
 	
 	/**
-	 * @return Map containing instruction target pairings for jumps.
-	 */
-	public Map<String, Integer> getInsnRefs() {
-		return insnRefs;
-	}
-	
-	/**
 	 * @return List containing all lines of the program, in order.
 	 */
 	public List<Line> getProgramLines() {
-		return lines;
+		return Collections.unmodifiableList(lines);
+	}
+	
+	/**
+	 * Adds a line of code to the program.
+	 * @param newLine The line to add to the program.
+	 */
+	public void addLine(Line newLine) {
+		lines.add(newLine);
+		if(newLine.isExecutable()) 
+			insnRefs.add(lines.size());
+	}
+	
+	/**
+	 * Adds a label to a line in the program.
+	 * @param reference The String reference for the label.
+	 * @param lineNum The line the label points to.
+	 */
+	public void addLabel(String reference, int lineNum) {
+		lineRefs.put(reference, lineNum);
 	}
 	
 	/**
@@ -100,32 +115,62 @@ public class Program {
 	 * @param reference String target indicating the line to jump to.
 	 */
 	public void jump(String reference) {
-		pc = insnRefs.get(reference);
+		lineIndex = lineRefs.get(reference);
 	}
 	
 	/**
-	 * @return the current PC, 
-	 * index of next line to execute in the list of lines.
+	 * Gets the PC targeted by a given instruction target string.
+	 * @param reference String target indicating the line to jump to.
+	 * @return the PC of the line indicated.
+	 */
+	public int getTargetPC(String reference) {
+		return Collections.binarySearch(insnRefs, lineRefs.get(reference))*4;
+	}
+	
+	/**
+	 * @return the current PC, address of next instruction to execute.
 	 */
 	public int getPC() {
-		return pc;
+		return Collections.binarySearch(insnRefs, lineIndex)*4;
 	}
 	
 	/**
-	 * Sets the PC,
-	 * index of next line to execute.
-	 * Used for jump register instructions.
-	 * @param newPC the new PC value.
+	 * Sets the current PC, address of next instruction to execute.
+	 * @param newPC The new value of the PC.
 	 */
 	public void setPC(int newPC) {
-		pc = newPC;
+		lineIndex = insnRefs.get(newPC/4);
+	}
+	
+	/**
+	 * @return The index of the currently executing line.
+	 */
+	public int getLineNum() {
+		return lineIndex;
+	}
+	
+	/**
+	 * Sets the next program line number.
+	 * @param num The next line to execute.
+	 */
+	public void setLineNum(int num) {
+		lineIndex = num;
+	}
+	
+	/**
+	 * Gets the program line pointed to by the given PC.
+	 * @param pc The PC.
+	 * @return the index of the line.
+	 */
+	public int getLine(int pc) {
+		return insnRefs.get(pc/4);
 	}
 	
 	/**
 	 * @return the next Line to execute.
 	 */
 	public Line getNextLine() {
-		return lines.get(pc++);
+		return lines.get(lineIndex++);
 	}
 	
 	/**
@@ -183,10 +228,10 @@ public class Program {
 	 * Used if program runs off bottom of file or exits via a return Jump Register.
 	 */
 	public void setupProgramClose() {
-		regs.write(Register.ra, new Data(lines.size(), Data.DataType.J_Target));
-		lines.add(new Line("", new Instruction(new AddImmediate("addi"), 
+		regs.write(Register.ra, new Data((insnRefs.size() - 1)*4, Data.DataType.J_Target));
+		addLine(new Line("", new Instruction(new AddImmediate("addi"), 
 				Register.v0, Register.zero, null, null, null, null, 10, null)));
-		lines.add(new Line("", new Instruction(new Syscall("syscall"), 
+		addLine(new Line("", new Instruction(new Syscall("syscall"), 
 				null, null, null, null, null, null, null, null)));
 	}
 	
@@ -196,10 +241,10 @@ public class Program {
 	 * @throws LabelException if invalid label found
 	 */
 	public void loadLabels() throws LabelException {
-		for(Line l : getProgramLines()) {
+		for(Line l : lines) {
 			if(l.isExecutable()) {
 				String label = l.getInstruction().getLabel();
-				if(label != null && !getInsnRefs().containsKey(label)
+				if(label != null && !lineRefs.containsKey(label)
 						&& !getMem().isDataReference(label)) {
 					throw new LabelException("No match for label " + label, l);
 				}

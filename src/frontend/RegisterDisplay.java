@@ -7,6 +7,7 @@ import backend.program.FPRegister;
 import backend.program.Program;
 import backend.program.Register;
 import backend.state.Data;
+import backend.state.Data.DataType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
@@ -160,7 +161,12 @@ public class RegisterDisplay implements ScreenObject {
 	 * @return a String representing the data.
 	 */
 	private String dataToString(Data input) {
-		if(displayType.equals(DataDisplay.AUTO)) return input.toString();
+		if(displayType.equals(DataDisplay.AUTO)) {
+			if(input.getDataType().equals(DataType.J_Target)) 
+				return "Line " + prog.getLine(input.getValue());
+			else
+				return input.toString();
+		}
 		if(displayType.equals(DataDisplay.HEX)) return input.toHex();
 		if(displayType.equals(DataDisplay.DECIMAL)) return input.toDecimal();
 		if(displayType.equals(DataDisplay.FLOAT)) return input.toFloatString();

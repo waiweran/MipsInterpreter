@@ -21,7 +21,8 @@ public class Data {
 		Float,
 		Double_L,
 		Double_H,
-		Space;
+		Space,
+		Unknown;
 	}
 	
 	private int val;
@@ -67,6 +68,36 @@ public class Data {
 		return typ;
 	}
 	
+	/**
+	 * Combines two Data to produce the expected result type.
+	 * @param other The other Data being combined.
+	 * @return The expected type of the result.
+	 */
+	public DataType combineType(Data other) {
+		return combineType(other.typ);
+	}
+	
+	/**
+	 * Combines this Data with another type to produce the expected result type.
+	 * @param other the type of the other Data being combined.
+	 * @return The expected type of the result.
+	 */
+	public DataType combineType(DataType other) {
+		if(typ.equals(other)) return typ;
+		if(typ.equals(DataType.Space)) return other;
+		if(other.equals(DataType.Space)) return typ;
+		if(typ.equals(DataType.Unknown)) return other;
+		if(other.equals(DataType.Unknown)) return typ;
+		if(typ.equals(DataType.Byte)) return other;
+		if(other.equals(DataType.Byte)) return typ;
+		if(typ.equals(DataType.Integer)) return other;
+		if(other.equals(DataType.Integer)) return typ;
+		if(typ.equals(DataType.Address) || other.equals(DataType.Address)) 
+			return DataType.Address;
+		
+		return DataType.Unknown;
+	}
+	
 	@Override
 	public int hashCode() {
 		return new Integer(val).hashCode();
@@ -87,7 +118,8 @@ public class Data {
 		}
 		if(typ.equals(DataType.Address)
 				|| typ.equals(DataType.Double_H)
-				|| typ.equals(DataType.Double_L)) {
+				|| typ.equals(DataType.Double_L)
+				|| typ.equals(DataType.Unknown)) {
 			return toHex();
 		}
 		return toDecimal();

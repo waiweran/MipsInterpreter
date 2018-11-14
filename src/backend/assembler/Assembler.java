@@ -1,11 +1,5 @@
 package backend.assembler;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import backend.program.Instruction;
@@ -28,7 +22,6 @@ public class Assembler {
 			ResourceBundle.getBundle("backend.assembler.PseudoFormats");
 
 	private Program prog;
-	private Map<Integer, Integer> targets;
 
 	/**
 	 * Initializes the program assembler.
@@ -36,36 +29,13 @@ public class Assembler {
 	 */
 	public Assembler(Program program) {
 		prog = program;
-		targets = new HashMap<>();
-		mapTargets();
-	}
-
-	/**
-	 * Assembles the program, writing the binary code to the given file.
-	 * @param file The file to write the code to.
-	 * @throws IOException if the file could not be opened.
-	 * @throws InstructionFormatException if an instruction in the file is improperly formatted.
-	 */
-	public void assembleProgram(File file) throws IOException, InstructionFormatException {
-		FileWriter fw = new FileWriter(file);
-		PrintWriter pw = new PrintWriter(fw);
-		int insnNum = 0;
-		for(Line l : prog.getProgramLines()) {
-			if(l.isExecutable()) {
-				pw.println(assemble(l, insnNum++));
-			}
-		}
-		pw.flush();
-		fw.flush();
-		pw.close();
-		fw.close();
 	}
 
 	/**
 	 * Assembles a single instruction.
 	 * @param line the instruction to assemble.  Must be an executable line.
 	 * @param insnNum The instruction number in the program (for relative branches).
-	 * @return The binary string of the assembled instruction.
+	 * @return The hexadecimal string of the assembled instruction.
 	 * @throws InstructionFormatException if instruction improperly formatted.
 	 */
 	public String assemble(Line line, int insnNum) throws InstructionFormatException {
@@ -87,11 +57,11 @@ public class Assembler {
 	}
 
 	/**
-	 * Processes a single instruction to convert it to binary.
+	 * Processes a single instruction to convert it to hexadecimal.
 	 * @param insn The instruction to process.
 	 * @param insnNum The number of the instruction in the program (for relative branches).
 	 * @param formatRef The reference format string for the instruction.
-	 * @return The binary string representation of the instruction.
+	 * @return The hex string representation of the instruction.
 	 * @throws InstructionFormatException if the instruction is improperly formatted.
 	 */
 	private String processInstruction(Line line, int insnNum, String formatRef)
@@ -153,15 +123,15 @@ public class Assembler {
 				else if(s.startsWith("target_absolute")) {
 					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
 					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = targets.get(prog.getInsnRefs().get(insn.getLabel()));
-					output.append(makeBinaryValue(targetPC, start, end));
+					int targetPC = prog.getTargetPC(insn.getLabel());
+					output.append(makeBinaryValue(targetPC/4, start, end));
 					used.append("label ");
 				}
 				else if(s.startsWith("target_relative")) {
 					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
 					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = targets.get(prog.getInsnRefs().get(insn.getLabel()));
-					output.append(makeBinaryValue(targetPC - insnNum + 1, start, end));
+					int targetPC = prog.getTargetPC(insn.getLabel());
+					output.append(makeBinaryValue(targetPC/4 - insnNum + 1, start, end));
 					used.append("label ");
 				}
 				else {
@@ -175,23 +145,6 @@ public class Assembler {
 		if(output.toString().equals("UNSUPPORTED")) return output.toString();
 		checkUsage(line, insn.makeUsedList(), used.toString());
 		return toHex(output.toString());
-	}
-
-	/**
-	 * Maps jump targets to PCs for assembling immediates.
-	 */
-	private void mapTargets() {
-		int insnNum = 0;
-		int lineNum = 0;
-		for(Line l : prog.getProgramLines()) {
-			if(l.isExecutable()) {
-				insnNum++;
-			}
-			if(prog.getInsnRefs().containsValue(lineNum)) {
-				targets.put(lineNum, insnNum);
-			}
-			lineNum++;
-		}
 	}
 
 	/**

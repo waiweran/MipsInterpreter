@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import backend.assembler.Assembler;
-import exceptions.InstructionFormatException;
+import backend.program.Line;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -126,21 +125,22 @@ public class TopMenu implements ScreenObject {
 	private void makeExportMenu() {
 		MenuItem binaryString = new MenuItem("Binary Text File");
 		binaryString.setOnAction(e -> {
-			Assembler assemble = new Assembler(gui.getProgram());
 			File file = gui.saveFile("Save Assembled Code");
 			if(file != null) {
 				try {
-					assemble.assembleProgram(file);
+					FileWriter fw = new FileWriter(file);
+					PrintWriter pw = new PrintWriter(fw);
+					for(Line l : gui.getProgram().getProgramLines()) {
+						pw.println(l.getHex());
+					}
+					pw.flush();
+					fw.flush();
+					pw.close();
+					fw.close();
 				}
 				catch (IOException ex) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setHeaderText("Could Not Save File");
-					alert.show();
-				}
-				catch (InstructionFormatException ex) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setHeaderText("Could Not Export");
-					alert.setContentText(ex.getMessage());
 					alert.show();
 				}
 			}
