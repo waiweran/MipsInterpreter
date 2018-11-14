@@ -17,7 +17,7 @@ public class OrImmediate extends Opcode {
 						insn.getR1() : insn.getR2());
 				prog.getRegFile().write(insn.getR1(), 
 						new Data(data.getValue() | 
-						insn.getImmed(), data.getDataType()));
+						insn.getImmed(), data.combineType(Data.DataType.Integer)));
 	}
 
 }

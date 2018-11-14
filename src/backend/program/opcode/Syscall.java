@@ -42,7 +42,7 @@ public class Syscall extends Opcode {
 			}
 			// If input not ready, stall
 			else {
-				prog.setPC(prog.getPC() - 1);
+				prog.setLineNum(prog.getLineNum() - 1);
 			}
 		}
 		// read float
@@ -54,7 +54,7 @@ public class Syscall extends Opcode {
 			}
 			// If input not ready, stall
 			else {
-				prog.setPC(prog.getPC() - 1);
+				prog.setLineNum(prog.getLineNum() - 1);
 			}
 		}
 		// read double
@@ -65,7 +65,7 @@ public class Syscall extends Opcode {
 			}
 			// If input not ready, stall
 			else {
-				prog.setPC(prog.getPC() - 1);
+				prog.setLineNum(prog.getLineNum() - 1);
 			}
 		}
 		// read string
@@ -81,7 +81,7 @@ public class Syscall extends Opcode {
 			}
 			// If input not ready, stall
 			else {
-				prog.setPC(prog.getPC() - 1);
+				prog.setLineNum(prog.getLineNum() - 1);
 			}
 		}
 		// sbrk

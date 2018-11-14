@@ -16,11 +16,13 @@ public class Divide extends Opcode {
 		prog.getRegFile().writeLO(new Data(
 				prog.getRegFile().read(insn.getR1()).getValue() / 
 				prog.getRegFile().read(insn.getR2()).getValue(), 
-				prog.getRegFile().read(insn.getR1()).getDataType()));
+				prog.getRegFile().read(insn.getR1()).combineType(
+				prog.getRegFile().read(insn.getR2()))));
 		prog.getRegFile().writeHI(new Data(
 				prog.getRegFile().read(insn.getR1()).getValue() % 
 				prog.getRegFile().read(insn.getR2()).getValue(), 
-				prog.getRegFile().read(insn.getR1()).getDataType()));
+				prog.getRegFile().read(insn.getR1()).combineType(
+				prog.getRegFile().read(insn.getR2()))));
 	}
 
 }

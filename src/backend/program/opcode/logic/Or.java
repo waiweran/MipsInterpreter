@@ -16,7 +16,8 @@ public class Or extends Opcode {
 		prog.getRegFile().write(insn.getR1(), 
 				new Data(prog.getRegFile().read(insn.getR2()).getValue() | 
 				prog.getRegFile().read(insn.getR3()).getValue(), 
-				prog.getRegFile().read(insn.getR2()).getDataType()));
+				prog.getRegFile().read(insn.getR2()).combineType(
+				prog.getRegFile().read(insn.getR3()))));
 	}
 
 }

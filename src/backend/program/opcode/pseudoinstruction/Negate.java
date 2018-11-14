@@ -14,7 +14,8 @@ public class Negate extends Opcode {
 	@Override
 	public void execute(Instruction insn, Program prog) {
 		prog.getRegFile().write(insn.getR1(), 
-			new Data(-prog.getRegFile().read(insn.getR2()).getValue()));
+			new Data(-prog.getRegFile().read(insn.getR2()).getValue(),
+			prog.getRegFile().read(insn.getR2()).getDataType()));
 	}
 
 }
