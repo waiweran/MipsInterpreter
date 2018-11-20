@@ -73,8 +73,21 @@ public class Assembler {
 		try {
 			for(String s : pieces) {
 				if(s.equals("reg1")) {
-					output.append(makeBinaryValue(insn.getR1().getRegisterNumber(), 5, 0));
-					used.append("reg1 ");
+					try {
+						output.append(makeBinaryValue(insn.getR1().getRegisterNumber(), 5, 0));
+						used.append("reg1 ");
+					} catch(NullPointerException e) {
+						if(insn.getOpcode().getName().equals("swc1") ||
+								insn.getOpcode().getName().equals("sdc1") ||
+								insn.getOpcode().getName().equals("s.d") ||
+								insn.getOpcode().getName().equals("l.d") ||
+								insn.getOpcode().getName().equals("s.s") ||
+								insn.getOpcode().getName().equals("l.s") ||
+								insn.getOpcode().getName().equals("lwc1") ||
+								insn.getOpcode().getName().equals("ldc1")) {
+							output.append("00000");
+						}
+					}
 				}
 				else if(s.equals("reg2")) {
 					try {

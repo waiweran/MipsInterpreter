@@ -22,11 +22,11 @@ public class Syscall extends Opcode {
 		}
 		// print float
 		else if(type == 2) {
-			prog.getOutput().print(prog.getFPRegFile().read(FPRegister.f0));
+			prog.getOutput().print(prog.getFPRegFile().read(FPRegister.f12));
 		}
 		// print double
 		else if(type == 3) {
-			prog.getOutput().print(prog.getFPRegFile().readDouble(FPRegister.f0));
+			prog.getOutput().print(prog.getFPRegFile().readDouble(FPRegister.f12));
 		}
 		// print string
 		else if(type == 4) {
