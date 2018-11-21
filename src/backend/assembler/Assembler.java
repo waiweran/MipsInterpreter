@@ -72,92 +72,96 @@ public class Assembler {
 		String[] pieces = formatRef.split(" ");
 		try {
 			for(String s : pieces) {
-				if(s.equals("reg1")) {
-					try {
-						output.append(makeBinaryValue(insn.getR1().getRegisterNumber(), 5, 0));
-						used.append("reg1 ");
-					} catch(NullPointerException e) {
-						if(insn.getOpcode().getName().equals("swc1") ||
-								insn.getOpcode().getName().equals("sdc1") ||
-								insn.getOpcode().getName().equals("s.d") ||
-								insn.getOpcode().getName().equals("l.d") ||
-								insn.getOpcode().getName().equals("s.s") ||
-								insn.getOpcode().getName().equals("l.s") ||
-								insn.getOpcode().getName().equals("lwc1") ||
-								insn.getOpcode().getName().equals("ldc1")) {
-							output.append("00000");
-						}
-					}
+				String alt = null;
+				if(s.indexOf("?") > 0) {
+					alt = s.substring(s.indexOf("?") + 1);
+					s = s.substring(0, s.indexOf("?"));
 				}
-				else if(s.equals("reg2")) {
-					try {
-						output.append(makeBinaryValue(insn.getR2().getRegisterNumber(), 5, 0));
-						used.append("reg2 ");
-					} catch(NullPointerException e) {
-						if(insn.getOpcode().getName().equals("sw") ||
-								insn.getOpcode().getName().equals("lw")) {
-							output.append("00000");
-						}
-						else {
-							output.append(makeBinaryValue(insn.getR1().getRegisterNumber(), 5, 0));
-							used.append("reg1 ");
-						}
-					}
-				}
-				else if(s.equals("reg3")) {
-					output.append(makeBinaryValue(insn.getR3().getRegisterNumber(), 5, 0));
-					used.append("reg3 ");
-				}
-				else if(s.equals("fpr1")) {
-					output.append(makeBinaryValue(insn.getFPR1().getRegisterNumber(), 5, 0));
-					used.append("fpr1 ");
-				}
-				else if(s.equals("fpr2")) {
-					output.append(makeBinaryValue(insn.getFPR2().getRegisterNumber(), 5, 0));
-					used.append("fpr2 ");
-				}
-				else if(s.equals("fpr3")) {
-					output.append(makeBinaryValue(insn.getFPR3().getRegisterNumber(), 5, 0));
-					used.append("fpr3 ");
-				}
-				else if(s.startsWith("immediate")) {
-					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
-					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					if(insn.getImmed() == null && insn.getLabel() != null 
-							&& prog.getMem().isDataReference(insn.getLabel())) {
-						output.append(makeBinaryValue(prog.getMem().getMemoryAddress(insn.getLabel()), start, end));
-						used.append("label ");
-					}
-					else {
-						output.append(makeBinaryValue(insn.getImmed(), start, end));
-						used.append("immediate ");
-					}
-				}
-				else if(s.startsWith("target_absolute")) {
-					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
-					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = prog.getTargetPC(insn.getLabel());
-					output.append(makeBinaryValue(targetPC/4, start, end));
-					used.append("label ");
-				}
-				else if(s.startsWith("target_relative")) {
-					int start = Integer.parseInt(s.substring(s.indexOf("[") + 1, s.indexOf(":")));
-					int end = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.indexOf("]")));
-					int targetPC = prog.getTargetPC(insn.getLabel());
-					output.append(makeBinaryValue(targetPC/4 - insnNum + 1, start, end));
-					used.append("label ");
-				}
-				else {
-					output.append(s);
+				try {
+					output.append(convertComponent(s, insn, insnNum));
+				} catch (NullPointerException e) {
+					output.append(convertComponent(alt, insn, insnNum));
 				}
 			}
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			throw new InstructionFormatException("Instruction missing a value", e, line);
 		}
-		if(output.toString().equals("UNSUPPORTED")) return output.toString();
-		checkUsage(line, insn.makeUsedList(), used.toString());
+		for(String s : pieces) {
+			if(s.indexOf("?") > 0) s = s.substring(0, s.indexOf("?"));
+			if(s.equals("reg1")) used.append("reg1 ");
+			else if(s.equals("reg2")) used.append("reg2 ");
+			else if(s.equals("reg3")) used.append("reg3 ");
+			else if(s.equals("fpr1")) used.append("fpr1 ");
+			else if(s.equals("fpr2")) used.append("fpr2 ");
+			else if(s.equals("fpr3")) used.append("fpr3 ");
+			else if(s.startsWith("immediate")) {
+				if(insn.getImmed() == null && insn.getLabel() != null 
+						&& prog.getMem().isDataReference(insn.getLabel())) {
+					used.append("label ");
+				}
+				else used.append("immediate ");
+			}
+			else if(s.startsWith("target_absolute")
+					|| s.startsWith("target_relative")) {
+				used.append("label ");
+			}
+		}
+		checkUsage(line, used.toString(), insn.makeUsedList());
 		return toHex(output.toString());
+	}
+
+	/**
+	 * Converts a given instruction component to its binary representation.
+	 * @param comp The component to convert
+	 * @param insn The instruction being converted
+	 * @param insnNum The number of the instruction
+	 * @return Binary string representation of that instruction
+	 */
+	private String convertComponent(String comp, Instruction insn, int insnNum) {
+		if(comp.equals("reg1")) {
+			return makeBinaryValue(insn.getR1().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.equals("reg2")) {
+			return makeBinaryValue(insn.getR2().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.equals("reg3")) {
+			return makeBinaryValue(insn.getR3().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.equals("fpr1")) {
+			return makeBinaryValue(insn.getFPR1().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.equals("fpr2")) {
+			return makeBinaryValue(insn.getFPR2().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.equals("fpr3")) {
+			return makeBinaryValue(insn.getFPR3().getRegisterNumber(), 5, 0);
+		}
+		else if(comp.startsWith("immediate")) {
+			int start = Integer.parseInt(comp.substring(comp.indexOf("[") + 1, comp.indexOf(":")));
+			int end = Integer.parseInt(comp.substring(comp.indexOf(":") + 1, comp.indexOf("]")));
+			if(insn.getImmed() == null && insn.getLabel() != null 
+					&& prog.getMem().isDataReference(insn.getLabel())) {
+				return makeBinaryValue(prog.getMem().getMemoryAddress(insn.getLabel()), start, end);
+			}
+			else {
+				return makeBinaryValue(insn.getImmed(), start, end);
+			}
+		}
+		else if(comp.startsWith("target_absolute")) {
+			int start = Integer.parseInt(comp.substring(comp.indexOf("[") + 1, comp.indexOf(":")));
+			int end = Integer.parseInt(comp.substring(comp.indexOf(":") + 1, comp.indexOf("]")));
+			int targetPC = prog.getTargetPC(insn.getLabel());
+			return makeBinaryValue(targetPC/4, start, end);
+		}
+		else if(comp.startsWith("target_relative")) {
+			int start = Integer.parseInt(comp.substring(comp.indexOf("[") + 1, comp.indexOf(":")));
+			int end = Integer.parseInt(comp.substring(comp.indexOf(":") + 1, comp.indexOf("]")));
+			int targetPC = prog.getTargetPC(insn.getLabel());
+			return makeBinaryValue(targetPC/4 - insnNum + 1, start, end);
+		}
+		else {
+			return comp;
+		}
 	}
 
 	/**
@@ -165,9 +169,8 @@ public class Assembler {
 	 * @param val The number to convert.
 	 * @param length The length of the output binary string.
 	 * @return the converted binary value.
-	 * @throws InstructionFormatException if value is too large to convert to binary
 	 */
-	private String makeBinaryValue(int val, int start, int end) throws InstructionFormatException {
+	private String makeBinaryValue(int val, int start, int end) {
 		if(val >= Math.pow(2, start) || val < -Math.pow(2,  start)) {
 			throw new RuntimeException("Immediate too large");
 		}
@@ -201,6 +204,11 @@ public class Assembler {
 		}
 	}
 	
+	/**
+	 * Converts a binary string to a hex string.
+	 * @param binary The binary input.
+	 * @return hex output.
+	 */
 	private String toHex(String binary) {
 		StringBuilder output = new StringBuilder();
 		for(int i = 0; i <binary.length(); i += 4){
