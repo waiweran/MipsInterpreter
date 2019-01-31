@@ -3,6 +3,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import backend.debugger.CallingConventionChecker;
+import backend.log.Log;
+import backend.log.RegisterLogEntry;
 import backend.program.Register;
 
 /**
@@ -14,13 +16,15 @@ public class RegisterFile {
 	
 	private Map<Register, Data> vals;
 	private Data lo, hi;
+	private Log logger;
 	private CallingConventionChecker call;
 	
 	/**
 	 * Initializes the register file.
 	 * Preloads all registers with the value 0.
 	 */
-	public RegisterFile() {
+	public RegisterFile(Log log) {
+		logger = log;
 		vals = new HashMap<>();
 		lo = new Data();
 		hi = new Data();
@@ -39,9 +43,22 @@ public class RegisterFile {
 	 */
 	public void write(Register write, Data value) {
 		if(!write.equals(Register.zero)) {
+			logger.addEntry(new RegisterLogEntry(this, write, vals.get(write)));
 			vals.put(write, value);
 		}
 		if(call != null) call.writeReg(write);
+	}
+	
+	/**
+	 * Writes the given value to the specified register
+	 * without invoking calling convention checker or logger.
+	 * @param write to this register.
+	 * @param value write this value.
+	 */
+	public void writeSafe(Register write, Data value) {
+		if(!write.equals(Register.zero)) {
+			vals.put(write, value);
+		}
 	}
 	
 	/**

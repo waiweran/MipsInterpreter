@@ -26,7 +26,7 @@ public class ProgramControls implements ScreenObject {
 	private Timeline runProg;
 	private Program prog;
 	private MainGUI gui;
-	private Button playPause, step, reload;
+	private Button back, playPause, step, reload;
 	private Slider rate;
 	
 	/**
@@ -51,12 +51,14 @@ public class ProgramControls implements ScreenObject {
 	private void initialize() {
 		controls.setPadding(new Insets(5, 5, 5, 5));
 		controls.setAlignment(Pos.CENTER_LEFT);
+		back = new Button("Back");
 		playPause = new Button("Play ");
 		step = new Button("Step");
 		reload = new Button("Reload");
 		rate = new Slider(1, 50, 20);
 		rate.setMinWidth(200);
 		runProg.setRate(rate.getValue());
+		back.setOnAction(e -> undo());
 		playPause.setOnAction(e -> playPause(runProg.getStatus() == Status.RUNNING));
 		step.setOnAction(e -> step());
 		reload.setOnAction(e -> {
@@ -64,7 +66,7 @@ public class ProgramControls implements ScreenObject {
 			gui.loadProgram();
 		});
 		rate.setOnMouseDragged(e -> updateAnimationRate());
-		controls.getChildren().addAll(playPause, step, reload, new Text("     Speed:"), rate);
+		controls.getChildren().addAll(back, playPause, step, reload, new Text("     Speed:"), rate);
 	}
 	
 	/**
@@ -75,22 +77,37 @@ public class ProgramControls implements ScreenObject {
 		if(isPlaying) {
 			runProg.pause();
 			playPause.setText("Play ");
+			back.setDisable(false);
 			step.setDisable(false);
 		}
 		else {
 			runProg.play();
 			playPause.setText("Pause");
+			back.setDisable(true);
 			step.setDisable(true);
 		}
 	}
 	
 	/**
+	 * Steps the program back by 1 instruction.
+	 */
+	private void undo() {
+		Line prevLine = prog.getLog().undo();
+		gui.getCode().executionHighlight(prevLine);
+		gui.getRegisters().update();
+		gui.getMemory().update();
+		gui.getCommandLine().update();
+		gui.getCode().update();
+		gui.getMenu().update();
+	}
+	
+	/**
 	 * Steps the program by 1 instruction.
-	 * Pauses execution if execution playing.
 	 */
 	private void step() {
 		if(prog.isDone()) {
 			playPause(true);
+			back.setDisable(true);
 			playPause.setDisable(true);
 			step.setDisable(true);
 			return;
@@ -105,6 +122,7 @@ public class ProgramControls implements ScreenObject {
 				gui.getCode().errorHighlight(currentLine);
 				gui.getCommandLine().printException(e);
 				playPause(true);
+				back.setDisable(true);
 				playPause.setDisable(true);
 				step.setDisable(true);
 				throw new ExecutionException("Program line " + currentLine + 
@@ -125,6 +143,7 @@ public class ProgramControls implements ScreenObject {
 	 * Unlocks the play/pause, reset, and step features.
 	 */
 	public void unlock() {
+		back.setDisable(false);
 		playPause.setDisable(false);
 		step.setDisable(false);
 		reload.setDisable(false);
@@ -135,6 +154,7 @@ public class ProgramControls implements ScreenObject {
 	 * Typically used if error is detected in the program.
 	 */
 	public void lock() {
+		back.setDisable(true);
 		playPause.setDisable(true);
 		step.setDisable(true);
 		reload.setDisable(true);

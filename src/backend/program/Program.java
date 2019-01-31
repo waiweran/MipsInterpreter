@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import backend.debugger.CallingConventionChecker;
+import backend.log.InstructionStartEntry;
+import backend.log.LineLogEntry;
+import backend.log.Log;
 import backend.program.opcode.Syscall;
 import backend.program.opcode.arithmetic.AddImmediate;
 import backend.program.opcode.jumpbranch.Jump;
@@ -27,6 +30,7 @@ import exceptions.LabelException;
  */
 public class Program {
 	
+	private Log log;
 	private RegisterFile regs;
 	private FPRegisterFile fpRegs;
 	private Memory mem;
@@ -44,7 +48,8 @@ public class Program {
 	 * @param output stream to use for Syscall.
 	 */
 	public Program(InputStream input, PrintStream output) {
-		regs = new RegisterFile();
+		log = new Log();
+		regs = new RegisterFile(log);
 		fpRegs = new FPRegisterFile();
 		mem = new Memory(this, regs);
 		lines = new ArrayList<>();
@@ -53,6 +58,13 @@ public class Program {
 		in = input;
 		out = output;
 		done = false;
+	}
+	
+	/**
+	 * @return the program log.
+	 */
+	public Log getLog() {
+		return log;
 	}
 	
 	/**
@@ -108,6 +120,7 @@ public class Program {
 	public void start() {
 		new Instruction(new Jump("j"), null, null, null, null, null, null,
 				null, "main").execute(this);
+		log.start();
 	}
 		
 	/**
@@ -115,6 +128,7 @@ public class Program {
 	 * @param reference String target indicating the line to jump to.
 	 */
 	public void jump(String reference) {
+		log.addEntry(new LineLogEntry(this, lineIndex));
 		lineIndex = lineRefs.get(reference);
 	}
 	
@@ -139,6 +153,7 @@ public class Program {
 	 * @param newPC The new value of the PC.
 	 */
 	public void setPC(int newPC) {
+		log.addEntry(new LineLogEntry(this, lineIndex));
 		lineIndex = insnRefs.get(newPC/4);
 	}
 	
@@ -151,10 +166,21 @@ public class Program {
 	
 	/**
 	 * Sets the next program line number.
+	 * Does not update the program log.
 	 * @param num The next line to execute.
 	 */
 	public void setLineNum(int num) {
 		lineIndex = num;
+	}
+	
+	/**
+	 * Sets the line number so that the current instruction is re-run.
+	 * Updates the log so it appears the instruction only ran once.
+	 * Used for syscalls waiting for user.
+	 */
+	public void SetInstructionRerun() {
+		lineIndex--;
+		log.setRerun();
 	}
 	
 	/**
@@ -170,7 +196,13 @@ public class Program {
 	 * @return the next Line to execute.
 	 */
 	public Line getNextLine() {
-		return lines.get(lineIndex++);
+		Line currentLine = lines.get(lineIndex);
+		if(currentLine.isExecutable())	{
+			log.addEntry(new InstructionStartEntry(currentLine));
+			log.addEntry(new LineLogEntry(this, lineIndex));
+		}
+		lineIndex++;
+		return currentLine;
 	}
 	
 	/**
